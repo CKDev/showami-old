@@ -7,6 +7,7 @@ that we don't need to discuss each choice that has been made in the past.
 ## Starting a new project using this template
 
 * Clone this project from Github
+  - git clone https://github.com/CKDev/greenfield.git
 * Create a new gemset with 'rvm gemset create <project name>'
 * Change .ruby-gemset for new project name
 * Run `bundle install`
