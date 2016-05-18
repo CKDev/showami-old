@@ -1,8 +1,8 @@
 require "feature_helper"
 
-feature "A guest user can visit all public pages" do
+feature "A guest user" do
 
-  scenario "a guest user can view every public page" do
+  scenario "can view every public page" do
     visit root_path
   end
 
