@@ -13,7 +13,6 @@ Capybara.configure do |config|
   config.always_include_port = true
 end
 
-
 def log_in_with(email, password)
   visit new_session_path
   find("#user_email").set(email)
