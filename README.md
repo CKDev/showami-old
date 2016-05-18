@@ -14,7 +14,6 @@ that we don't need to discuss each choice that has been made in the past.
 * Configure Devise - TODO:
 * Configure Redis - TODO:
 * Configure Sidekiq - TODO:
-* Vagrant setup - TODO:
 
 ## Replace this README with application specific information below.
 
