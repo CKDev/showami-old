@@ -6,10 +6,10 @@ feature "A user logs in" do
     log_out
   end
 
-  scenario "is initially taken to dashboard" do
+  scenario "is initially taken to user dashboard" do
     @user = FactoryGirl.create(:user)
     log_in @user
-    expect(current_path).to eq(root_path)
+    expect(current_path).to eq(users_root_path)
   end
 
 end
