@@ -1,0 +1,109 @@
+inherit_from:
+  - .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - "bin/**/*"
+    - "db/migrate/**/*"
+    - "db/schema.rb"
+    - "config/**/*"
+    - "script/**/*"
+
+Rails:
+  Enabled: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+  SupportedStyles:
+    - single_quotes
+    - double_quotes
+
+Metrics/ModuleLength:
+  Max: 500
+
+Metrics/ClassLength:
+  Max: 500
+
+Metrics/LineLength:
+  Max: 500
+
+Metrics/MethodLength:
+  Max: 110
+
+Metrics/AbcSize:
+  Max: 115
+  Exclude:
+
+Style/Documentation:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/BlockComments:
+  Enabled: false
+
+Style/AlignHash:
+  Enabled: false
+
+Style/IndentHash:
+  Enabled: false
+
+Style/IndentArray:
+  Enabled: false
+
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+Style/ClosingParenthesisIndentation:
+  Enabled: false
+
+Style/AlignArray:
+  Enabled: false
+
+Style/AndOr:
+  Enabled: false
+
+Style/AlignParameters:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+# TODO: eventually?
+Style/MutableConstant:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Max: 35
+
+Metrics/PerceivedComplexity:
+  Max: 35
+
+Rails/HasAndBelongsToMany:
+  Exclude:
+
+Rails/Output:
+  Exclude:
+    - "db/seeds.rb"
+
+Style/PercentLiteralDelimiters:
+  Exclude:
