@@ -1,5 +1,5 @@
 Rails.application.configure do
-  config.force_ssl = true
+  config.force_ssl = false
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
