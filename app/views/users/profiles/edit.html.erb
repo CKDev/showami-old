@@ -1,0 +1,68 @@
+<h1>Profile</h1>
+
+<%= form_for @profile, url: users_profile_path do |f| %>
+
+  <% if @profile.errors.any? %>
+    <div id="error_explanation">
+      <h3>The following errors prohibited this record from being saved:</h3>
+      <ul>
+        <% @profile.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="eight columns">
+
+      <div class="field">
+        <%= f.label :first_name, class: "required" %>
+        <%= f.text_field :first_name, autofocus: true %>
+      </div>
+
+      <div class="field">
+        <%= f.label :last_name, class: "required" %>
+        <%= f.text_field :last_name %>
+      </div>
+
+      <div class="row">
+        <div class="field six columns">
+          <%= f.label :phone1, "Cell Phone", class: "required" %>
+          <%= f.text_field :phone1 %>
+        </div>
+
+        <div class="field six columns">
+          <%= f.label :phone2, "Office Phone", class: "required" %>
+          <%= f.text_field :phone2 %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="four columns">
+      <img src="http://placehold.it/200x200">
+      <label>Upload Picture</label>
+      <small>Delete Picture</small>
+    </div>
+
+  </div>
+
+  <div class="field">
+    <%= f.label :company, class: "required" %>
+    <%= f.text_field :company %>
+  </div>
+
+  <div class="field">
+    <%= f.label :agent_id, "Agent ID", class: "required" %>
+    <%= f.text_field :agent_id %>
+  </div>
+
+  <div class="field">
+    <%= f.label :agent_type, class: "required" %>
+    <%= f.text_field :agent_type %>
+  </div>
+
+  <%= f.submit "Update" %>
+
+<% end %>

@@ -1,5 +1,4 @@
 module ApplicationHelper
-  # helper_method :resource_name, :resource, :devise_mapping
 
   def resource_name
     :user

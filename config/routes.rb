@@ -2,6 +2,7 @@ Rails.application.routes.draw do
 
   namespace :users do
     root "dashboard#index"
+    resource :profile, only: [:edit, :update]
   end
 
   namespace :admin do
