@@ -10,6 +10,7 @@ feature "A user logs in" do
     @user = FactoryGirl.create(:user)
     log_in @user
     expect(current_path).to eq(users_root_path)
+    expect(page).to have_content "Hi, User!"
   end
 
 end

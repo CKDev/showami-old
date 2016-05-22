@@ -8,4 +8,8 @@ class Profile < ActiveRecord::Base
   validates :company, presence: true
   validates :agent_id, presence: true
   validates :agent_type, presence: true
+
+  def greeting
+    first_name.present? ? "Hi, #{first_name}!" : "Hi, User!"
+  end
 end
