@@ -11,4 +11,11 @@ Rails.application.routes.draw do
 
   devise_for :users
   root to: "home#index"
+
+  # Static pages
+  get "about", to: "about#show"
+  get "terms", to: "terms#show"
+  get "privacy", to: "privacy#show"
+  get "contact", to: "contact#show"
+
 end

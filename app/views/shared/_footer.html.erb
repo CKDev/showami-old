@@ -1,7 +1,27 @@
 <footer>
   <div class="container">
-    <div class="links">
-      Showami - Copyright 2016
+    <div class="row">
+      <div class="three columns">
+        <p class="align-left">
+          Learn how to use Showami and more about providing showings.
+        </p>
+      </div>
+
+      <div class="five columns">
+        <ul class="left-or-right">
+          <li><%= link_to "About", about_path %></li>
+          <li><%= link_to "Privacy Policy", privacy_path %></li>
+          <li><%= link_to "Terms", terms_path %></li>
+          <li><%= link_to "Contact", contact_path %></li>
+        </ul>
+      </div>
+
+      <div class="four columns left-or-right">
+        <%= link_to root_path do %>
+          <%= image_tag "logo", class: "logo-icon" %>
+        <% end %>
+        <p>Copyright - 2016</p>
+      </div>
     </div>
   </div>
 </footer>
