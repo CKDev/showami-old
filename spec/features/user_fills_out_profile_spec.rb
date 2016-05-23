@@ -7,7 +7,7 @@ feature "A registered user can update their profile" do
     log_in @user
   end
 
-  scenario "with basic information" do
+  scenario "with valid information" do
     visit edit_users_profile_path
     find("#profile_first_name").set("Alex")
     find("#profile_last_name").set("Brinkman")

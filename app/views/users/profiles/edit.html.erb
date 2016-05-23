@@ -63,6 +63,8 @@
     <%= f.text_field :agent_type %>
   </div>
 
-  <%= f.submit "Update" %>
+  <%= f.submit "Update", class: "button-primary" %>
 
 <% end %>
+
+<%= link_to "Edit your email or password", edit_user_registration_path, class: "button" %>
