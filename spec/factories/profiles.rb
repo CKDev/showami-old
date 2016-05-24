@@ -7,6 +7,7 @@ FactoryGirl.define do
     company "Showing Services, LLC"
     agent_id "1234 1234"
     agent_type 2
+    avatar { fixture_file_upload(Rails.root.join("spec", "fixtures", "avatar.png"), "image/png") }
   end
 
 end

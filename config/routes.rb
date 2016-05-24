@@ -2,7 +2,11 @@ Rails.application.routes.draw do
 
   namespace :users do
     root "dashboard#index"
-    resource :profile, only: [:edit, :update]
+    resource :profile, only: [:edit, :update] do
+      member do
+        post :delete_avatar
+      end
+    end
     resources :buyers_requests
     resources :showing_appointments
     resources :showing_opportunities

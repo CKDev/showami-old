@@ -24,6 +24,7 @@ capybara-*.html
 /tmp
 /coverage
 /public/assets
+/public/system
 /spec/tmp
 /spec/examples.txt
 **.orig

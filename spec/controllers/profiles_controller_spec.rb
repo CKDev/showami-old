@@ -42,5 +42,20 @@ module Users
 
     end
 
+    describe "POST #delete_avatar" do
+
+      before :each do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        sign_in @user
+      end
+
+      it "correctly removes the avatar from the profile" do
+        post :delete_avatar
+        @user.profile.reload
+        expect(@user.profile.avatar.present?).to be false
+      end
+
+    end
+
   end
 end

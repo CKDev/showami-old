@@ -107,3 +107,6 @@ Rails/Output:
 
 Style/PercentLiteralDelimiters:
   Exclude:
+
+Style/RegexpLiteral:
+  Enabled: false

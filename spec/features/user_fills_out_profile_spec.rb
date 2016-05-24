@@ -16,10 +16,13 @@ feature "A registered user can update their profile" do
     find("#profile_company").set("Alex and Sons")
     find("#profile_agent_id").set("12341234") # TODO: what is the format of this number?
     choose "I'm a buyer's agent and I want assistance with showings"
+    attach_file "profile[avatar]", Rails.root + "spec/fixtures/avatar.png"
     click_button "Update"
     expect(current_path).to eq(edit_users_profile_path)
     expect(page).to have_content("Profile successfully updated.")
     expect(page).to have_content("Hi, Alex!")
+    click_link "Delete avatar"
+    expect(page).to have_content("Avatar successfully removed.")
   end
 
 end

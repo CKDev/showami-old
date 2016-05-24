@@ -30,10 +30,10 @@ gem "sidekiq-failures"
 
 # CK's preferred tools (not used in every project)
 # gem "twilio-ruby", "~> 3.12" # Twilio for SMS
-# gem "paperclip", "~> 4.2" # File uploads
 
-# For client-side timezone rendering
-gem "local_time"
+# Misc
+gem "paperclip" # File uploads
+gem "local_time" # Client-side timezone rendering
 
 # Pagination
 gem "will_paginate"

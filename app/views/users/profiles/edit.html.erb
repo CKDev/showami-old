@@ -40,10 +40,16 @@
 
     </div>
 
-    <div class="four columns">
-      <img src="http://placehold.it/200x200">
-      <label>Upload Picture</label>
-      <small>Delete Picture</small>
+    <div class="four columns left-or-right">
+      <%= image_tag @profile.avatar.url(:small), class: "size-200" %>
+      <div class="left-or-right">
+        <%= f.file_field :avatar, class: "size-200" %>
+      </div>
+      <% if @profile.avatar.present? %>
+        <p>
+          <%= link_to "Delete avatar", delete_avatar_users_profile_path, method: "post", data: { confirm: "Are you sure you want to delete your avatar?" } %>
+        </p>
+      <% end %>
     </div>
 
   </div>

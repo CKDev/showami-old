@@ -19,6 +19,7 @@ FactoryGirl.define do
         user.profile.company = "Showing Services, LLC"
         user.profile.agent_id = "1234 1234"
         user.profile.agent_type = 2
+        user.profile.avatar = fixture_file_upload(Rails.root.join("spec", "fixtures", "avatar.png"), "image/png")
         user.profile.save
       end
     end
