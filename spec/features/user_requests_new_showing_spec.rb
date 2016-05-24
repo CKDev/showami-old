@@ -12,10 +12,10 @@ feature "A registered user with valid payment" do
     expect(current_path).to eq users_buyers_requests_path
     click_link "New Request"
     expect(page).to have_content "Request New Showing"
-    select "May", from: "showing[showing_date(2i)]"
-    select "24", from: "showing[showing_date(3i)]"
-    select "07 PM", from: "showing[showing_date(4i)]"
-    select "30", from: "showing[showing_date(5i)]"
+    select "May", from: "showing[showing_at(2i)]"
+    select "24", from: "showing[showing_at(3i)]"
+    select "07 PM", from: "showing[showing_at(4i)]"
+    select "30", from: "showing[showing_at(5i)]"
     fill_in "showing[mls]", with: "1234512345"
     fill_in "showing[address_attributes][line1]", with: "600 S Broadway"
     fill_in "showing[address_attributes][line2]", with: "Apt ABC"
@@ -26,6 +26,7 @@ feature "A registered user with valid payment" do
     click_button "Submit"
     expect(current_path).to eq users_buyers_requests_path
     expect(page).to have_content "New showing successfully created."
+    expect(page).to have_content "600 S Broadway"
   end
 
 end

@@ -7,7 +7,7 @@ module Users
 
       let(:valid_attributes) do
         {
-          showing_date: Time.zone.now,
+          showing_at: Time.zone.now + 3.hours,
           mls: "abc123",
           notes: "notes about the showing",
           address_attributes: {
@@ -28,7 +28,8 @@ module Users
       it "correctly assigns the passed in info" do
         post :create, showing: valid_attributes
         showing = Showing.last
-        expect(showing.showing_date).to be_within(5.seconds).of(Time.zone.now)
+        expect(showing.user).to eq @user
+        expect(showing.showing_at).to be_within(5.seconds).of(Time.zone.now + 3.hours)
         expect(showing.mls).to eq "abc123"
         expect(showing.notes).to eq "notes about the showing"
         expect(showing.address.line1).to eq "600 S Broadway"
@@ -39,7 +40,7 @@ module Users
       end
 
       it "re-renders the form if invalid" do
-        valid_attributes[:showing_date] = ""
+        valid_attributes[:showing_at] = ""
         post :create, showing: valid_attributes
         expect(response).to render_template :new
       end

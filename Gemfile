@@ -32,6 +32,12 @@ gem "sidekiq-failures"
 # gem "twilio-ruby", "~> 3.12" # Twilio for SMS
 # gem "paperclip", "~> 4.2" # File uploads
 
+# For client-side timezone rendering
+gem "local_time"
+
+# Pagination
+gem "will_paginate"
+
 group :development do
   gem "rubocop", require: false
   gem "quiet_assets"

@@ -4,4 +4,10 @@ class Address < ActiveRecord::Base
   validates :city, presence: true
   validates :state, presence: true
   validates :zip, presence: true
+
+  def single_line
+    return if line1.empty? || city.empty? || state.empty? || zip.empty?
+    adr2 = line2.blank? ? " " : " " + line2 + " "
+    line1 + adr2 + city + ", " + state + " " + zip
+  end
 end

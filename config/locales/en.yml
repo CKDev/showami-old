@@ -28,3 +28,5 @@ en:
       address:
         line1: "Street"
         line2: "Unit"
+      showing:
+        showing_at: "Showing date"

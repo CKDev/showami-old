@@ -34,4 +34,21 @@ describe Address do
 
   end
 
+  context "#single_line" do
+
+    before :each do
+      @address = FactoryGirl.create(:address)
+    end
+
+    it "has a method to print itself in one line" do
+      expect(@address.single_line).to eq "600 S Broadway Unit 200 Denver, CO 80209"
+    end
+
+    it "should print correctly if no line2 is available" do
+      @address.line2 = ""
+      expect(@address.single_line).to eq "600 S Broadway Denver, CO 80209"
+    end
+
+  end
+
 end
