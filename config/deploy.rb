@@ -75,8 +75,7 @@ set :linked_dirs, fetch(:linked_dirs, []).push(
   "tmp/cache",
   "tmp/sockets",
   "vendor/bundle",
-  "public/system",
-  "public/storylines"
+  "public/system"
 )
 
 # DB / Asset Sync Options
