@@ -16,12 +16,12 @@
   <div class="row">
     <div class="eight columns">
 
-      <div class="field">
+      <div>
         <%= f.label :first_name, class: "required" %>
         <%= f.text_field :first_name, autofocus: true %>
       </div>
 
-      <div class="field">
+      <div>
         <%= f.label :last_name, class: "required" %>
         <%= f.text_field :last_name %>
       </div>
@@ -48,17 +48,17 @@
 
   </div>
 
-  <div class="field">
+  <div>
     <%= f.label :company, class: "required" %>
     <%= f.text_field :company %>
   </div>
 
-  <div class="field">
+  <div>
     <%= f.label :agent_id, "Agent ID", class: "required" %>
     <%= f.text_field :agent_id %>
   </div>
 
-  <div class="field">
+  <div>
     <div class="row">
       <div class="four columns">
         <%= f.label "agent_type_buyers_agent", "I'm a buyer's agent and I want assistance with showings" %>

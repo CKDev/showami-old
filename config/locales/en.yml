@@ -25,3 +25,6 @@ en:
       profile:
         phone1: "Cell phone"
         phone2: "Office phone"
+      address:
+        line1: "Street"
+        line2: "Unit"

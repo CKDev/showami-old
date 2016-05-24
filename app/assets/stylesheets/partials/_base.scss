@@ -73,3 +73,7 @@ em {
 .flash-message {
   margin-top: 1em;
 }
+
+select.month, select.day, select.hour, select.minute {
+  width: 20%;
+}

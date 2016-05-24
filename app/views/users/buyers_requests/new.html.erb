@@ -1,0 +1,66 @@
+<h1>Request New Showing</h1>
+
+<%= form_for @showing, url: users_buyers_requests_path do |f| %>
+
+  <% if @showing.errors.any? %>
+    <div id="error_explanation">
+      <h3>The following errors prohibited this record from being saved:</h3>
+      <ul>
+        <% @showing.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :showing_date, "Date" %>
+    <%= f.datetime_select :showing_date, discard_year: true, ampm: true, with_css_classes: true %>
+  </div>
+
+  <div>
+    <%= f.label :mls do %>
+      MLS # <span class="note">(optional)</span>
+    <% end %>
+    <%= f.text_field :mls %>
+  </div>
+
+  <%= f.fields_for :address do |a| %>
+
+    <div>
+      <%= a.label :line1, "Street", class: "required" %>
+      <%= a.text_field :line1 %>
+    </div>
+
+    <div>
+      <%= a.label :line2, "Unit" %>
+      <%= a.text_field :line2 %>
+    </div>
+
+    <div class="row">
+      <div class="four columns">
+        <%= a.label :city, class: "required" %>
+        <%= a.text_field :city %>
+      </div>
+
+      <div class="four columns">
+        <%= a.label :state, class: "required" %>
+        <%= a.text_field :state %>
+      </div>
+
+      <div class="four columns">
+        <%= a.label :zip, class: "required" %>
+        <%= a.text_field :zip %>
+      </div>
+    </div>
+
+  <% end %>
+
+  <div>
+    <%= f.label :notes %>
+    <%= f.text_area :notes %>
+  </div>
+
+  <%= f.submit "Submit" %>
+
+<% end %>
