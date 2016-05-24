@@ -14,7 +14,7 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.action_controller.perform_caching = false
 
-  # => to send email from local host
+  # Mailer configuration
   config.action_mailer.default_url_options = { host: "ccp-integapp-01.do.lark-it.com" }
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
