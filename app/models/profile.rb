@@ -9,6 +9,8 @@ class Profile < ActiveRecord::Base
   validates :agent_id, presence: true
   validates :agent_type, presence: true
 
+  enum agent_type: [:buyers_agent, :sellers_agent, :both]
+
   def greeting
     first_name.present? ? "Hi, #{first_name}!" : "Hi, User!"
   end

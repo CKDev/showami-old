@@ -2,6 +2,10 @@ require "rails_helper"
 
 describe Profile do
 
+  it "should default to have both buying and selling options selected" do
+    expect(Profile.new.agent_type).to eq "both"
+  end
+
   context "validations" do
 
     it "should require a first name" do
@@ -66,6 +70,7 @@ describe Profile do
       profile = Profile.new(first_name: "Alejandro")
       expect(profile.greeting).to eq "Hi, Alejandro!"
     end
+
   end
 
 end

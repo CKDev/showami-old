@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   namespace :users do
     root "dashboard#index"
     resource :profile, only: [:edit, :update]
+    resources :buyers_requests
+    resources :showing_appointments
+    resources :showing_opportunities
   end
 
   namespace :admin do

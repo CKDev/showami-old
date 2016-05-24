@@ -1,5 +1,5 @@
 <% if flash[:notice] || flash[:alert] %>
-  <div>
+  <div class="flash-message">
     <% if flash[:notice] %>
       <p class="notice"><%= flash[:notice].html_safe %></p>
     <% end %>

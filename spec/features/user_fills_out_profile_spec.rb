@@ -15,7 +15,7 @@ feature "A registered user can update their profile" do
     find("#profile_phone2").set("999 444 1234 x1234")
     find("#profile_company").set("Alex and Sons")
     find("#profile_agent_id").set("12341234") # TODO: what is the format of this number?
-    find("#profile_agent_type").set(1)
+    choose "I'm a buyer's agent and I want assistance with showings"
     click_button "Update"
     expect(current_path).to eq(edit_users_profile_path)
     expect(page).to have_content("Profile successfully updated.")

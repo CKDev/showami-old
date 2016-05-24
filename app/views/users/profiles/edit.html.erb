@@ -59,8 +59,22 @@
   </div>
 
   <div class="field">
-    <%= f.label :agent_type, class: "required" %>
-    <%= f.text_field :agent_type %>
+    <div class="row">
+      <div class="four columns">
+        <%= f.label "agent_type_buyers_agent", "I'm a buyer's agent and I want assistance with showings" %>
+        <%= f.radio_button :agent_type, :buyers_agent %>
+      </div>
+
+      <div class="four columns">
+        <%= f.label "agent_type_sellers_agent", "I'm an agent available to assist with showings" %>
+        <%= f.radio_button :agent_type, :sellers_agent %>
+      </div>
+
+      <div class="four columns">
+        <%= f.label "agent_type_both", "I want to do both: assist with showings and receive assistance for showings" %>
+        <%= f.radio_button :agent_type, :both %>
+      </div>
+    </div>
   </div>
 
   <%= f.submit "Update", class: "button-primary" %>

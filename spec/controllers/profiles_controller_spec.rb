@@ -13,7 +13,7 @@ module Users
           phone2: "720 444 5555",
           company: "Cannon Beach Real Estate",
           agent_id: "1234-1234",
-          agent_type: 0
+          agent_type: "buyers_agent"
         }
       end
 
@@ -31,7 +31,7 @@ module Users
         expect(@user.profile.phone2).to eq "720 444 5555"
         expect(@user.profile.company).to eq "Cannon Beach Real Estate"
         expect(@user.profile.agent_id).to eq "1234-1234"
-        expect(@user.profile.agent_type).to eq 0
+        expect(@user.profile.agent_type).to eq "buyers_agent"
       end
 
       it "re-renders the form if invalid" do
