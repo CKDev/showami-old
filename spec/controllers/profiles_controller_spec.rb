@@ -14,7 +14,8 @@ module Users
           company: "Cannon Beach Real Estate",
           agent_id: "1234-1234",
           agent_type: "buyers_agent",
-          geo_box: "(105.2705 , 40.0150), (105.000, 40.000)"
+          geo_box: "(105.2705 , 40.0150), (105.000, 40.000)",
+          geo_box_zoom: 10
         }
       end
 
@@ -34,6 +35,7 @@ module Users
         expect(@user.profile.agent_id).to eq "1234-1234"
         expect(@user.profile.agent_type).to eq "buyers_agent"
         expect(@user.profile.geo_box).to eq "(105.2705 , 40.0150), (105.000, 40.000)"
+        expect(@user.profile.geo_box_zoom).to eq 10
       end
 
       it "re-renders the form if invalid" do

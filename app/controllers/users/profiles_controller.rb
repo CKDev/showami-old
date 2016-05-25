@@ -26,7 +26,7 @@ module Users
 
     def profile_params
       params.require(:profile).permit(:first_name, :last_name, :phone1, :phone2,
-        :company, :agent_id, :agent_type, :avatar, :geo_box)
+        :company, :agent_id, :agent_type, :avatar, :geo_box, :geo_box_zoom)
     end
 
     def set_profile

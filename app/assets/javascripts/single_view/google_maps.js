@@ -10,42 +10,75 @@ var infoWindow;
 
 function initMap() {
 
+  // Map styling.
+  var styles = [
+    {
+      stylers: [
+        { hue: "#00ffe6" },
+        { saturation: -20 }
+      ]
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [
+        { lightness: 100 },
+        { visibility: "simplified" }
+      ]
+    },
+    {
+      featureType: "road",
+      elementType: "labels",
+      stylers: [
+        { visibility: "off" }
+      ]
+    }
+  ];
+
+  var styledMap = new google.maps.StyledMapType(styles, { name: "Styled Map" });
+
+  // Default bounding box (Denver)
+  var north = 39.730;
+  var east = -104.980;
+  var south = 39.710;
+  var west = -105.010;
+  var defaultZoom = 12;
+
+  var zoom = $("#profile_geo_box_zoom").val() * 1;
   var rawBounds = $("#profile_geo_box").val();
-  // TODO: this could be done better.  Move into it's own function, falling back to Denver.
   if (rawBounds) {
     var boundsArray = rawBounds.replace(/\(/g, "").replace(/\)/g, "").split(","); // Pull out just lats/longs.
-    var north = boundsArray[1] * 1.0;
-    var east = boundsArray[0] * 1.0;
-    var south = boundsArray[3] * 1.0;
-    var west = boundsArray[2] * 1.0;
-    var bounds = {
-      north: north,
-      east: east,
-      south: south,
-      west: west
-    };
-
-    var centerLat = (north + south) / 2.0;
-    var centerLong = (east + west) / 2.0;
-
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: centerLat, lng: centerLong },
-      zoom: 12
-    });
+    north = boundsArray[1] * 1.0;
+    east = boundsArray[0] * 1.0;
+    south = boundsArray[3] * 1.0;
+    west = boundsArray[2] * 1.0;
   }
   else {
-    var bounds = {
-      north: 39.730,
-      east: -104.980,
-      south: 39.710,
-      west: -105.010
-    };
-
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 39.720, lng: -105.000 }, // Denver
-      zoom: 12
-    });
+    setBoundingBoxValue(east, north, west, south);
+    setZoomValue(defaultZoom);
   }
+
+  var bounds = {
+    north: north,
+    east: east,
+    south: south,
+    west: west
+  };
+
+  var centerLat = (north + south) / 2.0;
+  var centerLong = (east + west) / 2.0;
+
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: centerLat, lng: centerLong },
+    zoom: zoom,
+    mapTypeControlOptions: {
+      mapTypeIds: [google.maps.MapTypeId.ROADMAP, "map_style"]
+    }
+  });
+
+  // Associate the styled map with the MapTypeId and set it to display.
+  map.mapTypes.set("map_style", styledMap);
+  map.setMapTypeId("map_style");
 
   // Define the rectangle and set its editable property to true.
   rectangle = new google.maps.Rectangle({
@@ -55,26 +88,28 @@ function initMap() {
   });
 
   rectangle.setMap(map);
-
-  // Add an event listener on the rectangle.
   rectangle.addListener("bounds_changed", showNewRect);
-
-  // Define an info window on the map.
+  map.addListener("zoom_changed", showNewZoom);
   infoWindow = new google.maps.InfoWindow();
 }
-// Show the new coordinates for the rectangle in an info window.
 
-/** @this {google.maps.Rectangle} */
 function showNewRect(event) {
   var ne = rectangle.getBounds().getNorthEast();
   var sw = rectangle.getBounds().getSouthWest();
-  $("#profile_geo_box").val("(" + ne.lng() + ", " + ne.lat() + "), (" + sw.lng() + ", " + sw.lat() + ")");
-
-  var contentString = "<b>Showing area moved - click update below to save.</b>";
-
-  // Set the info window's content and position.
-  infoWindow.setContent(contentString);
+  setBoundingBoxValue(ne.lng(), ne.lat(), sw.lng(), sw.lat());
+  infoWindow.setContent("<b>Showing area moved - click update below to save.</b>");
   infoWindow.setPosition(ne);
-
   infoWindow.open(map);
+}
+
+function showNewZoom(event) {
+  setZoomValue(map.getZoom());
+}
+
+function setBoundingBoxValue(ne_lng, ne_lat, sw_lng, sw_lat) {
+  $("#profile_geo_box").val("(" + ne_lng + ", " + ne_lat + "), (" + sw_lng + ", " + sw_lat + ")");
+}
+
+function setZoomValue(zoom) {
+  $("#profile_geo_box_zoom").val(zoom);
 }
