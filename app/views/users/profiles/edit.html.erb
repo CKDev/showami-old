@@ -1,3 +1,4 @@
+
 <h1>Profile</h1>
 
 <%= form_for @profile, url: users_profile_path do |f| %>
@@ -83,8 +84,17 @@
     </div>
   </div>
 
+  <label for="map">Select your showing area</label>
+  <p class="note">
+    Click the square icon on the map, and draw a box around the area in which you are willing
+    to show properties.</p>
+  <div id="map"></div>
+
+  <%= f.hidden_field :geo_box %>
+
   <%= f.submit "Update", class: "button-primary" %>
 
 <% end %>
 
 <%= link_to "Edit your email or password", edit_user_registration_path, class: "button" %>
+

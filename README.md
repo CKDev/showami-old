@@ -41,3 +41,6 @@
 * Production
 * Staging
 * Integration
+
+### Notes
+`Profile.where("geo_box @> point '(-105.98,39.73)'")`
