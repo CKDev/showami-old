@@ -25,7 +25,7 @@ gem "sinatra", require: nil # For the sidekiq web interface
 gem "sidekiq-failures"
 
 # Reporting tools
-# gem "honeybadger", "~> 2.0"
+gem "rollbar"
 # gem "newrelic_rpm"
 
 # CK's preferred tools (not used in every project)

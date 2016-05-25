@@ -25,6 +25,11 @@ set :ssh_options, {
   keepalive_interval: 60, # Seconds - prevents idle timeouts on long tasks.
 }
 
+# Rollbar config
+set :rollbar_token, "4d7af520311e439facd623155165a56b" # TODO, is there way to pull this from secrets?
+set :rollbar_env, Proc.new { fetch :stage }
+set :rollbar_role, Proc.new { :app }
+
 ### NO FURTHER CUSTOMIZATIONS SHOULD BE NECESSARY
 #
 

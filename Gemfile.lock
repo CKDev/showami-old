@@ -188,6 +188,7 @@ GEM
     minitest (5.9.0)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
+    multi_json (1.12.1)
     neat (1.7.2)
       bourbon (>= 4.0)
       sass (>= 3.3)
@@ -254,6 +255,8 @@ GEM
     responders (2.1.0)
       railties (>= 4.2.0, < 5)
     rolify (4.1.1)
+    rollbar (2.11.3)
+      multi_json
     rspec-core (3.4.4)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
@@ -377,6 +380,7 @@ DEPENDENCIES
   redis
   redis-namespace
   rolify
+  rollbar
   rspec-rails (~> 3.4)
   rubocop
   sass-rails (~> 5.0)
