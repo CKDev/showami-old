@@ -97,10 +97,5 @@
 
 <%= link_to "Edit your email or password", edit_user_registration_path, class: "button" %>
 
-<script src="https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js"></script>
-<link href="https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css" rel="stylesheet" />
-<link href="https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.css" rel="stylesheet" />
-<script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js"></script>
-<script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.js"></script>
-<%= javascript_include_tag "single_view/mapbox" %>
-
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBffPEqK3fNSSFCl9H04OH3aB5sN51DaI&callback=initMap"></script>
+<%= javascript_include_tag "single_view/google_maps" %>
