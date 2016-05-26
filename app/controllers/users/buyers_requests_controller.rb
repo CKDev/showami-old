@@ -3,7 +3,9 @@ module Users
 
     def index
       # TODO: change paging size back to 25 once done with testing.
-      @showings = current_user.showings.paginate(page: params[:page], per_page: 2)
+      @showings = current_user.showings
+        .includes(:address)
+        .paginate(page: params[:page], per_page: 2)
     end
 
     def new
