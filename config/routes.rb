@@ -1,3 +1,5 @@
+require "sidekiq/web"
+
 Rails.application.routes.draw do
 
   namespace :users do
@@ -24,5 +26,10 @@ Rails.application.routes.draw do
   get "terms", to: "terms#show"
   get "privacy", to: "privacy#show"
   get "contact", to: "contact#show"
+
+  # Sidekiq web interface is a Sinatra app.
+  authenticate :user, lambda { |u| u.admin? } do
+    mount Sidekiq::Web => "/sidekiq"
+  end
 
 end

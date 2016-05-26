@@ -21,7 +21,7 @@ gem "redis-namespace"
 
 # Background processing
 gem "sidekiq"
-gem "sinatra", require: nil # For the sidekiq web interface
+gem "sinatra", require: nil # For the Sidekiq web interface
 gem "sidekiq-failures"
 
 # Reporting tools

@@ -20,4 +20,19 @@ feature "A user logs in" do
     expect(page).to have_content "Hi, User!"
   end
 
+  scenario "is not able to get to the admin dashboard" do
+    @user = FactoryGirl.create(:user_with_valid_profile)
+    log_in @user
+    visit admin_root_path
+    expect(current_path).to eq(root_path)
+  end
+
+  scenario "is not able to get to the sidekiq dashboard" do
+    @user = FactoryGirl.create(:user_with_valid_profile)
+    log_in @user
+    expect do
+      visit sidekiq_web_path
+    end.to raise_error ActionController::RoutingError
+  end
+
 end

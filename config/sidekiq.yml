@@ -1,0 +1,9 @@
+# Configuration file for Sidekiq.
+# Options here can still be overridden by cmd line args.
+#   sidekiq -C config.yml
+---
+:verbose: false
+:queues:
+  - [high, 7]
+  - [default, 5]
+  - [mailers, 3]

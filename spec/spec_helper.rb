@@ -43,13 +43,6 @@ RSpec.configure do |config|
 
   config.mock_framework = :mocha
 
-  # This cleans up after carrierwave tests
-  config.after(:each) do
-    if Rails.env.test? || Rails.env.cucumber?
-      FileUtils.rm_rf(Dir["#{Rails.root}/spec/support/uploads"])
-    end
-  end
-
   # The settings below are suggested to provide a good initial experience
   # with RSpec, but feel free to customize to your heart's content.
 
@@ -93,9 +86,9 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   # Make sure sidekiq jobs are cleared out between tests
-  config.before(:each) do
-    Sidekiq::Worker.clear_all
-  end
+  # config.before(:each) do
+  #   Sidekiq::Worker.clear_all
+  # end
 
 end
 

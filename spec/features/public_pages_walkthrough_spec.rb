@@ -31,4 +31,9 @@ feature "A guest user" do
     expect(page).to have_content("Contact Us")
   end
 
+  scenario "is not able to get to the sidekiq dashboard" do
+    visit sidekiq_web_path
+    expect(current_path).to eq(new_user_session_path)
+  end
+
 end
