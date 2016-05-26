@@ -26,7 +26,7 @@ gem "sidekiq-failures"
 
 # Reporting tools
 gem "rollbar"
-# gem "newrelic_rpm"
+gem "skylight"
 
 # CK's preferred tools (not used in every project)
 # gem "twilio-ruby", "~> 3.12" # Twilio for SMS
