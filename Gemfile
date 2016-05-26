@@ -45,6 +45,7 @@ group :development do
   gem "bullet"
   gem "web-console", "~> 2.0"
   gem "brakeman"
+  gem "rack-mini-profiler"
 end
 
 group :development, :test do
