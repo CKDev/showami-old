@@ -110,3 +110,6 @@ Style/PercentLiteralDelimiters:
 
 Style/RegexpLiteral:
   Enabled: false
+
+Style/MultilineMethodCallIndentation:
+  Enabled: false

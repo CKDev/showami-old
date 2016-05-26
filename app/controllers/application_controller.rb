@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
   before_action :set_greeting
 
   def after_sign_in_path_for(resource)
-    resource.admin? ? admin_root_path : users_root_path
+    return admin_root_path if resource.admin?
+    resource.profile.valid? ? users_root_path : edit_users_profile_path
   end
 
   def set_greeting

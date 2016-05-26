@@ -1,6 +1,8 @@
 module Users
   class BuyersRequestsController < BaseController
 
+    before_action :verify_valid_profile
+
     def index
       # TODO: change paging size back to 25 once done with testing.
       @showings = current_user.showings

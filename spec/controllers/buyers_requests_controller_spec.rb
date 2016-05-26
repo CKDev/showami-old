@@ -21,7 +21,7 @@ module Users
       end
 
       before :each do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryGirl.create(:user_with_valid_profile)
         sign_in @user
       end
 
@@ -43,6 +43,30 @@ module Users
         valid_attributes[:showing_at] = ""
         post :create, showing: valid_attributes
         expect(response).to render_template :new
+      end
+
+    end
+
+    describe "GET #index" do
+
+      it "should redirect to the user profile view if the user's profile isn't valid" do
+        @user = FactoryGirl.create(:user)
+        expect(@user.profile.valid?).to be false
+        sign_in @user
+        get :index
+        expect(response).to redirect_to edit_users_profile_path
+      end
+
+    end
+
+    describe "GET #new" do
+
+      it "should redirect to the user profile view if the user's profile isn't valid" do
+        @user = FactoryGirl.create(:user)
+        expect(@user.profile.valid?).to be false
+        sign_in @user
+        get :new
+        expect(response).to redirect_to edit_users_profile_path
       end
 
     end
