@@ -7,18 +7,19 @@ feature "A user" do
     log_in @user
   end
 
-  scenario "can click on the Buyer's Agent Requests nav link and see their requests" do
-    click_link "Buyer's Agent Requests"
+  scenario "can click on the Buyer's Agent nav link and see their requests" do
+    first(:link, "Buyer's Agent Info").click
     expect(current_path).to eq users_buyers_requests_path
   end
 
-  scenario "can click on the Showing Assistant Appointments nav link and see their requests" do
-    click_link "Showing Assistant Appointments"
+  scenario "can click on the Showing Assistant nav link and see their requests" do
+    first(:link, "Showing Assistant Info").click
     expect(current_path).to eq users_showing_appointments_path
   end
 
   scenario "can click on the Available Showing Opportunities nav link and see their requests" do
-    click_link "Available Showing Opportunities"
+    first(:link, "Showing Assistant Info").click
+    first(:link, "Showing Opportunities").click
     expect(current_path).to eq users_showing_opportunities_path
   end
 

@@ -9,7 +9,7 @@ feature "A registered user can change their account information" do
   scenario "with a new email address" do
     @user = FactoryGirl.create(:user)
     log_in @user
-    click_link "Edit your email or password"
+    first(:link, "Login Info").click
     expect(current_path).to eq(edit_user_registration_path)
     fill_in "user[email]", with: "alex+new@commercekitchen.com"
     fill_in "user[current_password]", with: "asdfasdf"
@@ -21,7 +21,7 @@ feature "A registered user can change their account information" do
   scenario "with a new password" do
     @user = FactoryGirl.create(:user)
     log_in @user
-    click_link "Edit your email or password"
+    first(:link, "Login Info").click
     expect(current_path).to eq(edit_user_registration_path)
     fill_in "user[password]", with: "ASDFASDF1234"
     fill_in "user[password_confirmation]", with: "ASDFASDF1234"

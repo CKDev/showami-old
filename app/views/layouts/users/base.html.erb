@@ -5,6 +5,9 @@
 </head>
 <body>
   <%= render "shared/header" %>
+  <% if content_for?(:subnav) %>
+    <%= yield :subnav %>
+  <% end %>
   <main class="container">
     <%= render "shared/flashes" %>
     <%= yield %>

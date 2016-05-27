@@ -20,7 +20,6 @@ feature "A registered user can update their profile" do
     click_button "Update"
     expect(current_path).to eq(edit_users_profile_path)
     expect(page).to have_content("Profile successfully updated.")
-    expect(page).to have_content("Hi, Alex!")
     click_link "Delete avatar"
     expect(page).to have_content("Avatar successfully removed.")
   end

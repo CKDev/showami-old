@@ -1,3 +1,5 @@
+<%= content_for(:subnav) { render "shared/users/subnav_profile" } %>
+
 <h1>Profile</h1>
 
 <%= form_for @profile, url: users_profile_path do |f| %>
@@ -15,7 +17,6 @@
 
   <div class="row">
     <div class="eight columns">
-
       <div>
         <%= f.label :first_name, class: "required" %>
         <%= f.text_field :first_name, autofocus: true %>
@@ -94,7 +95,6 @@
 
 <% end %>
 
-<%= link_to "Edit your email or password", edit_user_registration_path, class: "button" %>
-
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBffPEqK3fNSSFCl9H04OH3aB5sN51DaI&callback=initMap"></script>
+
 <%= javascript_include_tag "single_view/google_maps" %>

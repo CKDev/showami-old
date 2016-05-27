@@ -1,56 +1,56 @@
 .hamburger {
-  background:none;
-  /*position:absolute;*/
-  top:0;
-  right:0;
-  line-height:45px;
-  padding:0px 15px 0px 15px;
+  background: none;
+  top: 0;
+  right: 0;
+  line-height: 45px;
+  padding: 0px 15px 0px 15px;
   color: $orange;
-  border:0;
-  font-size:1.4em;
-  font-weight:bold;
-  cursor:pointer;
-  outline:none;
-  z-index:10000000000000;
+  border: 0;
+  font-size: 21px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  z-index: 1000;
 
-  @media (min-width: 550px) {
+  @media (min-width: 800px) {
     display: none;
   }
 }
 
 .cross {
   background:none;
-  /*position:absolute;*/
-  top:0px;
-  right:0;
-  padding:0px 15px 0px 15px;
+  top: 0;
+  right: 0;
+  padding: 0px 15px 0px 15px;
   color: $orange;
-  border:0;
-  font-size:3em;
-  line-height:65px;
-  font-weight:bold;
-  cursor:pointer;
-  outline:none;
-  z-index:10000000000000;
+  border: 0;
+  font-size: 21px;
+  line-height: 45px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  z-index: 1000;
 
-  @media (min-width: 550px) {
+  @media (min-width: 800px) {
     display: none;
   }
 }
 
 .desktop-menu {
   .menu-items {
+    display: inline-block;
     li {
       display: inline-block;
+      color: $dark-blue;
     }
-    @media (max-width: 550px) {
+    @media (max-width: 800px) {
       display: none;
     }
   }
 }
 
 .mobile-menu {
-  z-index:1000000;
+  z-index:100;
   font-weight:bold;
   font-size:0.8em;
   width:100%;
@@ -58,7 +58,7 @@
   position:absolute;
   text-align:center;
 
-  @media (min-width: 550px) {
+  @media (min-width: 800px) {
     display: none;
   }
 }

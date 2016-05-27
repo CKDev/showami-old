@@ -3,14 +3,12 @@
     <li><%= link_to "Profile", edit_users_profile_path %></li>
     <% if current_user.profile.present? && current_user.profile.valid? %>
       <% if current_user.profile.agent_type == "buyers_agent" %>
-        <li><%= link_to "Buyer's Agent Requests", users_buyers_requests_path %></li>
+        <li><%= link_to "Buyer's Agent Info", users_buyers_requests_path %></li>
       <% elsif current_user.profile.agent_type == "sellers_agent" %>
-        <li><%= link_to "Showing Assistant Appointments", users_showing_appointments_path %></li>
-        <li><%= link_to "Available Showing Opportunities", users_showing_opportunities_path %></li>
+        <li><%= link_to "Showing Assistant Info", users_showing_appointments_path %></li>
       <% elsif current_user.profile.agent_type == "both" %>
-        <li><%= link_to "Buyer's Agent Requests", users_buyers_requests_path %></li>
-        <li><%= link_to "Showing Assistant Appointments", users_showing_appointments_path %></li>
-        <li><%= link_to "Available Showing Opportunities", users_showing_opportunities_path %></li>
+        <li><%= link_to "Buyer's Agent Info", users_buyers_requests_path %></li>
+        <li><%= link_to "Showing Assistant Info", users_showing_appointments_path %></li>
       <% end %>
     <% end %>
   </ul>

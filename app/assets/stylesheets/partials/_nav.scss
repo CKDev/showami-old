@@ -1,4 +1,32 @@
-nav {
-  background-color: $light-grey;
-  margin-bottom: 2em;
+.subnav {
+  text-align: center;
+  background-color: $dark-blue;
+
+  h1, h2 {
+    color: $white;
+    margin-bottom: 0;
+  }
+
+  nav.active {
+    background-color: $green;
+  }
+
+  nav {
+    background-color: $light-blue;
+  }
+}
+
+.subnav-2 {
+  text-align: center;
+  background-color: $light-blue;
+
+  a {
+    font-size: 1.2em;
+    color: $white;
+  }
+
+  .active {
+    background-color: $green;
+  }
+
 }

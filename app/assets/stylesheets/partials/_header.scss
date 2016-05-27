@@ -1,6 +1,4 @@
 header {
-  background: #ffffff;
-  color: #323333;
   min-height: 40px;
   padding: 20px 0;
   margin-bottom: 2em;
@@ -17,11 +15,12 @@ header {
   a {
     padding-left: 7px;
     padding-right: 7px;
-    color: #666;
+    color: $dark-blue;
     text-decoration: none;
+    font-weight: bold;
   }
 
   a:hover {
-    color: #444;
+    color: $light-blue;
   }
 }

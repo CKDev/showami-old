@@ -8,9 +8,9 @@ feature "A registered user with valid payment" do
   end
 
   scenario "can request a new showing" do
-    click_link "Buyer's Agent Requests"
+    first(:link, "Buyer's Agent Info").click
     expect(current_path).to eq users_buyers_requests_path
-    click_link "New Request"
+    first(:link, "New Request").click
     expect(page).to have_content "Request New Showing"
     select "Dec", from: "showing[showing_at(2i)]"
     select "31", from: "showing[showing_at(3i)]"

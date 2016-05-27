@@ -1,22 +1,20 @@
 <header>
   <div class="container">
-    <div class="row">
-      <div class="three columns">
-        <%= link_to root_path do %>
-          <%= image_tag "logo", class: "logo-icon" %>
-        <% end %>
-      </div>
-      <div class="nine columns align-right desktop-menu">
-        <% if user_signed_in? %>
-          <%= link_to "Log Out", destroy_user_session_path, method: "delete" %>
-          <%= render "shared/users/nav" %>
-          <span class="hamburger">&#9776;</span>
-          <span class="cross">&#735;</span>
-        <% else %>
-          <%= link_to "Log In", new_user_session_path %>
-          <%= link_to "Sign Up", new_user_registration_path %>
-        <% end %>
-      </div>
+    <div style="float: left;">
+      <%= link_to root_path do %>
+        <%= image_tag "logo", class: "logo-icon" %>
+      <% end %>
+    </div>
+    <div class="align-right desktop-menu" style="float: right;">
+      <% if user_signed_in? %>
+        <%= link_to "Log Out", destroy_user_session_path, method: "delete" %>
+        <%= render "shared/users/nav" %>
+        <span class="hamburger">&#9776;</span>
+        <span class="cross">x</span>
+      <% else %>
+        <%= link_to "Log In", new_user_session_path %>
+        <%= link_to "Sign Up", new_user_registration_path %>
+      <% end %>
     </div>
   </div>
   <div class="mobile-menu">
