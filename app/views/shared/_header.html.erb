@@ -6,23 +6,20 @@
           <%= image_tag "logo", class: "logo-icon" %>
         <% end %>
       </div>
-      <div class="nine columns align-right">
+      <div class="nine columns align-right desktop-menu">
         <% if user_signed_in? %>
           <%= link_to "Log Out", destroy_user_session_path, method: "delete" %>
+          <%= render "shared/users/nav" %>
+          <span class="hamburger">&#9776;</span>
+          <span class="cross">&#735;</span>
         <% else %>
           <%= link_to "Log In", new_user_session_path %>
           <%= link_to "Sign Up", new_user_registration_path %>
         <% end %>
-        <button class="hamburger">&#9776;</button>
-        <button class="cross">&#735;</button>
       </div>
     </div>
   </div>
-    <div class="menu">
-      <ul>
-        <% if user_signed_in? %>
-          <li><%= link_to "#{@greeting}", edit_users_profile_path %></li>
-        <% end %>
-      </ul>
-    </div>
+  <div class="mobile-menu">
+    <%= render "shared/users/nav" %>
+  </div>
 </header>

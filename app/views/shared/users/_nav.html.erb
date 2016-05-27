@@ -1,31 +1,17 @@
-<%# TODO: need some tests around this %>
-<% if current_user.profile.present? && current_user.profile.valid? %>
-<nav>
-  <div class="container">
-    <div class="row">
+<% if user_signed_in? %>
+  <ul class="menu-items">
+    <li><%= link_to "Profile", edit_users_profile_path %></li>
+    <% if current_user.profile.present? && current_user.profile.valid? %>
       <% if current_user.profile.agent_type == "buyers_agent" %>
-        <div class="four columns">
-          <%= link_to "Buyer's Agent Requests", users_buyers_requests_path %>
-        </div>
+        <li><%= link_to "Buyer's Agent Requests", users_buyers_requests_path %></li>
       <% elsif current_user.profile.agent_type == "sellers_agent" %>
-        <div class="four columns">
-          <%= link_to "Showing Assistant Appointments", users_showing_appointments_path %>
-        </div>
-        <div class="four columns">
-          <%= link_to "Available Showing Opportunities", users_showing_opportunities_path %>
-        </div>
+        <li><%= link_to "Showing Assistant Appointments", users_showing_appointments_path %></li>
+        <li><%= link_to "Available Showing Opportunities", users_showing_opportunities_path %></li>
       <% elsif current_user.profile.agent_type == "both" %>
-        <div class="four columns">
-          <%= link_to "Buyer's Agent Requests", users_buyers_requests_path %>
-        </div>
-        <div class="four columns">
-          <%= link_to "Showing Assistant Appointments", users_showing_appointments_path %>
-        </div>
-        <div class="four columns">
-          <%= link_to "Available Showing Opportunities", users_showing_opportunities_path %>
-        </div>
+        <li><%= link_to "Buyer's Agent Requests", users_buyers_requests_path %></li>
+        <li><%= link_to "Showing Assistant Appointments", users_showing_appointments_path %></li>
+        <li><%= link_to "Available Showing Opportunities", users_showing_opportunities_path %></li>
       <% end %>
-    </div>
-  </div>
-</nav>
+    <% end %>
+  </ul>
 <% end %>
