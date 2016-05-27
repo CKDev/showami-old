@@ -40,11 +40,12 @@ gem "will_paginate"
 
 group :development do
   gem "rubocop", require: false
+  gem "foreman", require: false
+  gem "brakeman", require: false
   gem "quiet_assets"
   gem "letter_opener"
   gem "bullet"
   gem "web-console", "~> 2.0"
-  gem "brakeman"
   gem "rack-mini-profiler"
 end
 

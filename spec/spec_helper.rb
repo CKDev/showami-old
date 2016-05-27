@@ -86,9 +86,9 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   # Make sure sidekiq jobs are cleared out between tests
-  # config.before(:each) do
-  #   Sidekiq::Worker.clear_all
-  # end
+  config.before(:each) do
+    Sidekiq::Worker.clear_all
+  end
 
 end
 
