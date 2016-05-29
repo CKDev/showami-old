@@ -16,7 +16,10 @@ module Users
             city: "Denver",
             state: "CO",
             zip: "80209"
-          }
+          },
+          buyer_name: "Andre",
+          buyer_phone: "720 999 8888",
+          buyer_type: "individual"
         }
       end
 
@@ -37,6 +40,9 @@ module Users
         expect(showing.address.city).to eq "Denver"
         expect(showing.address.state).to eq "CO"
         expect(showing.address.zip).to eq "80209"
+        expect(showing.buyer_name).to eq "Andre"
+        expect(showing.buyer_phone).to eq "720 999 8888"
+        expect(showing.buyer_type).to eq "individual"
       end
 
       it "re-renders the form if invalid" do

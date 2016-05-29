@@ -1,3 +1,5 @@
+<%= content_for(:subnav) { render "shared/users/subnav_buyers_requests" } %>
+
 <h1>Request New Showing</h1>
 
 <%= form_for @showing, url: users_buyers_requests_path do |f| %>
@@ -14,7 +16,7 @@
   <% end %>
 
   <div>
-    <%= f.label :showing_at, "Date" %>
+    <%= f.label :showing_at %>
     <%= f.datetime_select :showing_at, discard_year: true, ampm: true, with_css_classes: true %>
   </div>
 
@@ -55,6 +57,33 @@
     </div>
 
   <% end %>
+
+  <div>
+    <%= f.label :buyer_name %>
+    <%= f.text_field :buyer_name %>
+  </div>
+
+  <div>
+    <%= f.label :buyer_phone %>
+    <%= f.text_field :buyer_phone %>
+  </div>
+
+  <div class="row">
+    <div class="four columns">
+      <%= f.label "buyer_type_individual", "Individual" %>
+      <%= f.radio_button :buyer_type, :individual %>
+    </div>
+
+    <div class="four columns">
+      <%= f.label "buyer_type_couple", "Couple" %>
+      <%= f.radio_button :buyer_type, :couple %>
+    </div>
+
+    <div class="four columns">
+      <%= f.label "buyer_type_family", "Family" %>
+      <%= f.radio_button :buyer_type, :family %>
+    </div>
+  </div>
 
   <div>
     <%= f.label :notes %>

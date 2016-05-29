@@ -29,6 +29,7 @@ module Users
 
     def showing_params
       params.require(:showing).permit(:showing_at, :mls, :notes,
+        :buyer_name, :buyer_phone, :buyer_type,
         address_attributes: [:id, :line1, :line2, :city, :state, :zip])
     end
 

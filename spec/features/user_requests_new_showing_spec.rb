@@ -23,6 +23,9 @@ feature "A registered user with valid payment" do
     fill_in "showing[address_attributes][state]", with: "CO"
     fill_in "showing[address_attributes][zip]", with: "80209"
     fill_in "showing[notes]", with: "A whole bunch of details on the showing..."
+    fill_in "showing[buyer_name]", with: "Andre"
+    fill_in "showing[buyer_phone]", with: "720 999 8888"
+    choose "Couple"
     click_button "Submit"
     expect(current_path).to eq users_buyers_requests_path
     expect(page).to have_content "New showing successfully created."
