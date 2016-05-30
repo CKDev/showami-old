@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
          :confirmable, :lockable
 
   has_one :profile
-  has_many :showings, -> { order(:showing_at) }
+  has_many :showings, -> { order("showing_at DESC") }
   after_create :add_profile
 
   delegate :greeting, to: :profile
