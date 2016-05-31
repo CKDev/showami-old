@@ -51,6 +51,21 @@ module Users
         expect(response).to render_template :new
       end
 
+      it "assigns the latitude and longitude of the showing address" do
+        post :create, showing: valid_attributes
+        showing = Showing.last
+        expect(showing.address.latitude).to_not be nil
+        expect(showing.address.longitude).to_not be nil
+      end
+
+      it "notifies all users whose bounding box contains the address of the showing" do
+        @user2 = FactoryGirl.create(:user_with_valid_profile) # Not in bounding box
+        @user.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
+        @user2.profile.update(geo_box: "(-100, 39.500), (-101.000, 40.000)")
+        User.any_instance.expects(:notify_new_showing).once
+        post :create, showing: valid_attributes
+      end
+
     end
 
     describe "GET #index" do

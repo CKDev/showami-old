@@ -19,4 +19,22 @@ describe User do
     expect(@user.showings.third).to eq @showing1
   end
 
+  context "#in_bounding_box" do
+
+    it "should return users whose bounding box conatins the showing point" do
+      @user1 = FactoryGirl.create(:user_with_valid_profile)
+      @user2 = FactoryGirl.create(:user_with_valid_profile)
+      @user3 = FactoryGirl.create(:user_with_valid_profile)
+      @user4 = FactoryGirl.create(:user_with_valid_profile)
+      @user5 = FactoryGirl.create(:user_with_valid_profile)
+      @user1.profile.update(geo_box: "(-104.800, 39.500), (-105.000, 40.000)")
+      @user2.profile.update(geo_box: "(-104.901, 39.500), (-105.000, 40.000)")
+      @user3.profile.update(geo_box: "(-104.800, 39.751), (-105.000, 40.000)")
+      @user4.profile.update(geo_box: "(-104.800, 39.500), (-104.899, 40.000)")
+      @user5.profile.update(geo_box: "(-104.800, 39.500), (-105.000, 39.749)")
+      expect(User.in_bounding_box(39.750, -104.900)).to contain_exactly @user1
+    end
+
+  end
+
 end

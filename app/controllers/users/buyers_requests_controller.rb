@@ -4,10 +4,9 @@ module Users
     before_action :verify_valid_profile
 
     def index
-      # TODO: change paging size back to 25 once done with testing.
       @showings = current_user.showings
         .includes(:address)
-        .paginate(page: params[:page], per_page: 2)
+        .paginate(page: params[:page])
     end
 
     def new
@@ -19,6 +18,9 @@ module Users
       @showing = Showing.new(showing_params)
       @showing.user = current_user
       if @showing.save
+        User.in_bounding_box(@showing.address.latitude, @showing.address.longitude).each do |u|
+          u.notify_new_showing(@showing)
+        end
         redirect_to users_buyers_requests_path, notice: "New showing successfully created."
       else
         render :new

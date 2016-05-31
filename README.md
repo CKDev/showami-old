@@ -44,3 +44,8 @@
 
 ### Notes
 `Profile.where("geo_box @> point '(-105.98,39.73)'")`
+`Profile.where("box '(-104.800, 39.500), (-105.000, 40.000)' @> point '(-105.98,39.73)'")`
+`Profile.where("geo_box::box @> point '(-105.98,39.73)'")`
+
+geo_box = Profile.last.geo_box
+Profile.where("box '#{geo_box}' @> point '(-105.98,39.73)'")

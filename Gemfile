@@ -28,12 +28,12 @@ gem "sidekiq-failures"
 gem "rollbar"
 gem "skylight"
 
-# CK's preferred tools (not used in every project)
 # gem "twilio-ruby", "~> 3.12" # Twilio for SMS
 
 # Misc
 gem "paperclip" # File uploads
 gem "local_time" # Client-side timezone rendering
+gem "geocoder" # Convert addresses into lat/long
 
 # Pagination
 gem "will_paginate"

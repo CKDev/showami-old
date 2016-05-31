@@ -6,9 +6,11 @@ class User < ActiveRecord::Base
 
   has_one :profile
   has_many :showings, -> { order("showing_at DESC") }
-  after_create :add_profile
 
+  after_create :add_profile
   delegate :greeting, to: :profile
+
+  scope :in_bounding_box, ->(lat, long) { joins(:profile).where("geo_box::box @> point '(#{long},#{lat})'") }
 
   def send_devise_notification(notification, *args)
     # Sidekiq is picking this job up more quickly than the user can be saved.
@@ -22,6 +24,10 @@ class User < ActiveRecord::Base
 
   def admin?
     admin
+  end
+
+  def notify_new_showing(showing)
+    puts "New Showing: #{showing.address.single_line}"
   end
 
 end

@@ -5,6 +5,9 @@ class Address < ActiveRecord::Base
   validates :state, presence: true
   validates :zip, presence: true
 
+  geocoded_by :single_line
+  after_validation :geocode
+
   def single_line
     return if line1.empty? || city.empty? || state.empty? || zip.empty?
     adr2 = line2.blank? ? " " : " " + line2 + " "
