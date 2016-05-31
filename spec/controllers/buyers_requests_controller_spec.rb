@@ -23,6 +23,24 @@ module Users
         }
       end
 
+      let(:bad_address) do
+        {
+          showing_at: Time.zone.now + 3.hours,
+          mls: "abc123",
+          notes: "notes about the showing",
+          address_attributes: {
+            line1: "abc",
+            line2: "",
+            city: "abc",
+            state: "abc",
+            zip: "12"
+          },
+          buyer_name: "Andre",
+          buyer_phone: "720 999 8888",
+          buyer_type: "individual"
+        }
+      end
+
       before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
         sign_in @user
@@ -74,6 +92,11 @@ module Users
         @user.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
         User.any_instance.expects(:notify_new_showing).never
         post :create, showing: valid_attributes
+      end
+
+      it "warns the user if the address of the showing was unable to be geocoded" do
+        post :create, showing: bad_address
+        expect(response).to render_template :new
       end
 
     end

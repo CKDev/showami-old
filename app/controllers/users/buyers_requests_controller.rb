@@ -17,9 +17,10 @@ module Users
     def create
       @showing = Showing.new(showing_params)
       @showing.user = current_user
+
       if @showing.save
-        lat = @showing.address.lat
-        long = @showing.address.long
+        lat = @showing.address.latitude
+        long = @showing.address.longitude
         User.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long).each do |u|
           u.notify_new_showing(@showing)
         end
