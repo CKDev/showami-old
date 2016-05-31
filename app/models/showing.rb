@@ -4,6 +4,9 @@ class Showing < ActiveRecord::Base
 
   validates :showing_at, presence: true
   validate :showing_at_cannot_be_in_the_past, on: :create
+  validates :buyer_name, presence: true
+  validates :buyer_phone, presence: true
+  validates :buyer_type, presence: true
   validates_associated :address
   accepts_nested_attributes_for :address
 
