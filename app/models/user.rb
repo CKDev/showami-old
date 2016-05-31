@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   delegate :greeting, to: :profile
 
   scope :in_bounding_box, ->(lat, long) { joins(:profile).where("geo_box::box @> point '(#{long},#{lat})'") }
+  scope :sellers_agents, -> { joins(:profile).where("profiles.agent_type <> ? ", Profile.agent_types[:buyers_agent]) }
+  scope :not_self, ->(id) { where("users.id <> ?", id) }
 
   def send_devise_notification(notification, *args)
     # Sidekiq is picking this job up more quickly than the user can be saved.

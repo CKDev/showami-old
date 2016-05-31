@@ -18,7 +18,9 @@ module Users
       @showing = Showing.new(showing_params)
       @showing.user = current_user
       if @showing.save
-        User.in_bounding_box(@showing.address.latitude, @showing.address.longitude).each do |u|
+        lat = @showing.address.lat
+        long = @showing.address.long
+        User.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long).each do |u|
           u.notify_new_showing(@showing)
         end
         redirect_to users_buyers_requests_path, notice: "New showing successfully created."

@@ -37,4 +37,28 @@ describe User do
 
   end
 
+  context "#sellers_agents" do
+
+    it "should return users whose agent_type is either showing assistent or both" do
+      @user1 = FactoryGirl.create(:user_with_valid_profile)
+      @user2 = FactoryGirl.create(:user_with_valid_profile)
+      @user3 = FactoryGirl.create(:user_with_valid_profile)
+      @user1.profile.update(agent_type: "buyers_agent")
+      @user2.profile.update(agent_type: "sellers_agent")
+      @user3.profile.update(agent_type: "both")
+      expect(User.sellers_agents).to contain_exactly @user2, @user3
+    end
+
+  end
+
+  context "#not_self" do
+
+    it "should return users that aren't the passed in id" do
+      @user1 = FactoryGirl.create(:user_with_valid_profile)
+      @user2 = FactoryGirl.create(:user_with_valid_profile)
+      expect(User.not_self(@user1.id)).to contain_exactly @user2
+    end
+
+  end
+
 end

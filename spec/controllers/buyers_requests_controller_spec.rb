@@ -58,11 +58,21 @@ module Users
         expect(showing.address.longitude).to_not be nil
       end
 
-      it "notifies all users whose bounding box contains the address of the showing" do
-        @user2 = FactoryGirl.create(:user_with_valid_profile) # Not in bounding box
-        @user.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
-        @user2.profile.update(geo_box: "(-100, 39.500), (-101.000, 40.000)")
+      it "notifies all seller agent users whose bounding box contains the address of the showing" do
+        @user1 = FactoryGirl.create(:user_with_valid_profile)
+        @user1.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
+        @user2 = FactoryGirl.create(:user_with_valid_profile)
+        @user2.profile.update(geo_box: "(-100, 39.500), (-101.000, 40.000)") # Not in bounding box
+        @user3 = FactoryGirl.create(:user_with_valid_profile)
+        @user3.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
+        @user3.profile.update(agent_type: "buyers_agent")
         User.any_instance.expects(:notify_new_showing).once
+        post :create, showing: valid_attributes
+      end
+
+      it "does not notify the user creating the showing (even if their bounding box contains the showing address)" do
+        @user.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
+        User.any_instance.expects(:notify_new_showing).never
         post :create, showing: valid_attributes
       end
 
