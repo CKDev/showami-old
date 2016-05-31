@@ -49,3 +49,7 @@
 
 geo_box = Profile.last.geo_box
 Profile.where("box '#{geo_box}' @> point '(-105.98,39.73)'")
+
+Twilio code:
+1A917Z0OtlSkq1Iw3+dFtoC67pKacoJUjtVzMIUT
+# twilio_default_from: +13033279182

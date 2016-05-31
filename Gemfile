@@ -28,7 +28,7 @@ gem "sidekiq-failures"
 gem "rollbar"
 gem "skylight"
 
-# gem "twilio-ruby", "~> 3.12" # Twilio for SMS
+gem "twilio-ruby"
 
 # Misc
 gem "paperclip" # File uploads

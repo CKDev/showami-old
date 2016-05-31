@@ -27,7 +27,11 @@ class User < ActiveRecord::Base
   end
 
   def notify_new_showing(showing)
-    puts "New Showing: #{showing.address.single_line}"
+    to = profile.phone1
+    body = "There is a new showing available at: #{showing.address.single_line}"
+    Notification::SMS.new(to, body).send
+    # EventLog.write("")
+    Rails.logger.info "New Showing: #{showing.address.single_line}"
   end
 
 end
