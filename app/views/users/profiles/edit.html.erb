@@ -46,7 +46,7 @@
       </div>
       <% if @profile.avatar.present? %>
         <p>
-          <%= link_to "Delete avatar", delete_avatar_users_profile_path, method: "post", data: { confirm: "Are you sure you want to delete your avatar?" } %>
+          <%= link_to "Delete picture", delete_avatar_users_profile_path, method: "post", data: { confirm: "Are you sure you want to delete your picture?" } %>
         </p>
       <% end %>
     </div>

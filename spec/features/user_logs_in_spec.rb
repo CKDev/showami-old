@@ -6,10 +6,10 @@ feature "A user logs in" do
     log_out
   end
 
-  scenario "is initially taken to user dashboard, when they have a valid profile" do
+  scenario "is initially taken to the buyers request path, when they have a valid profile" do
     @user = FactoryGirl.create(:user_with_valid_profile)
     log_in @user
-    expect(current_path).to eq(users_root_path)
+    expect(current_path).to eq(users_buyers_requests_path)
   end
 
   scenario "is initially taken to edit profile, when they have an incomplete profile" do

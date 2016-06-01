@@ -5,8 +5,13 @@ class ApplicationController < ActionController::Base
   before_action :set_greeting
 
   def after_sign_in_path_for(resource)
+    # TODO: I need some tests around this.
+    stored_location = stored_location_for(resource) # This resets after being called, so store.
     return admin_root_path if resource.admin?
-    resource.profile.valid? ? users_root_path : edit_users_profile_path
+    return edit_users_profile_path if resource.profile.invalid?
+    return stored_location if stored_location
+    return users_showing_appointments_path if resource.profile.agent_type == "sellers_agent"
+    users_buyers_requests_path
   end
 
   def set_greeting
