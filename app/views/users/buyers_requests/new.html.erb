@@ -1,6 +1,6 @@
 <%= content_for(:subnav) { render "shared/users/subnav_buyers_requests" } %>
 
-<h1>Request New Showing</h1>
+<h2>Request New Showing</h2>
 
 <%= form_for @showing, url: users_buyers_requests_path do |f| %>
 
@@ -70,18 +70,27 @@
 
   <div class="row">
     <div class="four columns">
-      <%= f.label "buyer_type_individual", "Individual" %>
-      <%= f.radio_button :buyer_type, :individual %>
+      <%= f.label "buyer_type_individual", class: "control control--radio" do %>
+        Individual
+        <%= f.radio_button :buyer_type, :individual %>
+        <div class="control__indicator"></div>
+      <% end %>
     </div>
 
     <div class="four columns">
-      <%= f.label "buyer_type_couple", "Couple" %>
-      <%= f.radio_button :buyer_type, :couple %>
+      <%= f.label "buyer_type_couple", class: "control control--radio" do %>
+        Couple
+        <%= f.radio_button :buyer_type, :couple %>
+        <div class="control__indicator"></div>
+      <% end %>
     </div>
 
     <div class="four columns">
-      <%= f.label "buyer_type_family", "Family" %>
-      <%= f.radio_button :buyer_type, :family %>
+      <%= f.label "buyer_type_family", class: "control control--radio" do %>
+        Family
+        <%= f.radio_button :buyer_type, :family %>
+        <div class="control__indicator"></div>
+      <% end %>
     </div>
   </div>
 

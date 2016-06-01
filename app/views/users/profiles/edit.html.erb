@@ -1,7 +1,5 @@
 <%= content_for(:subnav) { render "shared/users/subnav_profile" } %>
 
-<h1>Profile</h1>
-
 <%= form_for @profile, url: users_profile_path do |f| %>
 
   <% if @profile.errors.any? %>
@@ -68,18 +66,27 @@
   <div>
     <div class="row">
       <div class="four columns">
-        <%= f.label "agent_type_buyers_agent", "I'm a buyer's agent and I want assistance with showings" %>
-        <%= f.radio_button :agent_type, :buyers_agent %>
+        <%= f.label "agent_type_buyers_agent", class: "control control--radio" do %>
+          I'm a buyer's agent and I want assistance with showings
+          <%= f.radio_button :agent_type, :buyers_agent %>
+          <div class="control__indicator"></div>
+        <% end %>
       </div>
 
       <div class="four columns">
-        <%= f.label "agent_type_sellers_agent", "I'm an agent available to assist with showings" %>
-        <%= f.radio_button :agent_type, :sellers_agent %>
+        <%= f.label "agent_type_sellers_agent", class: "control control--radio" do %>
+          I'm an agent available to assist with showings
+          <%= f.radio_button :agent_type, :sellers_agent %>
+          <div class="control__indicator"></div>
+        <% end %>
       </div>
 
       <div class="four columns">
-        <%= f.label "agent_type_both", "I want to do both: assist with showings and receive assistance for showings" %>
-        <%= f.radio_button :agent_type, :both %>
+        <%= f.label "agent_type_both", class: "control control--radio" do %>
+          I want to do both: assist with showings and receive assistance for showings
+          <%= f.radio_button :agent_type, :both %>
+          <div class="control__indicator"></div>
+        <% end %>
       </div>
     </div>
   </div>

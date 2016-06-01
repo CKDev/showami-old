@@ -18,6 +18,10 @@ header {
     color: $dark-blue;
     text-decoration: none;
     font-weight: bold;
+
+    &.active {
+      color: $orange;
+    }
   }
 
   a:hover {

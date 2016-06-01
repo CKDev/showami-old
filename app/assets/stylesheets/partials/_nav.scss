@@ -2,7 +2,17 @@
   text-align: center;
   background-color: $dark-blue;
 
-  h1, h2 {
+  h1 {
+    font-size: 3rem;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    color: $white;
+    margin-bottom: 0;
+  }
+
+  h2 {
+    padding-top: .5em;
+    padding-bottom: .5em;
     color: $white;
     margin-bottom: 0;
   }
@@ -24,6 +34,12 @@
   a {
     font-size: 1.2em;
     color: $white;
+    line-height: 2em;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 
   .active {
