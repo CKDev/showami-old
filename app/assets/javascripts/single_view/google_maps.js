@@ -1,12 +1,9 @@
-// This example adds a user-editable rectangle to the map.
-// When the user changes the bounds of the rectangle,
-// an info window pops up displaying the new bounds.
-
 // TODO: wrap all code into an object.
 
 var rectangle;
 var map;
 var infoWindow;
+var bounds;
 
 function initMap() {
 
@@ -58,7 +55,7 @@ function initMap() {
     setZoomValue(defaultZoom);
   }
 
-  var bounds = {
+  bounds = {
     north: north,
     east: east,
     south: south,
@@ -91,6 +88,9 @@ function initMap() {
   rectangle.addListener("bounds_changed", showNewRect);
   map.addListener("zoom_changed", showNewZoom);
   infoWindow = new google.maps.InfoWindow();
+  google.maps.event.addListenerOnce(map, "idle", function() {
+    checkBoundingBoxInWindow(bounds);
+  });
 }
 
 function showNewRect(event) {
@@ -112,4 +112,25 @@ function setBoundingBoxValue(ne_lng, ne_lat, sw_lng, sw_lat) {
 
 function setZoomValue(zoom) {
   $("#profile_geo_box_zoom").val(zoom);
+}
+
+function checkBoundingBoxInWindow() {
+  var zoom = map.getZoom();
+  if (zoom <= 0) {
+    return;
+  }
+
+  var map_bounds = map.getBounds();
+  var north = map_bounds.getNorthEast().lat();
+  var east = map_bounds.getNorthEast().lng();
+  var south = map_bounds.getSouthWest().lat();
+  var west = map_bounds.getSouthWest().lng();
+
+  // Only works for western hemisphere?
+  if (bounds.north > north || bounds.east > east || bounds.south < south || bounds.west < west) {
+    zoom--;
+    map.setZoom(zoom);
+    setZoomValue(zoom);
+    checkBoundingBoxInWindow();
+  }
 }
