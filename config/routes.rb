@@ -18,7 +18,11 @@ Rails.application.routes.draw do
     root "dashboard#index"
   end
 
-  devise_for :users
+  devise_for :users, controllers: {
+    sessions: "sessions",
+    registrations: "registrations"
+  }
+
   root to: "home#index"
 
   # Static pages

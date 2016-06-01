@@ -20,6 +20,8 @@ Style/StringLiterals:
 
 Metrics/ModuleLength:
   Max: 100
+  Exclude:
+    - "spec/controllers/buyers_requests_controller_spec.rb" # Just a spec file, it's fine.
 
 Metrics/ClassLength:
   Max: 100

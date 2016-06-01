@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%= render "shared/meta_tags" %>
+</head>
+<body>
+  <%= render "shared/header" %>
+  <div class="homepage-hero">
+    <main class="container">
+      <%= render "shared/flashes" %>
+      <%= yield %>
+    </main>
+  </div>
+  <%= render "shared/footer" %>
+</body>
+</html>

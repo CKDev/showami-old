@@ -85,3 +85,37 @@ select.month, select.day, select.hour, select.minute {
 .size-200 {
   width: 200px;
 }
+
+.homepage-hero {
+  background-color: $dark-blue;
+  padding-top: 1em;
+
+  @media (min-width: 490px) {
+    border-top: 20px solid $dark-blue;
+    background: image-url("home.jpg") no-repeat;
+    background-size: cover;
+    min-height: 600px;
+  }
+}
+
+.homepage-signin-box {
+  background-color: white;
+  margin-top: 3em;
+  margin-bottom: 3em;
+  padding: 2em;
+
+  h1 {
+    color: $dark-blue;
+    font-size: 3.5rem;
+  }
+
+  h2 {
+    color: $light-blue;
+    font-size: 2.5rem;
+  }
+
+  @media (min-width: 640px) {
+    float: right;
+    width: 490px;
+  }
+}

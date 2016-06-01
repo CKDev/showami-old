@@ -1,29 +1,38 @@
-<h2>Sign up</h2>
+<div class="row">
+  <div class="homepage-signin-box">
+    <h1>Some copy about what Showami is and why you should care.</h1>
+    <h2>Signup today to get...</h2>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= devise_error_messages! %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
+      <div>
+        <%= f.label :email %>
+        <%= f.email_field :email, autofocus: true %>
+      </div>
 
-  <div>
-    <%= f.label :email %>
-    <%= f.email_field :email, autofocus: true %>
-  </div>
+      <div>
+        <%= f.label :password do %>
+          Password
+          <% if @minimum_password_length %>
+            <span class="note">(<%= @minimum_password_length %> characters minimum)</span>
+          <% end %>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "off" %>
+      </div>
 
-  <div>
-    <%= f.label :password do %>
-      Password
-      <% if @minimum_password_length %>
-        <span class="note">(<%= @minimum_password_length %> characters minimum)</span>
-      <% end %>
+      <div>
+        <%= f.label :password_confirmation %>
+        <%= f.password_field :password_confirmation, autocomplete: "off" %>
+      </div>
+
+      <div class="row">
+        <div class="six columns">
+          <%= f.submit "Sign up", class: "button button-primary" %>
+        </div>
+        <div class="six columns left-or-right">
+          <%= link_to "Already Registered? Sign in", new_user_session_path %>
+        </div>
+      </div>
     <% end %>
-    <%= f.password_field :password, autocomplete: "off" %>
   </div>
-
-  <div>
-    <%= f.label :password_confirmation %>
-    <%= f.password_field :password_confirmation, autocomplete: "off" %>
-  </div>
-
-  <div>
-    <%= f.submit "Sign up", class: "button button-primary" %>
-  </div>
-<% end %>
+</div>
