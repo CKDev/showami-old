@@ -38,13 +38,13 @@
 
 .desktop-menu {
   .menu-items {
-    display: inline-block;
-    li {
+    display: none;
+    @media (min-width: 800px) {
       display: inline-block;
-      color: $dark-blue;
-    }
-    @media (max-width: 800px) {
-      display: none;
+      li {
+        display: inline-block;
+        color: $dark-blue;
+      }
     }
   }
 }
@@ -52,10 +52,8 @@
 .mobile-menu {
   z-index:100;
   font-weight:bold;
-  font-size:0.8em;
   width:100%;
-  background: $light-grey;
-  position:absolute;
+  background: $pale-grey;
   text-align:center;
 
   @media (min-width: 800px) {
@@ -73,35 +71,23 @@
 .mobile-menu li {
   display: block;
   padding:15px 0 15px 0;
-  border-bottom: $grey 1px solid;
+  border-bottom: $dark-blue 1px solid;
   margin-bottom: 0;
 }
 
 .mobile-menu li:hover {
   display: block;
-  background: $grey;
-  padding:15px 0 15px 0;
-  border-bottom: $grey 1px solid;
   a {
-    color: $white;
+    color: $light-blue;
   }
 }
 
-/*.mobile-menu ul li a { text-decoration:none;
-  margin: 0px;
-  color: $orange;
-}
-
-.mobile-menu ul li a:hover {  color: #fff;
-  text-decoration:none;
-}*/
-
 .mobile-menu a {
   text-decoration:none;
-  color: $orange;
+  color: $dark-blue;
 }
 
 .mobile-menu a:hover {
   text-decoration:none;
-  color:$orange;
+  color:$light-blue;
 }
