@@ -1,30 +1,22 @@
 <%= content_for(:subnav) { render "shared/users/subnav_buyers_requests" } %>
 
-<h2>My Requests</h2>
+<h2>My Requests for Showings</h2>
 
-<div class="row">
-  <div class="eight columns">
-    <% if @showings.size > 0 %>
-      <table class="u-full-width">
-        <tbody>
-          <% @showings.each do |showing| %>
-            <tr>
-              <td><strong><%= local_time(showing.showing_at, format: Constants.datetime_format) %><strong></td>
-              <td><strong><%= showing.address.single_line %></strong></td>
-              <td><span class="note">Not assigned</span></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-      <div class="align-right">
-        <%= will_paginate @showings %>
-      </div>
-    <% else %>
-      <p class="note">There are no showings available.</p>
-    <% end %>
+<% if @showings.size > 0 %>
+  <table class="u-full-width">
+    <tbody>
+      <% @showings.each do |showing| %>
+        <tr>
+          <td><strong><%= local_time(showing.showing_at, format: Constants.datetime_format) %><strong></td>
+          <td><strong><%= showing.address.single_line %></strong></td>
+          <td><span class="note">Not assigned</span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <div class="align-right">
+    <%= will_paginate @showings %>
   </div>
-
-  <div class="four columns">
-    <%= link_to "New Request", new_users_buyers_request_path, class: "button" %>
-  </div>
-</div>
+<% else %>
+  <p class="note">There are no showings available.</p>
+<% end %>

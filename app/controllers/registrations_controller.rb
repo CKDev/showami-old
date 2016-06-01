@@ -1,4 +1,3 @@
 class RegistrationsController < Devise::RegistrationsController
-  layout "home", except: [:edit]
-  layout "users/base", if: [:edit]
+  layout proc { user_signed_in? ? "users/base" : "home" }
 end

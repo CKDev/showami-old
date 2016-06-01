@@ -1,25 +1,28 @@
 <% if user_signed_in? %>
   <ul class="menu-items">
-    <li><%= link_to "Profile", edit_users_profile_path, class: add_active_link(edit_users_profile_path) %></li>
+    <li>
+      <%= link_to "Profile", edit_users_profile_path,
+      class: add_active_link([edit_users_profile_path, edit_user_registration_path]) %>
+    </li>
     <% if current_user.profile.present? && current_user.profile.valid? %>
       <% if current_user.profile.agent_type == "buyers_agent" %>
         <li>
           <%= link_to "Buyer's Agent Info", users_buyers_requests_path,
-          class: add_active_link(users_buyers_requests_path) %>
+          class: add_active_link([users_buyers_requests_path, new_users_buyers_request_path]) %>
         </li>
       <% elsif current_user.profile.agent_type == "sellers_agent" %>
         <li>
           <%= link_to "Showing Assistant Info", users_showing_appointments_path,
-          class: add_active_link(users_showing_appointments_path) %>
+          class: add_active_link([users_showing_appointments_path, users_showing_opportunities_path]) %>
         </li>
       <% elsif current_user.profile.agent_type == "both" %>
         <li>
           <%= link_to "Buyer's Agent Info", users_buyers_requests_path,
-          class: add_active_link(users_buyers_requests_path) %>
+          class: add_active_link([users_buyers_requests_path, new_users_buyers_request_path]) %>
         </li>
         <li>
           <%= link_to "Showing Assistant Info", users_showing_appointments_path,
-          class: add_active_link(users_showing_appointments_path) %>
+          class: add_active_link([users_showing_appointments_path, users_showing_opportunities_path]) %>
         </li>
       <% end %>
     <% end %>

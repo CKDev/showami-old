@@ -129,7 +129,7 @@ body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
-  font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   color: #222;
 }
 
@@ -141,6 +141,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 2rem;
   font-weight: 300;
   color: $dark-grey;
+  font-family: "Roboto Condensed", sans-serif;
 }
 
 h1 { font-size: 4.0rem; line-height: 1.2;  letter-spacing: -.1rem; }
@@ -196,6 +197,7 @@ a:hover {
   border: 1px solid $green;
   cursor: pointer;
   box-sizing: border-box;
+  font-family: "Roboto Condensed", sans-serif;
 }
 
 .button:hover, button:hover, input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hover,
@@ -210,6 +212,7 @@ input[type="reset"].button-primary, input[type="button"].button-primary {
   color: $white;
   background-color: $green;
   border-color: $green;
+  font-family: "Roboto Condensed", sans-serif;
 }
 
 .button.button-primary:hover, button.button-primary:hover, input[type="submit"].button-primary:hover,
@@ -226,6 +229,7 @@ input[type="reset"].button-secondary, input[type="button"].button-secondary {
   color: $grey;
   background-color: $white;
   border-color: $light-grey;
+  font-family: "Roboto Condensed", sans-serif;
 }
 
 .button.button-secondary:hover, button.button-secondary:hover, input[type="submit"].button-secondary:hover,

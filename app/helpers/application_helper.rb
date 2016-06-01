@@ -12,12 +12,13 @@ module ApplicationHelper
     @devise_mapping ||= Devise.mappings[:user]
   end
 
-  def add_active_link(path, classes="")
-    if current_page? path
-      "#{classes} active"
-    else
-      classes
+  def add_active_link(paths, classes = "")
+    paths.each do |path|
+      if current_page? path
+        return "#{classes} active"
+      end
     end
+    classes
   end
 
 end
