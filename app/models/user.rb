@@ -8,7 +8,9 @@ class User < ActiveRecord::Base
   has_many :showings, -> { order("showing_at DESC") }
 
   after_create :add_profile
+
   delegate :greeting, to: :profile
+  delegate :full_name, to: :profile
 
   scope :in_bounding_box, ->(lat, long) { joins(:profile).where("geo_box::box @> point '(#{long},#{lat})'") }
   scope :sellers_agents, -> { joins(:profile).where("profiles.agent_type <> ? ", Profile.agent_types[:buyers_agent]) }
@@ -31,9 +33,9 @@ class User < ActiveRecord::Base
   def notify_new_showing(showing)
     to = profile.phone1
     body = "There is a new showing available at: #{showing.address.single_line}"
+    log_msg = "Attempting SMS showing notification to #{self.full_name} (#{self.profile.phone1}) -  New Showing: #{showing.address.single_line}"
+    Rails.logger.tagged("SMS (Twilio)") { Rails.logger.info log_msg }
     Notification::SMS.new(to, body).send
-    # EventLog.write("")
-    Rails.logger.info "New Showing: #{showing.address.single_line}"
   end
 
 end

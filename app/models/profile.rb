@@ -9,6 +9,14 @@ class Profile < ActiveRecord::Base
   validates :agent_id, presence: true
   validates :agent_type, presence: true
 
+  before_validation :strip_phone_numbers
+
+  validates_each :phone1, :phone2 do |record, attr, value|
+    if value.present?
+      record.errors.add(attr, "must have exactly 10 digits") unless value.gsub(/\D/, "").length == 10
+    end
+  end
+
   has_attached_file :avatar, styles: { small: "200x200#" }, default_url: ActionController::Base.helpers.asset_path("/assets/:style/avatar.png")
   validates_attachment :avatar, content_type: { content_type: /\Aimage\/.*\Z/ }, size: { in: 0..1024.kilobytes }
 
@@ -17,4 +25,18 @@ class Profile < ActiveRecord::Base
   def greeting
     first_name.present? ? "Hi, #{first_name}!" : "Hi, User!"
   end
+
+  def full_name
+    [first_name, last_name].join(" ").strip
+  end
+
+  def ten_digits?(phone)
+    phone.gsub(/\D/, "").length == 10 # Remove non-digit values before testing for 10 digits.
+  end
+
+  def strip_phone_numbers
+    self.phone1 = phone1.gsub(/\D/, "") unless phone1.blank?
+    self.phone2 = phone2.gsub(/\D/, "") unless phone2.blank?
+  end
+
 end

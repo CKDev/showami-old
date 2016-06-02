@@ -11,8 +11,8 @@ feature "A registered user can update their profile" do
     visit edit_users_profile_path
     find("#profile_first_name").set("Alex")
     find("#profile_last_name").set("Brinkman")
-    find("#profile_phone1").set("888 555 1234 x1234")
-    find("#profile_phone2").set("999 444 1234 x1234")
+    find("#profile_phone1").set("888 555 1234")
+    find("#profile_phone2").set("999 444 1234")
     find("#profile_company").set("Alex and Sons")
     find("#profile_agent_id").set("12341234") # TODO: what is the format of this number?
     choose "I'm a buyer's agent and I want assistance with showings"

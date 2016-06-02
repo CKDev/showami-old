@@ -2,8 +2,8 @@ FactoryGirl.define do
   factory :profile do
     first_name "Alejandro"
     last_name "Brinkster"
-    phone1 "555 123 1234 x 123"
-    phone2 "555 987 1234 x 456"
+    phone1 "555 123 1234"
+    phone2 "555 987 1234"
     company "Showing Services, LLC"
     agent_id "1234 1234"
     agent_type 2
