@@ -47,12 +47,12 @@
 
       <div class="four columns">
         <%= a.label :state, class: "required" %>
-        <%= a.text_field :state %>
+        <%= a.text_field :state, maxlength: 2 %>
       </div>
 
       <div class="four columns">
         <%= a.label :zip, class: "required" %>
-        <%= a.text_field :zip %>
+        <%= a.text_field :zip, maxlength: 5 %>
       </div>
     </div>
 

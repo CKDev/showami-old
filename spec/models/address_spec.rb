@@ -4,31 +4,59 @@ describe Address do
 
   context "validations" do
 
-    it "should require the street" do
+    before :each do
       @address = FactoryGirl.create(:address)
+    end
+
+    it "should be initially valid" do
       expect(@address.valid?).to be true
+    end
+
+    it "should require the street" do
       @address.update(line1: "")
       expect(@address.valid?).to be false
     end
 
     it "should require the city" do
-      @address = FactoryGirl.create(:address)
-      expect(@address.valid?).to be true
       @address.update(city: "")
       expect(@address.valid?).to be false
     end
 
     it "should require the state" do
-      @address = FactoryGirl.create(:address)
-      expect(@address.valid?).to be true
       @address.update(state: "")
       expect(@address.valid?).to be false
     end
 
-    it "should require the zip" do
-      @address = FactoryGirl.create(:address)
+    it "should only allow 2 character state values" do
+      @address.update(state: "CO")
       expect(@address.valid?).to be true
+
+      @address.update(state: "Colorado")
+      expect(@address.valid?).to be false
+
+      @address.update(state: "COL")
+      expect(@address.valid?).to be false
+
+      @address.update(state: "12")
+      expect(@address.valid?).to be false
+    end
+
+    it "should require the zip" do
       @address.update(zip: "")
+      expect(@address.valid?).to be false
+    end
+
+    it "should only allow 5 digit zip codes" do
+      @address.update(zip: "80210")
+      expect(@address.valid?).to be true
+
+      @address.update(zip: "ASDFA")
+      expect(@address.valid?).to be false
+
+      @address.update(zip: "8020")
+      expect(@address.valid?).to be false
+
+      @address.update(zip: "802102")
       expect(@address.valid?).to be false
     end
 
