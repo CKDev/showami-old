@@ -104,9 +104,9 @@ var ShowingsMap = (function($) {
       var sw = ShowingsMap.rectangle.getBounds().getSouthWest();
 
       ShowingsMap.setBoundingBoxValue(ne.lng(), ne.lat(), sw.lng(), sw.lat());
-      ShowingsMap.infoWindow.setContent("<b>Click update below to save.</b>");
-      ShowingsMap.infoWindow.setPosition(ne);
-      ShowingsMap.infoWindow.open(ShowingsMap.map);
+      // ShowingsMap.infoWindow.setContent("<b>Click update below to save.</b>");
+      // ShowingsMap.infoWindow.setPosition(ne);
+      // ShowingsMap.infoWindow.open(ShowingsMap.map);
     },
 
     showNewZoom : function(event) {
@@ -133,9 +133,9 @@ var ShowingsMap = (function($) {
       var east = map_bounds.getNorthEast().lng();
       var south = map_bounds.getSouthWest().lat();
       var west = map_bounds.getSouthWest().lng();
+      var m = (east - west) * .05 // The map needs to be bigger than the box by this amount. (5% on each side)
 
-      // Only works for western hemisphere?
-      if (bounds.north > north || bounds.east > east || bounds.south < south || bounds.west < west) {
+      if (bounds.north > north + m || bounds.east > east + m || bounds.south < south + m|| bounds.west < west + m) {
         zoom--;
         ShowingsMap.map.setZoom(zoom);
         ShowingsMap.setZoomValue(zoom);
