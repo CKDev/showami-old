@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   def notify_new_showing(showing)
     to = profile.phone1
     body = "There is a new showing available at: #{showing.address.single_line}"
-    log_msg = "Attempting SMS showing notification to #{self.full_name} (#{self.profile.phone1}) -  New Showing: #{showing.address.single_line}"
+    log_msg = "Attempting SMS showing notification to #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address.single_line}"
     Rails.logger.tagged("SMS (Twilio)") { Rails.logger.info log_msg }
     Notification::SMS.new(to, body).send
   end

@@ -30,10 +30,6 @@ class Profile < ActiveRecord::Base
     [first_name, last_name].join(" ").strip
   end
 
-  def ten_digits?(phone)
-    phone.gsub(/\D/, "").length == 10 # Remove non-digit values before testing for 10 digits.
-  end
-
   def strip_phone_numbers
     self.phone1 = phone1.gsub(/\D/, "") unless phone1.blank?
     self.phone2 = phone2.gsub(/\D/, "") unless phone2.blank?
