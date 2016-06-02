@@ -78,8 +78,18 @@ em {
   margin-top: 1em;
 }
 
-select.month, select.day, select.hour, select.minute {
-  width: 20%;
+select.month {
+  width: 100%;
+  @media (min-width: 668px) {
+    width: 125px;
+  }
+}
+
+select.day, select.hour, select.minute {
+  width: 100%;
+  @media (min-width: 668px) {
+    width: 125px;
+  }
 }
 
 .size-200 {

@@ -61,4 +61,19 @@ describe User do
 
   end
 
+  context "#notify_new_showing" do
+
+    # it "should call the sms noticiation class with the correct parameters" do
+    #   @user = FactoryGirl.create(:user_with_valid_profile)
+    #   @showing = FactoryGirl.create(:showing)
+    #   to = @user.profile.phone1
+    #   body = "There is a new showing available at: #{@showing.address.single_line}"
+    #   # notification = Notification::SMS.new
+    #   binding.pry
+    #   Notification::SMS.expects(:new).with(to, body)
+    #   Notification::SMS.any_instance.expects(:send)
+    #   @user.notify_new_showing(@showing)
+    # end
+  end
+
 end

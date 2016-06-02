@@ -19,6 +19,17 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :letter_opener
   # config.action_mailer.delivery_method = :smtp
 
+  # Paperclip S3 upload config
+  # config.paperclip_defaults = {
+  #   storage: :s3,
+  #   s3_credentials: {
+  #     bucket: Rails.application.secrets[:aws_s3]["bucket"],
+  #     access_key_id: Rails.application.secrets[:aws_s3]["access_key"],
+  #     secret_access_key: Rails.application.secrets[:aws_s3]["secret_key"],
+  #     s3_region: Rails.application.secrets[:aws_s3]["region"]
+  #   }
+  # }
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
