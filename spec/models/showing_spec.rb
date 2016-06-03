@@ -39,40 +39,40 @@ describe Showing do
   context "#verify_geocoding" do
 
     let(:valid_attributes) do
-        {
-          showing_at: Time.zone.now + 3.hours,
-          mls: "abc123",
-          notes: "notes about the showing",
-          address_attributes: {
-            line1: "600 S Broadway",
-            line2: "Unit 200",
-            city: "Denver",
-            state: "CO",
-            zip: "80209"
-          },
-          buyer_name: "Andre",
-          buyer_phone: "720 999 8888",
-          buyer_type: "individual"
-        }
-      end
+      {
+        showing_at: Time.zone.now + 3.hours,
+        mls: "abc123",
+        notes: "notes about the showing",
+        address_attributes: {
+          line1: "600 S Broadway",
+          line2: "Unit 200",
+          city: "Denver",
+          state: "CO",
+          zip: "80209"
+        },
+        buyer_name: "Andre",
+        buyer_phone: "720 999 8888",
+        buyer_type: "individual"
+      }
+    end
 
-      let(:invalid_attributes) do
-        {
-          showing_at: Time.zone.now + 3.hours,
-          mls: "abc123",
-          notes: "notes about the showing",
-          address_attributes: {
-            line1: "Doesn't Exist",
-            line2: "",
-            city: "Somewhere",
-            state: "CO",
-            zip: "12345"
-          },
-          buyer_name: "Andre",
-          buyer_phone: "720 999 8888",
-          buyer_type: "individual"
-        }
-      end
+    let(:invalid_attributes) do
+      {
+        showing_at: Time.zone.now + 3.hours,
+        mls: "abc123",
+        notes: "notes about the showing",
+        address_attributes: {
+          line1: "Doesn't Exist",
+          line2: "",
+          city: "Somewhere",
+          state: "CO",
+          zip: "12345"
+        },
+        buyer_name: "Andre",
+        buyer_phone: "720 999 8888",
+        buyer_type: "individual"
+      }
+    end
 
     it "should pass verify_geocoding for a valid geocoding address" do
       @showing = Showing.new(valid_attributes)
