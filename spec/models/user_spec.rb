@@ -63,15 +63,10 @@ describe User do
 
   context "#notify_new_showing" do
 
-    it "should call the sms noticiation class with the correct parameters" do
+    it "should call the background worker with the correct parameters" do
       @user = FactoryGirl.create(:user_with_valid_profile)
       @showing = FactoryGirl.create(:showing)
-      to = @user.profile.phone1
-      body = "There is a new showing available at: #{@showing.address.single_line}"
-
-      success_object = stub(send: true)
-      Notification::SMS.expects(:new).once.with(to, body).returns(success_object)
-      @user.notify_new_showing(@showing)
+      expect { @user.notify_new_showing(@showing) }.to change { Sidekiq::Worker.jobs.size }.by(1)
     end
   end
 

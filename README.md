@@ -44,3 +44,5 @@
 ### Notes
 
 `Profile.where("geo_box::box @> point '(-105.98,39.73)'")`
+
+302 Hanson Ranch Rd, Vail, CO 81657

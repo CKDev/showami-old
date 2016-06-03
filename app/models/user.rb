@@ -31,11 +31,9 @@ class User < ActiveRecord::Base
   end
 
   def notify_new_showing(showing)
-    to = profile.phone1
-    body = "There is a new showing available at: #{showing.address.single_line}"
-    log_msg = "Attempting SMS showing notification to #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address.single_line}"
-    Rails.logger.tagged("SMS (Twilio)") { Rails.logger.info log_msg }
-    Notification::SMS.new(to, body).send
+    log_msg = "Pushing SMS showing notification to background: #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address.single_line}"
+    Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
+    ShowingNotificationWorker.perform_async(self.id, showing.id)
   end
 
 end

@@ -17,9 +17,9 @@ module Notification
     def send
       @client.messages.create(body: @body, to: @to, from: @from)
       log_msg = "Completed SMS showing notification to #{@to}"
-      Rails.logger.tagged("SMS (Twilio)") { Rails.logger.info log_msg }
+      Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
     rescue Twilio::REST::RequestError => e
-      Rails.logger.tagged("SMS (Twilio)") { Rails.logger.error "Error: #{e.code} - #{e.message}" }
+      Rails.logger.tagged("Showing Notification SMS") { Rails.logger.error "Error: #{e.code} - #{e.message}" }
     end
 
   end
