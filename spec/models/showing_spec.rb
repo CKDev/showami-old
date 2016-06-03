@@ -36,4 +36,56 @@ describe Showing do
 
   end
 
+  context "#verify_geocoding" do
+
+    let(:valid_attributes) do
+        {
+          showing_at: Time.zone.now + 3.hours,
+          mls: "abc123",
+          notes: "notes about the showing",
+          address_attributes: {
+            line1: "600 S Broadway",
+            line2: "Unit 200",
+            city: "Denver",
+            state: "CO",
+            zip: "80209"
+          },
+          buyer_name: "Andre",
+          buyer_phone: "720 999 8888",
+          buyer_type: "individual"
+        }
+      end
+
+      let(:invalid_attributes) do
+        {
+          showing_at: Time.zone.now + 3.hours,
+          mls: "abc123",
+          notes: "notes about the showing",
+          address_attributes: {
+            line1: "Doesn't Exist",
+            line2: "",
+            city: "Somewhere",
+            state: "CO",
+            zip: "12345"
+          },
+          buyer_name: "Andre",
+          buyer_phone: "720 999 8888",
+          buyer_type: "individual"
+        }
+      end
+
+    it "should pass verify_geocoding for a valid geocoding address" do
+      @showing = Showing.new(valid_attributes)
+      @showing.save
+      expect(@showing.persisted?).to be true
+    end
+
+    it "should return false (to cancel db transaction) if either lat or long is unavailable" do
+      @showing = Showing.new(invalid_attributes)
+      @showing.save
+      expect(@showing.persisted?).to be false
+    end
+
+  end
+
 end

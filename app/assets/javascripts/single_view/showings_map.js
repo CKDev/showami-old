@@ -98,11 +98,7 @@ var ShowingsMap = (function($) {
     showNewRect : function(event) {
       var ne = ShowingsMap.rectangle.getBounds().getNorthEast();
       var sw = ShowingsMap.rectangle.getBounds().getSouthWest();
-
       ShowingsMap.setBoundingBoxValue(ne.lng(), ne.lat(), sw.lng(), sw.lat());
-      // ShowingsMap.infoWindow.setContent("<b>Click update below to save.</b>");
-      // ShowingsMap.infoWindow.setPosition(ne);
-      // ShowingsMap.infoWindow.open(ShowingsMap.map);
     },
 
     showNewZoom : function(event) {
