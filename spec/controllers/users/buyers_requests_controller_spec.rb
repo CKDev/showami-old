@@ -103,6 +103,15 @@ module Users
 
     describe "GET #index" do
 
+      it "should assign all showings for the given user" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing)
+        @user.showings << @showing
+        sign_in @user
+        get :index
+        expect(assigns(:showings).size).to be 1
+      end
+
       it "should redirect to the user profile view if the user's profile isn't valid" do
         @user = FactoryGirl.create(:user)
         expect(@user.profile.valid?).to be false
@@ -114,6 +123,15 @@ module Users
     end
 
     describe "GET #new" do
+
+      it "assign a new showing and address" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        sign_in @user
+        get :new
+        showing = assigns(:showing)
+        expect(showing).to be_an_instance_of(Showing)
+        expect(showing.address).to be_an_instance_of(Address)
+      end
 
       it "should redirect to the user profile view if the user's profile isn't valid" do
         @user = FactoryGirl.create(:user)
