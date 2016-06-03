@@ -1,7 +1,3 @@
-// $(document).ready(function() {
-//   ShowingsMap.initialize();
-// });
-
 var ShowingsMap = (function($) {
 
   return {
@@ -40,7 +36,7 @@ var ShowingsMap = (function($) {
 
       var styledMap = new google.maps.StyledMapType(styles, { name: "Styled Map" });
 
-      // Default bounding box (Denver)
+      // Default bounding box (Denver).
       var north = 39.730;
       var east = -104.980;
       var south = 39.710;
@@ -133,7 +129,7 @@ var ShowingsMap = (function($) {
       var east = map_bounds.getNorthEast().lng();
       var south = map_bounds.getSouthWest().lat();
       var west = map_bounds.getSouthWest().lng();
-      var m = (east - west) * .05 // The map needs to be bigger than the box by this amount. (5% on each side)
+      var m = (east - west) * .05 // The map needs to be bigger than the box by this amount. (5% on each side).
 
       if (bounds.north > north + m || bounds.east > east + m || bounds.south < south + m|| bounds.west < west + m) {
         zoom--;
