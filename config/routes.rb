@@ -9,9 +9,9 @@ Rails.application.routes.draw do
         post :delete_avatar
       end
     end
-    resources :buyers_requests
-    resources :showing_appointments
-    resources :showing_opportunities
+    resources :buyers_requests, except: [:edit, :update, :delete]
+    resources :showing_appointments, only: [:index]
+    resources :showing_opportunities, only: [:index]
   end
 
   namespace :admin do
