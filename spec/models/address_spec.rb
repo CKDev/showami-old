@@ -47,7 +47,7 @@ describe Address do
     end
 
     it "should only allow 5 digit zip codes" do
-      @address.update(zip: "80210")
+      @address.update(zip: "80209")
       expect(@address.valid?).to be true
 
       @address.update(zip: "ASDFA")
