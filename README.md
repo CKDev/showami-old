@@ -40,16 +40,7 @@
 ## Server Environments / Deployment Norms
 * Production
 * Staging
-* Integration
 
 ### Notes
-`Profile.where("geo_box @> point '(-105.98,39.73)'")`
-`Profile.where("box '(-104.800, 39.500), (-105.000, 40.000)' @> point '(-105.98,39.73)'")`
+
 `Profile.where("geo_box::box @> point '(-105.98,39.73)'")`
-
-geo_box = Profile.last.geo_box
-Profile.where("box '#{geo_box}' @> point '(-105.98,39.73)'")
-
-Twilio code:
-1A917Z0OtlSkq1Iw3+dFtoC67pKacoJUjtVzMIUT
-# twilio_default_from: +13033279182

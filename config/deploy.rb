@@ -35,7 +35,7 @@ set :rollbar_role, Proc.new { :app }
 
 # Determine Rails Environment
 cap_stage = fetch(:stage).to_s
-if cap_stage.include? "production" or cap_stage.include? "staging" or cap_stage.include? "integration"
+if cap_stage.include? "production" or cap_stage.include? "staging"
   set :rails_env, fetch(:stage)
 else
   set :rails_env, "development"
