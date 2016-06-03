@@ -3,20 +3,25 @@ class Showing < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
 
   validates :showing_at, presence: true
-  validate :showing_at_cannot_be_in_the_past, on: :create
   validates :buyer_name, presence: true
   validates :buyer_phone, presence: true
   validates :buyer_type, presence: true
+  validate :showing_at_must_be_in_range, on: :create
   validates_associated :address
+
   accepts_nested_attributes_for :address
 
   before_save :verify_geocoding
 
   enum buyer_type: [:individual, :couple, :family]
 
-  def showing_at_cannot_be_in_the_past
-    if showing_at.present? && showing_at <= Time.zone.now
-      errors.add(:showing_at, "can't be in the past")
+  def showing_at_must_be_in_range
+    if showing_at.present? && showing_at < Time.zone.now + 1.hour
+      errors.add(:showing_at, "must be at least one hour from now")
+    end
+
+    if showing_at.present? && showing_at > Time.zone.now + 7.days
+      errors.add(:showing_at, "cannot be more than seven days from now")
     end
   end
 

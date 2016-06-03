@@ -14,8 +14,22 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
-    it "should not allow a showing time to be in the past" do
-      @showing = Showing.new(showing_at: Time.zone.now - 1.minute)
+    it "should not allow a showing time to be less than 1 hour from now" do
+      @showing = FactoryGirl.build(:showing)
+      @showing.showing_at = Time.zone.now + 59.minutes
+      expect(@showing.valid?).to be false
+
+      @showing.showing_at = Time.zone.now + 61.minutes
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing time to be more than 7 days from now" do
+      @showing = FactoryGirl.build(:showing)
+      @showing.showing_at = Time.zone.now + 6.days + 23.hours + 59.minutes
+      expect(@showing.valid?).to be true
+
+      @showing = FactoryGirl.build(:showing)
+      @showing.showing_at = Time.zone.now + 7.days + 1.minute
       expect(@showing.valid?).to be false
     end
 
