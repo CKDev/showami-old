@@ -2,6 +2,9 @@ class Showing < ActiveRecord::Base
   belongs_to :user
   has_one :address, as: :addressable, dependent: :destroy
 
+  enum buyer_type: [:individual, :couple, :family]
+  enum status: [:unconfirmed, :confirmed, :completed, :cancelled]
+
   validates :showing_at, presence: true
   validates :buyer_name, presence: true
   validates :buyer_phone, presence: true
@@ -12,8 +15,6 @@ class Showing < ActiveRecord::Base
   accepts_nested_attributes_for :address
 
   before_save :verify_geocoding
-
-  enum buyer_type: [:individual, :couple, :family]
 
   def showing_at_must_be_in_range
     if showing_at.present? && showing_at < Time.zone.now + 1.hour
