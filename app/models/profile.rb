@@ -17,7 +17,7 @@ class Profile < ActiveRecord::Base
     end
   end
 
-  has_attached_file :avatar, styles: { small: "200x200#" }, default_url: ActionController::Base.helpers.asset_path("/assets/:style/avatar.png")
+  has_attached_file :avatar, styles: { small: "200x200#", mini: "75x75#" }, default_url: ActionController::Base.helpers.asset_path("/assets/:style/avatar.png")
   validates_attachment :avatar, content_type: { content_type: /\Aimage\/.*\Z/ }, size: { in: 0..1024.kilobytes }
 
   enum agent_type: [:buyers_agent, :sellers_agent, :both]

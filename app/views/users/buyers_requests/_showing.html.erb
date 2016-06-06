@@ -1,0 +1,19 @@
+<div class="showing">
+  <div class="row">
+    <div class="four columns">
+      <%= render partial: "users/buyers_requests/showing_partials/calendar", locals: { showing: showing } %>
+    </div>
+    <div class="eight columns">
+      <div class="address">
+        <h4><%= showing.address.single_line %></h4>
+      </div>
+      <%= render partial: "users/buyers_requests/showing_partials/buyer_info", locals: { showing: showing } %>
+      <%= render partial: "users/buyers_requests/showing_partials/showing_agent_info", locals: { showing: showing } %>
+      <p class="note">
+        The notes for this could be really really long, or nothing at all.  In the time of
+        chimpanzees, I was a monkey.
+      </p>
+      <%= render partial: "users/buyers_requests/showing_partials/showing_status", locals: { showing: showing } %>
+    </div>
+  </div>
+</div>

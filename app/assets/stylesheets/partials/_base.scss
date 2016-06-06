@@ -28,7 +28,7 @@ em {
 }
 
 .note {
-  color: $grey;
+  color: $medium-grey;
   font-weight: 100;
 }
 
@@ -94,6 +94,10 @@ select.day, select.hour, select.minute {
 
 .size-200 {
   width: 200px;
+}
+
+.size-75 {
+  width: 75px;
 }
 
 .homepage-hero {

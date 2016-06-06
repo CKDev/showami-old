@@ -3,17 +3,9 @@
 <h2>My Requests for Showings</h2>
 
 <% if @showings.size > 0 %>
-  <table class="u-full-width">
-    <tbody>
-      <% @showings.each do |showing| %>
-        <tr>
-          <td><strong><%= local_time(showing.showing_at, format: Constants.datetime_format) %><strong></td>
-          <td><strong><%= showing.address.single_line %></strong></td>
-          <td><span class="note">Not assigned</span></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <% @showings.each do |showing| %>
+    <%= render partial: "users/buyers_requests/showing", locals: { showing: showing } %>
+  <% end %>
   <div class="align-right">
     <%= will_paginate @showings %>
   </div>

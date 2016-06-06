@@ -1,0 +1,12 @@
+<div class="showing-agent-info">
+  <div class="avatar row">
+    <div class="three columns">
+      <%= image_tag current_user.profile.avatar.url(:mini), class: "size-75" %>
+    </div>
+    <div class="nine columns">
+      <div class="agent-name">Agent: Showing Agent's Name</div>
+      <div class="agent-phone">Phone: 303-555-5555</div>
+      <div class="agent-email">Email: <%= mail_to "agent.name@example.com" %></div>
+    </div>
+  </div>
+</div>

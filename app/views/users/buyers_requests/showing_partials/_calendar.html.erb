@@ -1,0 +1,8 @@
+<div class="calendar">
+  <div class="day">
+    <%= local_time(showing.showing_at, format: Constants.day_format) %>
+  </div>
+  <div class="time">
+    <%= local_time(showing.showing_at, format: Constants.time_format) %>
+  </div>
+</div>
