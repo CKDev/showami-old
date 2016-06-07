@@ -21,7 +21,9 @@ module Users
       if @showing.save
         lat = @showing.address.latitude
         long = @showing.address.longitude
-        User.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long).each do |u|
+        matched_users = User.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
+        Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info "Notifying #{matched_users.count} users of new showing: #{@showing.address.single_line}" }
+        matched_users.each do |u|
           u.notify_new_showing(@showing)
         end
         redirect_to users_buyers_requests_path, notice: "New showing successfully created."
