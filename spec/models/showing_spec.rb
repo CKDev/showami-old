@@ -48,6 +48,113 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
+    # enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled]
+    it "should initially be in unassigned status" do
+      @showing = FactoryGirl.create(:showing)
+      expect(@showing.status).to eq "unassigned"
+    end
+
+    it "should allow a showing to go from unassigned to unconfirmed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.update(status: "unconfirmed")
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing to go from unassigned to confirmed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.update(status: "confirmed")
+      expect(@showing.valid?).to be false
+    end
+
+    it "should not allow a showing to go from unassigned to completed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.update(status: "completed")
+      expect(@showing.valid?).to be false
+    end
+
+    it "should allow a showing to go from unassigned to cancelled" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.update(status: "cancelled")
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing to go from unconfirmed to unassigned" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "unconfirmed"
+      @showing.save(validate: false)
+      @showing.update(status: "unassigned")
+      expect(@showing.valid?).to be false
+    end
+
+    it "should allow a showing to go from unconfirmed to confirmed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "unconfirmed"
+      @showing.save(validate: false)
+      @showing.update(status: "confirmed")
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing to go from unconfirmed to completed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.update(status: "completed")
+      expect(@showing.valid?).to be false
+    end
+
+    it "should allow a showing to go from unconfirmed to cancelled" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.update(status: "cancelled")
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing to go from confirmed to unconfirmed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "confirmed"
+      @showing.save(validate: false)
+      expect(@showing.status).to eq "confirmed"
+      @showing.update(status: "unconfirmed")
+      expect(@showing.valid?).to be false
+    end
+
+    it "should allow a showing to go from confirmed to completed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "confirmed"
+      @showing.save(validate: false)
+      expect(@showing.status).to eq "confirmed"
+      @showing.update(status: "completed")
+      expect(@showing.valid?).to be true
+    end
+
+    it "should allow a showing to go from confirmed to cancelled" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "confirmed"
+      @showing.save(validate: false)
+      expect(@showing.status).to eq "confirmed"
+      @showing.update(status: "cancelled")
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing to change status once in completed" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "completed"
+      @showing.save(validate: false)
+      expect(@showing.status).to eq "completed"
+      ["unconfirmed", "confirmed", "cancelled"].each do |status|
+        @showing.update(status: status)
+        expect(@showing.valid?).to be false
+      end
+    end
+
+    it "should not allow a showing to change status once in cancelled" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "cancelled"
+      @showing.save(validate: false)
+      expect(@showing.status).to eq "cancelled"
+      ["unconfirmed", "confirmed", "completed"].each do |status|
+        @showing.update(status: status)
+        expect(@showing.valid?).to be false
+      end
+    end
+
   end
 
   context "#verify_geocoding" do

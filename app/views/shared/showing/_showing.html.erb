@@ -1,0 +1,18 @@
+<div class="showing">
+  <div class="row">
+    <div class="four columns">
+      <%= render partial: "shared/showing/calendar", locals: { showing: showing } %>
+    </div>
+    <div class="eight columns">
+      <div class="address">
+        <h4><%= showing.address.single_line %></h4>
+      </div>
+      <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
+      <%= render partial: "shared/showing/showing_agent_info", locals: { showing: showing } %>
+      <p class="note">
+        <%= showing.notes %>
+      </p>
+      <%= render partial: "shared/showing/showing_status", locals: { showing: showing } %>
+    </div>
+  </div>
+</div>

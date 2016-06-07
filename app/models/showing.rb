@@ -3,13 +3,14 @@ class Showing < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
 
   enum buyer_type: [:individual, :couple, :family]
-  enum status: [:unconfirmed, :confirmed, :completed, :cancelled]
+  enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled]
 
   validates :showing_at, presence: true
   validates :buyer_name, presence: true
   validates :buyer_phone, presence: true
   validates :buyer_type, presence: true
   validate :showing_at_must_be_in_range, on: :create
+  validate :valid_status_change?
   validates_associated :address
 
   accepts_nested_attributes_for :address
@@ -23,6 +24,26 @@ class Showing < ActiveRecord::Base
 
     if showing_at.present? && showing_at > Time.zone.now + 7.days
       errors.add(:showing_at, "cannot be more than seven days from now")
+    end
+  end
+
+  def valid_status_change?
+    if status_changed?
+      if status_was == "unassigned" && status == "confirmed"
+        errors.add(:status, "cannot change from unassigned to confirmed, it must be unconfirmed first")
+      elsif status_was == "unassigned" && status == "completed"
+        errors.add(:status, "cannot change from unassigned to completed, it must be unconfirmed first")
+      elsif status_was == "unconfirmed" && status == "unassigned"
+        errors.add(:status, "cannot change from unconfirmed to unassigned")
+      elsif status_was == "unconfirmed" && status == "completed"
+        errors.add(:status, "cannot change from unconfirmed to completed, it must be confirmed first")
+      elsif status_was == "confirmed" && status == "unconfirmed"
+        errors.add(:status, "cannot change from confirmed to unconfirmed")
+      elsif status_was == "completed"
+        errors.add(:status, "cannot change, once completed")
+      elsif status_was == "cancelled"
+        errors.add(:status, "cannot change, once cancelled")
+      end
     end
   end
 

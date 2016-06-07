@@ -4,7 +4,7 @@
 
 <% if @showings.size > 0 %>
   <% @showings.each do |showing| %>
-    <%= render partial: "users/buyers_requests/showing", locals: { showing: showing } %>
+    <%= render partial: "shared/showing/showing", locals: { showing: showing } %>
   <% end %>
   <div class="align-right">
     <%= will_paginate @showings %>

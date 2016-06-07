@@ -1,0 +1,8 @@
+<div class="status">
+  <%= showing.status %>
+  <%= form_for showing, url: users_showing_opportunity_path(showing) do |f| %>
+    <% if showing.status == "unassigned" %>
+      <%= f.submit "Accept" %>
+    <% end %>
+  <% end %>
+</div>

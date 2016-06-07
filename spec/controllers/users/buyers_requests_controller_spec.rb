@@ -124,7 +124,7 @@ module Users
 
     describe "GET #new" do
 
-      it "assign a new showing and address" do
+      it "assigns a new showing and address" do
         @user = FactoryGirl.create(:user_with_valid_profile)
         sign_in @user
         get :new
@@ -138,6 +138,28 @@ module Users
         expect(@user.profile.valid?).to be false
         sign_in @user
         get :new
+        expect(response).to redirect_to edit_users_profile_path
+      end
+
+    end
+
+    describe "GET #show" do
+
+      it "assigns the requested showing and address" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing)
+        sign_in @user
+        get :show, id: @showing.id
+        showing = assigns(:showing)
+        expect(showing).to be_an_instance_of(Showing)
+      end
+
+      it "should redirect to the user profile view if the user's profile isn't valid" do
+        @user = FactoryGirl.create(:user)
+        @showing = FactoryGirl.create(:showing)
+        expect(@user.profile.valid?).to be false
+        sign_in @user
+        get :show, id: @showing.id
         expect(response).to redirect_to edit_users_profile_path
       end
 

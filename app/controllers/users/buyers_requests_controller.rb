@@ -30,6 +30,10 @@ module Users
       end
     end
 
+    def show
+      @showing = Showing.find(params[:id])
+    end
+
     private
 
     def showing_params

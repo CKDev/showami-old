@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     end
     resources :buyers_requests, except: [:edit, :update, :delete]
     resources :showing_appointments, only: [:index]
-    resources :showing_opportunities, only: [:index]
+    resources :showing_opportunities, only: [:index, :show, :update]
   end
 
   namespace :admin do
