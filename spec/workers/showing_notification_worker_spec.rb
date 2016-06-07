@@ -6,7 +6,7 @@ describe ShowingNotificationWorker do
     @user = FactoryGirl.create(:user_with_valid_profile)
     @showing = FactoryGirl.create(:showing)
     to = @user.profile.phone1
-    body = "There is a new showing available at: #{@showing.address.single_line}"
+    body = "<a href='http://localhost:3000/users/showing_opportunities/#{@showing.id}'>New Showami showing available!</a>"
     success_object = stub(send: true)
     Notification::SMS.expects(:new).once.with(to, body).returns(success_object)
     worker = ShowingNotificationWorker.new

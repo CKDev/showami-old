@@ -30,6 +30,9 @@ Rails.application.configure do
   #   }
   # }
 
+  # To use url helpers in workers
+  Rails.application.routes.default_url_options = { host: "localhost", port: 3000, only_path: false }
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

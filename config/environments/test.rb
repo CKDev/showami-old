@@ -32,6 +32,9 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "localhost", port: 3000, only_path: false }
   config.action_mailer.delivery_method = :test
 
+  # For worker link helpers
+  Rails.application.routes.default_url_options = { host: "localhost", port: 3000, only_path: false }
+
   # Randomize the order test cases are executed.
   config.active_support.test_order = :random
 

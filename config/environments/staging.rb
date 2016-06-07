@@ -20,6 +20,8 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.asset_host = "http://ccp-stageapp-01.do.lark-it.com"
 
+  Rails.application.routes.default_url_options = { host: "ccp-stageapp-01.do.lark-it.com" }
+
   # # Paperclip S3 upload config
   # config.paperclip_defaults = {
   #   storage: :s3,

@@ -20,6 +20,9 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.asset_host = "http://ccp-prodapp-01.do.lark-it.com"
 
+  # To use url helpers in workers
+  Rails.application.routes.default_url_options = { host: "ccp-prodapp-01.do.lark-it.com" }
+
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
   # For large-scale production use, consider using a caching reverse proxy like
