@@ -209,4 +209,38 @@ describe Showing do
 
   end
 
+  context "#in_bounding_box" do
+
+    it "should return all showings in the given bounding box" do
+      @valid_showing = FactoryGirl.create(:showing)
+      @vail_showing = FactoryGirl.create(:showing)
+      @vail_address = FactoryGirl.create(:vail_address)
+      @vail_showing.update(address: @vail_address)
+      expect(Showing.in_bounding_box([[39.500, -105.000], [39.749, -104.800]])).to contain_exactly @valid_showing
+    end
+
+  end
+
+  context "#in_future" do
+
+    it "should return all showings where the showing_at is in the future" do
+      @past_showing = FactoryGirl.create(:showing)
+      @past_showing.showing_at = Time.zone.now - 1.hour
+      @past_showing.save(validate: false)
+      @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hour)
+      expect(Showing.in_future).to contain_exactly @future_showing
+    end
+
+  end
+
+  context "#unassigned" do
+
+    it "should return all showings in unassigned status" do
+      @unassigned_showing = FactoryGirl.create(:showing)
+      @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
+      expect(Showing.unassigned).to contain_exactly @unassigned_showing
+    end
+
+  end
+
 end

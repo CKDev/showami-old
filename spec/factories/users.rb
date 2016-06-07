@@ -20,6 +20,7 @@ FactoryGirl.define do
         user.profile.agent_id = "1234 1234"
         user.profile.agent_type = 2
         user.profile.avatar = fixture_file_upload(Rails.root.join("spec", "fixtures", "avatar.png"), "image/png")
+        user.profile.geo_box = "(-104.682, 39.822), (-105.358, 39.427)"
         user.profile.save
       end
     end

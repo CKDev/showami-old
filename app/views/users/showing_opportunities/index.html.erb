@@ -1,3 +1,15 @@
 <%= content_for(:subnav) { render "shared/users/subnav_showing_assistant" } %>
 
 <h2>Available Showing Opportunities</h2>
+
+<% if @showings.size > 0 %>
+  <% @showings.each do |showing| %>
+    <%= render partial: "shared/showing/showing", locals: { showing: showing } %>
+  <% end %>
+  <div class="align-right">
+    <%= will_paginate @showings %>
+  </div>
+<% else %>
+  <p class="note">There are no showings available.</p>
+<% end %>
+

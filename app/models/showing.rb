@@ -17,6 +17,22 @@ class Showing < ActiveRecord::Base
 
   before_save :verify_geocoding
 
+  scope :in_future, -> { where("showing_at > ?", Time.zone.now) }
+  scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
+
+  # Note: This method was copied right from the Geocoder source (within_bounding_box)
+  # so that I could apply it to the Showing model instead of having to run it on
+  # the Address model, which caused all kinds of complications.
+  scope :in_bounding_box, ->(bounds) {
+    sw_lat, sw_lng, ne_lat, ne_lng = bounds.flatten if bounds
+    if sw_lat && sw_lng && ne_lat && ne_lng
+      joins(:address).where(Geocoder::Sql.within_bounding_box(
+        sw_lat, sw_lng, ne_lat, ne_lng, "addresses.latitude","addresses.longitude"))
+    else
+      select(select_clause(nil, null_value, null_value)).where(false_condition)
+    end
+  }
+
   def showing_at_must_be_in_range
     if showing_at.present? && showing_at < Time.zone.now + 1.hour
       errors.add(:showing_at, "must be at least one hour from now")
@@ -55,6 +71,10 @@ class Showing < ActiveRecord::Base
       errors.add(:address, "geocoding was not successful - unable to get coordinates for this showing")
       return false
     end
+  end
+
+  def self.available(geo_box_coords)
+    Showing.in_bounding_box(geo_box_coords).in_future.unassigned
   end
 
 end

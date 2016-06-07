@@ -43,6 +43,10 @@
 
 ### Notes
 
+The bounding box is expected in different formats
+Profile model: (NE long/lat SW long/lat ) (-106.246, 39.703), (-106.458, 39.568)
+Profile.geo_box_coords: [[sw_lat, sw_lon], [ne_lat, ne_lon]]
+
 `Profile.where("geo_box::box @> point '(-105.98,39.73)'")`
 
 302 Hanson Ranch Rd, Vail, CO 81657

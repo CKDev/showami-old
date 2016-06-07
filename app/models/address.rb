@@ -13,4 +13,5 @@ class Address < ActiveRecord::Base
     adr2 = line2.blank? ? " " : " " + line2 + " "
     line1 + adr2 + city + ", " + state + " " + zip
   end
+
 end
