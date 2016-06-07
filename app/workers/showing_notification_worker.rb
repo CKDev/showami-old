@@ -13,7 +13,7 @@ class ShowingNotificationWorker
     # showing_url = Googl.shorten(users_showing_opportunity_path(showing_id))
     showing_url = users_showing_opportunity_url(showing_id)
 
-    body = "<a href='#{showing_url}'>New Showami showing available!</a>"
+    body = "New Showami showing available: #{showing_url}"
     log_msg = "Sending SMS showing notification to #{user.full_name} (#{user.profile.phone1}) -  New Showing: #{showing.address.single_line}"
     Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
     Notification::SMS.new(to, body).send
