@@ -33,7 +33,7 @@ class Showing < ActiveRecord::Base
         Geocoder::Sql.within_bounding_box(sw_lat, sw_lng, ne_lat, ne_lng, "addresses.latitude", "addresses.longitude")
       )
     else
-      select(select_clause(nil, null_value, null_value)).where(false_condition)
+      joins(:address).where("false")
     end
   }
 

@@ -1,9 +1,10 @@
 require "feature_helper"
 
-feature "A registered user with valid payment" do
+feature "A buyers agent" do
 
   before :each do
     @user = FactoryGirl.create(:user_with_valid_profile)
+    @showing_agent = FactoryGirl.create(:user_with_valid_profile) # To receive the notification
     log_in @user
   end
 

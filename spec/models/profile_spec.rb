@@ -140,4 +140,21 @@ describe Profile do
 
   end
 
+  context "#geo_box_coords" do
+
+    it "should properly convert from a valid geo_box (in postgres ::box style) to an array in the geocoder gem style" do
+      profile = Profile.new(geo_box: "(-104.682, 39.822), (-105.358, 39.427)")
+      expect(profile.geo_box_coords).to eq [[39.427, -105.358], [39.822, -104.682]]
+    end
+
+    it "should return lat/long of 0/0 for an empty or invalid geo_box" do
+      profile = Profile.new(geo_box: "")
+      expect(profile.geo_box_coords).to eq [[0.0, 0.0], [0.0, 0.0]]
+
+      rofile = Profile.new(geo_box: nil)
+      expect(profile.geo_box_coords).to eq [[0.0, 0.0], [0.0, 0.0]]
+    end
+
+  end
+
 end

@@ -70,4 +70,15 @@ describe User do
     end
   end
 
+  context "#admin?" do
+
+    it "should properly determine if a user is an admin" do
+      @user = FactoryGirl.create(:user)
+      @admin = FactoryGirl.create(:admin)
+      expect(@user.admin?).to be false
+      expect(@admin.admin?).to be true
+    end
+
+  end
+
 end
