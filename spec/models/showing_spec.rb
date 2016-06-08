@@ -243,4 +243,61 @@ describe Showing do
 
   end
 
+  context ".update_completed" do
+
+    it "should set confirmed showings whos showing date/time has past to completed status" do
+      @showing1 = FactoryGirl.create(:showing)
+      @showing1.status = "confirmed"
+      @showing1.showing_at = Time.zone.now - 1.minute
+      @showing1.save(validate: false)
+
+      @showing2 = FactoryGirl.create(:showing)
+      @showing2.status = "confirmed"
+      @showing2.showing_at = Time.zone.now + 1.minute
+      @showing2.save(validate: false)
+
+      @showing3 = FactoryGirl.create(:showing)
+      @showing3.status = "confirmed"
+      @showing3.showing_at = Time.zone.now + 3.hours
+      @showing3.save(validate: false)
+
+      @showing4 = FactoryGirl.create(:showing)
+      @showing4.status = "unconfirmed"
+      @showing4.showing_at = Time.zone.now - 1.minute
+      @showing4.save(validate: false)
+
+      @showing5 = FactoryGirl.create(:showing)
+      @showing5.status = "unassigned"
+      @showing5.showing_at = Time.zone.now - 1.minute
+      @showing5.save(validate: false)
+
+      @showing6 = FactoryGirl.create(:showing)
+      @showing6.status = "cancelled"
+      @showing6.showing_at = Time.zone.now - 1.minute
+      @showing6.save(validate: false)
+
+      Showing.update_completed
+      @showing1.reload; @showing2.reload; @showing3.reload; @showing4.reload; @showing5.reload; @showing6.reload
+      expect(@showing1.status).to eq "completed"
+      expect(@showing2.status).to eq "confirmed"
+      expect(@showing3.status).to eq "confirmed"
+      expect(@showing4.status).to eq "unconfirmed"
+      expect(@showing5.status).to eq "unassigned"
+      expect(@showing6.status).to eq "cancelled"
+
+      Timecop.freeze(Time.zone.now + 3.hours + 1.minute) do
+        Showing.update_completed
+        @showing1.reload; @showing2.reload; @showing3.reload; @showing4.reload; @showing5.reload; @showing6.reload
+        expect(@showing1.status).to eq "completed"
+        expect(@showing2.status).to eq "completed"
+        expect(@showing3.status).to eq "completed"
+        expect(@showing4.status).to eq "unconfirmed"
+        expect(@showing5.status).to eq "unassigned"
+        expect(@showing6.status).to eq "cancelled"
+      end
+
+    end
+
+  end
+
 end

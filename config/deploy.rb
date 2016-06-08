@@ -30,6 +30,9 @@ set :rollbar_token, "4d7af520311e439facd623155165a56b" # TODO, is there way to p
 set :rollbar_env, Proc.new { fetch :stage }
 set :rollbar_role, Proc.new { :app }
 
+# Whenever config
+set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
+
 ### NO FURTHER CUSTOMIZATIONS SHOULD BE NECESSARY
 #
 

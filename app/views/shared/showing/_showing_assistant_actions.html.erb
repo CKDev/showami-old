@@ -34,5 +34,12 @@
     <div class="nine columns">
       <button class="button-alert">Cancelled</button>
     </div>
+  <% elsif showing.status == "completed" %>
+    <div class="three columns">
+      <span class="status light-blue">Completed</span>
+    </div>
+    <div class="nine columns">
+      &nbsp;
+    </div>
   <% end %>
 </div>

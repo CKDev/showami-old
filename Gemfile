@@ -34,6 +34,7 @@ gem "paperclip" # File uploads
 gem "local_time" # Client-side timezone rendering
 gem "geocoder" # Convert addresses into lat/long
 gem "twilio-ruby" # Sending SMS messages
+gem "whenever", require: false # Cron scheduling
 
 # Pagination
 gem "will_paginate"
@@ -61,7 +62,7 @@ group :test do
   gem "factory_girl_rails"
   gem "mocha"
   gem "database_cleaner"
-
+  gem "timecop"
   gem "capybara-webkit"
   gem "selenium-webdriver"
   gem "simplecov", require: false

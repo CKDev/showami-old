@@ -21,6 +21,7 @@ class Showing < ActiveRecord::Base
 
   scope :in_future, -> { where("showing_at > ?", Time.zone.now) }
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
+  scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
 
   # Note: This method was copied right from the Geocoder source (within_bounding_box)
   # so that I could apply it to the Showing model instead of having to run it on
@@ -78,6 +79,13 @@ class Showing < ActiveRecord::Base
 
   def self.available(geo_box_coords)
     Showing.in_bounding_box(geo_box_coords).in_future.unassigned
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.update_completed
+    Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
+    updated_records = Showing.completed.update_all(status: statuses[:completed])
+    Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{updated_records} as completed." }
   end
 
 end

@@ -12,6 +12,7 @@ require "capistrano/faster_assets"
 require "capistrano/rails/migrations"
 require "capistrano-db-tasks"
 require "capistrano/sidekiq"
+require "whenever/capistrano"
 require "rollbar/capistrano3"
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
