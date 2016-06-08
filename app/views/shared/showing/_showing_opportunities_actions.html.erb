@@ -1,8 +1,12 @@
 <div class="status">
   <% if showing.status == "unassigned" %>
-    <%= showing.status %>
-    <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
-      <%= f.submit "Accept" %>
-    <% end %>
+    <div class="three columns">
+      <span class="status light-blue">Not Assigned</span>
+    </div>
+    <div class="nine columns">
+      <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
+        <%= f.submit "Accept" %>
+      <% end %>
+    </div>
   <% end %>
 </div>

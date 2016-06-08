@@ -4,5 +4,35 @@
     <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
       <%= f.submit "Accept" %>
     <% end %>
+  <% elsif showing.status == "unconfirmed" %>
+    <div class="three columns">
+      <%= form_for showing, url: confirm_users_showing_appointment_path(showing), method: :post do |f| %>
+        <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
+        <%= f.submit "Confirm" %>
+      <% end %>
+    </div>
+    <div class="nine columns">
+      <%= form_for showing, url: cancel_users_showing_appointment_path(showing), method: :post do |f| %>
+        <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
+        <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
+      <% end %>
+    </div>
+  <% elsif showing.status == "confirmed" %>
+    <div class="three columns">
+      <span class="status orange">Confirmed</span>
+    </div>
+    <div class="nine columns">
+      <%= form_for showing, url: cancel_users_showing_appointment_path(showing), method: :post do |f| %>
+        <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
+        <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
+      <% end %>
+    </div>
+  <% elsif showing.status == "cancelled" %>
+    <div class="three columns">
+      &nbsp;
+    </div>
+    <div class="nine columns">
+      <button class="button-alert">Cancelled</button>
+    </div>
   <% end %>
 </div>

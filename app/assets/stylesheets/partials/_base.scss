@@ -134,6 +134,10 @@ select.day, select.hour, select.minute {
   }
 }
 
+.status {
+  font-weight: bold;
+}
+
 .white {
   color: $white;
 }
@@ -144,6 +148,10 @@ select.day, select.hour, select.minute {
 
 .light-blue {
   color: $light-blue;
+}
+
+.orange {
+  color: $orange;
 }
 
 .red-box {

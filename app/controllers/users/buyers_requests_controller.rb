@@ -5,7 +5,7 @@ module Users
 
     def index
       @showings = current_user.showings
-        .includes(:address)
+        .includes(:address, :showing_agent)
         .paginate(page: params[:page])
     end
 

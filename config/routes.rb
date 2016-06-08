@@ -14,7 +14,12 @@ Rails.application.routes.draw do
         post :cancel
       end
     end
-    resources :showing_appointments, only: [:index]
+    resources :showing_appointments, only: [:index] do
+      member do
+        post :confirm
+        post :cancel
+      end
+    end
     resources :showing_opportunities, only: [:index, :show] do
       member do
         post :accept
