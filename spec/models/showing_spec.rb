@@ -227,7 +227,7 @@ describe Showing do
       @past_showing = FactoryGirl.create(:showing)
       @past_showing.showing_at = Time.zone.now - 1.hour
       @past_showing.save(validate: false)
-      @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hour)
+      @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hours)
       expect(Showing.in_future).to contain_exactly @future_showing
     end
 

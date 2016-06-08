@@ -25,11 +25,12 @@ class Showing < ActiveRecord::Base
   # Note: This method was copied right from the Geocoder source (within_bounding_box)
   # so that I could apply it to the Showing model instead of having to run it on
   # the Address model, which caused all kinds of complications.
-  scope :in_bounding_box, ->(bounds) {
+  scope :in_bounding_box, lambda { |bounds|
     sw_lat, sw_lng, ne_lat, ne_lng = bounds.flatten if bounds
     if sw_lat && sw_lng && ne_lat && ne_lng
-      joins(:address).where(Geocoder::Sql.within_bounding_box(
-        sw_lat, sw_lng, ne_lat, ne_lng, "addresses.latitude","addresses.longitude"))
+      joins(:address).where(
+        Geocoder::Sql.within_bounding_box(sw_lat, sw_lng, ne_lat, ne_lng, "addresses.latitude", "addresses.longitude")
+      )
     else
       select(select_clause(nil, null_value, null_value)).where(false_condition)
     end
