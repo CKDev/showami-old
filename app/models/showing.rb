@@ -1,5 +1,7 @@
 class Showing < ActiveRecord::Base
+
   belongs_to :user
+  belongs_to :showing_agent, class_name: "User"
   has_one :address, as: :addressable, dependent: :destroy
 
   enum buyer_type: [:individual, :couple, :family]

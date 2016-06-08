@@ -9,10 +9,11 @@ feature "A showing agent accepts a new showing" do
   end
 
   scenario "by visiting the individual showing page (from SMS link) an clicking the accept button" do
-    visit users_showing_opportunity_path(id: @showing.id) # Most likely from the SMS notification
+    visit users_showing_opportunity_path(id: @showing.id)
     click_button "Accept"
-    expect(current_path).to eq users_showing_opportunities_path
+    expect(current_path).to eq users_showing_appointments_path
     expect(page).to have_content "Showing accepted"
+    expect(page).to have_content @showing.address.single_line
   end
 
 end

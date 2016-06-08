@@ -11,17 +11,11 @@ module Users
       @showing = Showing.find(params[:id])
     end
 
-    def update
+    def accept
       @showing = Showing.find(params[:id])
-      @showing.update(status: update_params)
-      redirect_to users_showing_opportunities_path, notice: "Showing accepted"
+      @showing.update(status: "unconfirmed", showing_agent: current_user)
+      redirect_to users_showing_appointments_path, notice: "Showing accepted"
     end
 
-    private
-
-    def update_params
-      return "unconfirmed" if params[:commit] == "Accept"
-      raise ArgumentError, "Unknown showing status: #{params[:commit]}"
-    end
   end
 end

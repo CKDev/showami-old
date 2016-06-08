@@ -46,15 +46,16 @@ module Users
 
     end
 
-    describe "POST #update" do
+    describe "POST #accept" do
 
-      it "updates the showing to have the correct status" do
+      it "updates a showing in unassigned status to unconfirmed" do
         @user = FactoryGirl.create(:user_with_valid_profile)
         @showing = FactoryGirl.create(:showing)
         sign_in @user
-        post :update, id: @showing.id, commit: "Accept"
+        post :accept, id: @showing.id
         showing = assigns(:showing)
-        expect(showing).to be_an_instance_of(Showing)
+        expect(showing.status).to eq "unconfirmed"
+        expect(showing.showing_agent).to eq @user
       end
 
     end
