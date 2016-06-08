@@ -18,4 +18,5 @@ class ApplicationController < ActionController::Base
       @greeting ||= current_user.greeting
     end
   end
+
 end

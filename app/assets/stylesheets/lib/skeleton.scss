@@ -226,9 +226,9 @@ input[type="button"].button-primary:focus {
 
 .button.button-secondary, button.button-secondary, input[type="submit"].button-secondary,
 input[type="reset"].button-secondary, input[type="button"].button-secondary {
-  color: $grey;
-  background-color: $white;
-  border-color: $light-grey;
+  color: $white;
+  background-color: $light-blue;
+  border-color: $light-blue;
   font-family: "Roboto Condensed", sans-serif;
 }
 
@@ -236,9 +236,26 @@ input[type="reset"].button-secondary, input[type="button"].button-secondary {
 input[type="reset"].button-secondary:hover, input[type="button"].button-secondary:hover, .button.button-secondary:focus,
 button.button-secondary:focus, input[type="submit"].button-secondary:focus, input[type="reset"].button-secondary:focus,
 input[type="button"].button-secondary:focus {
-  color: $grey;
-  background-color: $light-grey;
-  border-color: $light-grey;
+  color: $white;
+  background-color: $dark-blue;
+  border-color: $dark-blue;
+}
+
+.button.button-alert, button.button-alert, input[type="submit"].button-alert,
+input[type="reset"].button-alert, input[type="button"].button-alert {
+  color: $white;
+  background-color: $red;
+  border-color: $red;
+  font-family: "Roboto Condensed", sans-serif;
+}
+
+.button.button-alert:hover, button.button-alert:hover, input[type="submit"].button-alert:hover,
+input[type="reset"].button-alert:hover, input[type="button"].button-alert:hover, .button.button-alert:focus,
+button.button-alert:focus, input[type="submit"].button-alert:focus, input[type="reset"].button-alert:focus,
+input[type="button"].button-alert:focus {
+  color: $white;
+  background-color: $dark-red;
+  border-color: $dark-red;
 }
 
 /* Forms

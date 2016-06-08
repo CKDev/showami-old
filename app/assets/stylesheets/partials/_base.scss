@@ -133,3 +133,21 @@ select.day, select.hour, select.minute {
     width: 490px;
   }
 }
+
+.white {
+  color: $white;
+}
+
+.light-grey {
+  color: $light-grey;
+}
+
+.light-blue {
+  color: $light-blue;
+}
+
+.red-box {
+  color: $white;
+  display: inline-block;
+  background-color: $red;
+}

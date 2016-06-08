@@ -36,6 +36,12 @@ module Users
       @showing = Showing.find(params[:id])
     end
 
+    def cancel
+      @showing = Showing.find(params[:id])
+      @showing.update(status: "cancelled")
+      redirect_to users_buyers_requests_path, notice: "Showing cancelled."
+    end
+
     private
 
     def showing_params

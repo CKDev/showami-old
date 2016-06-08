@@ -12,7 +12,13 @@
       <p class="note">
         <%= showing.notes %>
       </p>
-      <%= render partial: "shared/showing/showing_status", locals: { showing: showing } %>
+      <% if buyers_requests_route? %>
+        <%= render partial: "shared/showing/buyers_agent_actions", locals: { showing: showing } %>
+      <% elsif showing_appointments_route? %>
+        <%= render partial: "shared/showing/showing_assistant_actions", locals: { showing: showing } %>
+      <% elsif showing_opportunities_route? %>
+        <%= render partial: "shared/showing/showing_opportunities_actions", locals: { showing: showing } %>
+      <% end %>
     </div>
   </div>
 </div>

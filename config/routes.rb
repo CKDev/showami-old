@@ -9,7 +9,11 @@ Rails.application.routes.draw do
         post :delete_avatar
       end
     end
-    resources :buyers_requests, except: [:edit, :update, :delete]
+    resources :buyers_requests, except: [:edit, :update, :delete] do
+      member do
+        post :cancel
+      end
+    end
     resources :showing_appointments, only: [:index]
     resources :showing_opportunities, only: [:index, :show] do
       member do

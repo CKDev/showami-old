@@ -165,5 +165,18 @@ module Users
 
     end
 
+    describe "POST #cancel" do
+
+      it "marks the showing as cancelled" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing)
+        sign_in @user
+        post :cancel, id: @showing.id
+        showing = assigns(:showing)
+        expect(showing.status).to eq "cancelled"
+      end
+
+    end
+
   end
 end
