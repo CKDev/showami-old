@@ -151,7 +151,7 @@ describe Profile do
       profile = Profile.new(geo_box: "")
       expect(profile.geo_box_coords).to eq [[0.0, 0.0], [0.0, 0.0]]
 
-      rofile = Profile.new(geo_box: nil)
+      profile = Profile.new(geo_box: nil)
       expect(profile.geo_box_coords).to eq [[0.0, 0.0], [0.0, 0.0]]
     end
 

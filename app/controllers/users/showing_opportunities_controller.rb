@@ -13,9 +13,13 @@ module Users
 
     def accept
       @showing = Showing.find(params[:id])
-      @showing.update(status: "unconfirmed", showing_agent: current_user)
-      ShowingAcceptedNotificationWorker.perform_async(@showing.id)
-      redirect_to users_showing_appointments_path, notice: "Showing accepted"
+      if @showing.update(status: "unconfirmed", showing_agent: current_user)
+        ShowingAcceptedNotificationWorker.perform_async(@showing.id)
+        redirect_to users_showing_appointments_path, notice: "Showing accepted"
+      else
+        redirect_path = request.env["HTTP_REFERER"] || users_showing_appointments_path
+        redirect_to redirect_path, alert: "Unable to accept showing, perhaps another user accepted first."
+      end
     end
 
   end

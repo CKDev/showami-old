@@ -58,14 +58,24 @@ module Users
 
       it "updates a showing in unassigned status to unconfirmed" do
         post :accept, id: @showing.id
-        showing = assigns(:showing)
-        expect(showing.status).to eq "unconfirmed"
-        expect(showing.showing_agent).to eq @showing_agent
+        @showing.reload
+        expect(@showing.status).to eq "unconfirmed"
+        expect(@showing.showing_agent).to eq @showing_agent
       end
 
       it "sends an SMS to the buying agent upon accepting" do
         ShowingAcceptedNotificationWorker.expects(:perform_async).once.with(@showing.id)
         post :accept, id: @showing.id
+      end
+
+      it "prevents a second user from accepting a showing after it has already been accepted" do
+        @showing_agent2 = FactoryGirl.create(:user_with_valid_profile)
+        post :accept, id: @showing.id
+        sign_out @showing_agent
+        sign_in @showing_agent2
+        post :accept, id: @showing.id
+        @showing.reload
+        expect(@showing.showing_agent).to eq @showing_agent
       end
 
     end

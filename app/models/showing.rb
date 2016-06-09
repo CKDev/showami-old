@@ -13,6 +13,7 @@ class Showing < ActiveRecord::Base
   validates :buyer_type, presence: true
   validate :showing_at_must_be_in_range, on: :create
   validate :valid_status_change?
+  validate :showing_agent_changed?
   validates_associated :address
 
   accepts_nested_attributes_for :address
@@ -64,6 +65,12 @@ class Showing < ActiveRecord::Base
       elsif status_was == "cancelled"
         errors.add(:status, "cannot change, once cancelled")
       end
+    end
+  end
+
+  def showing_agent_changed?
+    if showing_agent_id_changed? && showing_agent_id_was.present?
+      errors.add(:showing_agent, "cannot change the showing agent")
     end
   end
 
