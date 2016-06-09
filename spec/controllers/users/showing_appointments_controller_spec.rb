@@ -53,14 +53,22 @@ module Users
 
     describe "POST #cancel" do
 
-      it "marks the showing as cancelled" do
+      before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
         @showing = FactoryGirl.create(:showing)
         sign_in @user
+      end
+
+      it "marks the showing as cancelled" do
         post :cancel, id: @showing.id
         showing = assigns(:showing)
         expect(showing.status).to eq "cancelled"
         expect(response).to redirect_to users_showing_appointments_path
+      end
+
+      it "sends an SMS to the buying agent upon cancelling" do
+        ShowingCancelledNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        post :cancel, id: @showing.id
       end
 
     end
