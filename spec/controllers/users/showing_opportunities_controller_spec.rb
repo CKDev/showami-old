@@ -48,14 +48,24 @@ module Users
 
     describe "POST #accept" do
 
-      it "updates a showing in unassigned status to unconfirmed" do
-        @user = FactoryGirl.create(:user_with_valid_profile)
+      before(:each) do
+        @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
         @showing = FactoryGirl.create(:showing)
-        sign_in @user
+        @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+        @buyers_agent.showings << @showing
+        sign_in @showing_agent
+      end
+
+      it "updates a showing in unassigned status to unconfirmed" do
         post :accept, id: @showing.id
         showing = assigns(:showing)
         expect(showing.status).to eq "unconfirmed"
-        expect(showing.showing_agent).to eq @user
+        expect(showing.showing_agent).to eq @showing_agent
+      end
+
+      it "sends an SMS to the buying agent upon accepting" do
+        ShowingAcceptedNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        post :accept, id: @showing.id
       end
 
     end

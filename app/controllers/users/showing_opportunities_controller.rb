@@ -14,6 +14,7 @@ module Users
     def accept
       @showing = Showing.find(params[:id])
       @showing.update(status: "unconfirmed", showing_agent: current_user)
+      ShowingAcceptedNotificationWorker.perform_async(@showing.id)
       redirect_to users_showing_appointments_path, notice: "Showing accepted"
     end
 
