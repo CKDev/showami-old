@@ -11,8 +11,13 @@ module Users
 
     def confirm
       @showing = Showing.find(params[:id])
-      @showing.update(status: "confirmed")
-      redirect_to users_showing_appointments_path, notice: "Showing confirmed."
+      if @showing.update(status: "confirmed")
+        ShowingConfirmedNotificationWorker.perform_async(@showing.id)
+        redirect_to users_showing_appointments_path, notice: "Showing confirmed."
+      else
+        redirect_path = request.env["HTTP_REFERER"] || users_showing_appointments_path
+        redirect_to redirect_path, alert: "Unable to confirm showing, please try again."
+      end
     end
 
     def cancel

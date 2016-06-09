@@ -29,16 +29,24 @@ module Users
 
     describe "POST #confirm" do
 
-      it "marks the showing as cancelled" do
+      before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
         @showing = FactoryGirl.create(:showing)
         @showing.status = "unconfirmed"
         @showing.save(validate: false)
         sign_in @user
+      end
+
+      it "marks the showing as confirmed" do
         post :confirm, id: @showing.id
         showing = assigns(:showing)
         expect(showing.status).to eq "confirmed"
         expect(response).to redirect_to users_showing_appointments_path
+      end
+
+      it "sends an SMS to the buying agent upon confirming" do
+        ShowingConfirmedNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        post :confirm, id: @showing.id
       end
 
     end

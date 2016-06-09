@@ -30,10 +30,10 @@ Metrics/LineLength:
   Max: 210
 
 Metrics/MethodLength:
-  Max: 50
+  Max: 20
 
 Metrics/AbcSize:
-  Max: 50
+  Max: 45
   Exclude:
 
 Style/Documentation:
@@ -90,15 +90,11 @@ Style/WordArray:
 Style/EmptyLinesAroundModuleBody:
   Enabled: false
 
-# TODO: eventually?
-Style/MutableConstant:
-  Enabled: false
-
 Metrics/CyclomaticComplexity:
-  Max: 20
+  Max: 15
 
 Metrics/PerceivedComplexity:
-  Max: 20
+  Max: 15
 
 Rails/HasAndBelongsToMany:
   Exclude:

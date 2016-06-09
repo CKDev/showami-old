@@ -307,7 +307,7 @@ describe Showing do
       @showing6.save(validate: false)
 
       Showing.update_completed
-      @showing1.reload; @showing2.reload; @showing3.reload; @showing4.reload; @showing5.reload; @showing6.reload
+      [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6].each(&:reload)
       expect(@showing1.status).to eq "completed"
       expect(@showing2.status).to eq "confirmed"
       expect(@showing3.status).to eq "confirmed"
@@ -317,7 +317,7 @@ describe Showing do
 
       Timecop.freeze(Time.zone.now + 3.hours + 1.minute) do
         Showing.update_completed
-        @showing1.reload; @showing2.reload; @showing3.reload; @showing4.reload; @showing5.reload; @showing6.reload
+        [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6].each(&:reload)
         expect(@showing1.status).to eq "completed"
         expect(@showing2.status).to eq "completed"
         expect(@showing3.status).to eq "completed"
