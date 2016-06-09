@@ -81,4 +81,80 @@ describe User do
 
   end
 
+  context "#can_create_showing?" do
+
+    it "should allow a user to create a showing if their profile is valid, they have a cc token on file, and they aren't blocked" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(cc_token: "something")
+      # TODO: when ready, add in the blocked check
+      expect(@user.can_create_showing?).to be true
+    end
+
+    it "should not allow a user to create a showing if their profile isn't valid" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(cc_token: "something")
+      @user.profile.first_name = ""
+      @user.profile.save(validate: false)
+      expect(@user.profile.valid?).to be false
+      expect(@user.can_create_showing?).to be false
+    end
+
+    it "should not allow a user to create a showing if they don't have a cc token on file" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(cc_token: nil)
+      expect(@user.can_create_showing?).to be false
+    end
+
+  end
+
+  context "#can_accept_showing?" do
+
+    it "should allow a user to accept a showing if their profile is valid, they have a valid bank transfer token on file, and they aren't blocked" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      # TODO: when ready, add in the bank transfer and  blocked check
+      expect(@user.can_accept_showing?).to be true
+    end
+
+    it "should not allow a user to accept a showing if their profile isn't valid" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.first_name = ""
+      @user.profile.save(validate: false)
+      expect(@user.profile.valid?).to be false
+      expect(@user.can_accept_showing?).to be false
+    end
+
+    it "should not allow a user to accept a showing if they don't have a bank transfer token" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(bank_token: nil)
+      expect(@user.can_accept_showing?).to be false
+    end
+
+  end
+
+  context "#valid_credit_card?" do
+
+    it "should return if the user has a cc on file" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(cc_token: nil)
+      expect(@user.valid_credit_card?).to be false
+
+      @user.profile.update(cc_token: "something")
+      expect(@user.valid_credit_card?).to be true
+    end
+
+  end
+
+  context "#valid_bank_account?" do
+
+    it "should return if the user has a valid bank key on file" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(bank_token: nil)
+      expect(@user.valid_bank_account?).to be false
+
+      @user.profile.update(bank_token: "something")
+      expect(@user.valid_bank_account?).to be true
+    end
+
+  end
+
 end

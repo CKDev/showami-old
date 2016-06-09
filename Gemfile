@@ -28,6 +28,9 @@ gem "sidekiq-failures"
 gem "rollbar"
 gem "skylight"
 
+# Payments
+gem "stripe"
+
 # Misc
 gem "aws-sdk", "< 2.0" # To store Paperclip uploads on S3
 gem "paperclip" # File uploads

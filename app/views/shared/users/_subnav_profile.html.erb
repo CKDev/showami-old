@@ -6,9 +6,8 @@
     <div class="four columns <% if current_page? edit_users_profile_path %>active<% end %>">
       <%= link_to "Info", edit_users_profile_path %>
     </div>
-    <%# TODO: Add payment path when available %>
-    <div class="four columns">
-      <%= link_to "Payment", "#" %>
+    <div class="four columns <% if current_page? users_cc_payment_path %>active<% end %>">
+      <%= link_to "Payment", users_cc_payment_path %>
     </div>
     <div class="four columns <% if current_page? edit_user_registration_path %>active<% end %>">
       <%= link_to "Login Info", edit_user_registration_path %>

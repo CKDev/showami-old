@@ -99,6 +99,12 @@ module Users
         expect(response).to render_template :new
       end
 
+      it "does not allow a new showing to be created without a valid credit card on file" do
+        @user.profile.update(cc_token: "")
+        post :create, showing: valid_attributes
+        expect(response).to redirect_to users_cc_payment_path
+      end
+
     end
 
     describe "GET #index" do
@@ -139,6 +145,14 @@ module Users
         sign_in @user
         get :new
         expect(response).to redirect_to edit_users_profile_path
+      end
+
+      it "does not allow the new showing view to be accessed without a valid credit card on file" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @user.profile.update(cc_token: nil)
+        sign_in @user
+        get :new
+        expect(response).to redirect_to users_cc_payment_path
       end
 
     end

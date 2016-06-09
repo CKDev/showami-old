@@ -44,6 +44,60 @@ module Users
         expect(response).to render_template :edit
       end
 
+      it "takes the user to the cc payment view, if they are a buyer's agent and they don't have payment on record" do
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to users_cc_payment_path
+      end
+
+      it "takes the user to the cc payment view, if they are both a buyer's and seller's agent and they don't have payment on record" do
+        valid_attributes[:agent_type] = "both"
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to users_cc_payment_path
+      end
+
+      it "takes the user back to the profile view, if they are a buyer's agent and they have payment on record" do
+        valid_attributes[:agent_type] = "buyers_agent"
+        post :update, profile: valid_attributes
+        @user.profile.reload
+        @user.profile.update(cc_token: "something valid")
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to edit_users_profile_path
+      end
+
+      it "takes the user back to the profile view, if they are both buyer's and seller's agent and they have payment on record" do
+        valid_attributes[:agent_type] = "both"
+        post :update, profile: valid_attributes
+        @user.profile.reload
+        @user.profile.update(cc_token: "something valid")
+        @user.profile.update(bank_token: "something valid")
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to edit_users_profile_path
+      end
+
+      it "takes the user to the bank payment view, if they are a seller's agent and they don't have payment on record" do
+        valid_attributes[:agent_type] = "sellers_agent"
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to users_bank_payment_path
+      end
+
+      it "takes the user back to the profile view, if they are a seller's agent and they have payment on record" do
+        valid_attributes[:agent_type] = "sellers_agent"
+        post :update, profile: valid_attributes
+        @user.profile.reload
+        @user.profile.update(bank_token: "something valid")
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to edit_users_profile_path
+      end
+
+      it "takes the user to the bank payment view, if they are both buyer's and seller's agent and they have cc payment but not bank payment on record" do
+        valid_attributes[:agent_type] = "both"
+        post :update, profile: valid_attributes
+        @user.profile.reload
+        @user.profile.update(cc_token: "something valid")
+        post :update, profile: valid_attributes
+        expect(response).to redirect_to users_bank_payment_path
+      end
+
     end
 
     describe "POST #delete_avatar" do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160607233757) do
+ActiveRecord::Schema.define(version: 20160610135336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,9 @@ ActiveRecord::Schema.define(version: 20160607233757) do
     t.datetime "avatar_updated_at"
     t.string   "geo_box"
     t.integer  "geo_box_zoom",        default: 12
+    t.string   "stripe_token"
+    t.string   "cc_token"
+    t.string   "bank_token"
   end
 
   create_table "showings", force: :cascade do |t|

@@ -2,6 +2,7 @@ module Users
   class BuyersRequestsController < BaseController
 
     before_action :verify_valid_profile
+    before_action :verify_credit_card_on_file, only: [:new, :create]
 
     def index
       @showings = current_user.showings

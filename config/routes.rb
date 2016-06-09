@@ -25,6 +25,8 @@ Rails.application.routes.draw do
         post :accept
       end
     end
+    resource :cc_payment, only: [:show, :create]
+    resource :bank_payment, only: [:show, :create]
   end
 
   namespace :admin do

@@ -18,8 +18,9 @@ feature "A registered user can update their profile" do
     choose "I'm a buyer's agent and I want assistance with showings"
     attach_file "profile[avatar]", Rails.root + "spec/fixtures/avatar.png"
     click_button "Update"
-    expect(current_path).to eq(edit_users_profile_path)
+    expect(current_path).to eq(users_cc_payment_path)
     expect(page).to have_content("Profile successfully updated.")
+    visit edit_users_profile_path
     click_link "Delete picture"
     expect(page).to have_content("Avatar successfully removed.")
   end

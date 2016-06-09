@@ -36,4 +36,22 @@ class User < ActiveRecord::Base
     ShowingNotificationWorker.perform_async(id, showing.id)
   end
 
+  # For showing agents - need a bank account on file
+  def can_accept_showing?
+    profile.valid? && valid_bank_account? # TODO: && !blocked?
+  end
+
+  # For buyer's agents - need a credit card on file
+  def can_create_showing?
+    profile.valid? && valid_credit_card? # TODO: && !blocked?
+  end
+
+  def valid_credit_card?
+    profile.cc_token.present?
+  end
+
+  def valid_bank_account?
+    profile.bank_token.present?
+  end
+
 end
