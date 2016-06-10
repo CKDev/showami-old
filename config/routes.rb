@@ -3,7 +3,7 @@ require "sidekiq/web"
 Rails.application.routes.draw do
 
   namespace :users do
-    root "profile#edit"
+    root "profiles#edit"
     resource :profile, only: [:edit, :update] do
       member do
         post :delete_avatar

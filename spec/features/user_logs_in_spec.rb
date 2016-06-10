@@ -18,6 +18,14 @@ feature "A user logs in" do
     expect(current_path).to eq(edit_users_profile_path)
   end
 
+  scenario "is able to go to /users and get to the profile path" do
+    @user = FactoryGirl.create(:user)
+    log_in @user
+    visit "/users"
+    expect(current_path).to eq "/users"
+    expect(page).to have_content "First name"
+  end
+
   scenario "is not able to get to the admin dashboard" do
     @user = FactoryGirl.create(:user_with_valid_profile)
     log_in @user
