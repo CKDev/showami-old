@@ -4,7 +4,7 @@ module Users
     before_action :verify_valid_profile
 
     def index
-      @showings = Showing.available(current_user.profile.geo_box_coords).paginate(page: params[:page])
+      @showings = Showing.available(current_user.profile.geo_box_coords).paginate(page: params[:page], per_page: 5)
     end
 
     def show
