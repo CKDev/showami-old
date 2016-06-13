@@ -9,6 +9,13 @@ describe Constants do
     end
   end
 
+  it "should return the expected date format for month_format" do
+    Timecop.freeze do
+      t = Time.zone.local(2016, 9, 1, 10, 5, 0)
+      expect(t.strftime(Constants.month_format)).to eq "Sep"
+    end
+  end
+
   it "should return the expected date format for day_format" do
     Timecop.freeze do
       t = Time.zone.local(2016, 9, 1, 10, 5, 0)

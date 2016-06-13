@@ -3,6 +3,10 @@ class Constants
     "%b %d, %Y %l:%M %p" # "Dec 04, 2015 7:47 PM"
   end
 
+  def self.month_format
+    "%b" # "Sep"
+  end
+
   def self.day_format
     "%d" # "04"
   end

@@ -1,4 +1,7 @@
 <div class="calendar">
+  <div class="month">
+    <%= local_time(showing.showing_at, format: Constants.month_format) %>
+  </div>
   <div class="day">
     <%= local_time(showing.showing_at, format: Constants.day_format) %>
   </div>

@@ -23,6 +23,7 @@ class Showing < ActiveRecord::Base
 
   before_save :verify_geocoding
 
+  default_scope { order("showing_at DESC") }
   scope :in_future, -> { where("showing_at > ?", Time.zone.now) }
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
@@ -63,8 +64,6 @@ class Showing < ActiveRecord::Base
         errors.add(:status, "cannot change from unconfirmed to completed, it must be confirmed first")
       elsif status_was == "confirmed" && status == "unconfirmed"
         errors.add(:status, "cannot change from confirmed to unconfirmed")
-      elsif status_was == "confirmed" && status == "confirmed"
-        errors.add(:status, "showing already confirmed")
       elsif status_was == "completed"
         errors.add(:status, "cannot change status, once completed")
       elsif status_was == "cancelled"

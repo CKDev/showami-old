@@ -1,5 +1,3 @@
-require "twilio-ruby"
-
 module Notification
 
   class ErrorReporter

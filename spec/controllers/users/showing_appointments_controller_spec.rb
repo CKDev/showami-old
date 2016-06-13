@@ -25,6 +25,26 @@ module Users
         expect(response).to redirect_to edit_users_profile_path
       end
 
+      it "should list showings in descending date order" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing1 = FactoryGirl.create(:showing, showing_agent: @user)
+        @showing2 = FactoryGirl.create(:showing, showing_agent: @user)
+        @showing3 = FactoryGirl.create(:showing, showing_agent: @user)
+        @showing1.showing_at = Time.zone.now - 1.month
+        @showing2.showing_at = Time.zone.now + 1.month
+        @showing3.showing_at = Time.zone.now
+        @showing1.save(validate: false)
+        @showing2.save(validate: false)
+        @showing3.save(validate: false)
+        sign_in @user
+        get :index
+        showings = assigns(:showings)
+        puts showings # TODO: not sure why I have to access showings before it will be what I expect???
+        expect(showings.first.showing_at).to eq @showing2.showing_at
+        expect(showings.second.showing_at).to eq @showing3.showing_at
+        expect(showings.third.showing_at).to eq @showing1.showing_at
+      end
+
     end
 
     describe "POST #confirm" do
