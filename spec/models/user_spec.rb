@@ -144,15 +144,15 @@ describe User do
 
   end
 
-  context "#valid_bank_account?" do
+  context "#valid_bank_token?" do
 
     it "should return if the user has a valid bank key on file" do
       @user = FactoryGirl.create(:user_with_valid_profile)
       @user.profile.update(bank_token: nil)
-      expect(@user.valid_bank_account?).to be false
+      expect(@user.valid_bank_token?).to be false
 
       @user.profile.update(bank_token: "something")
-      expect(@user.valid_bank_account?).to be true
+      expect(@user.valid_bank_token?).to be true
     end
 
   end

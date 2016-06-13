@@ -1,3 +1,6 @@
+require "geocoder/sql"
+require "geocoder/stores/base"
+
 class Showing < ActiveRecord::Base
 
   belongs_to :user
@@ -60,10 +63,12 @@ class Showing < ActiveRecord::Base
         errors.add(:status, "cannot change from unconfirmed to completed, it must be confirmed first")
       elsif status_was == "confirmed" && status == "unconfirmed"
         errors.add(:status, "cannot change from confirmed to unconfirmed")
+      elsif status_was == "confirmed" && status == "confirmed"
+        errors.add(:status, "showing already confirmed")
       elsif status_was == "completed"
-        errors.add(:status, "cannot change, once completed")
+        errors.add(:status, "cannot change status, once completed")
       elsif status_was == "cancelled"
-        errors.add(:status, "cannot change, once cancelled")
+        errors.add(:status, "cannot change status, once cancelled")
       end
     end
   end

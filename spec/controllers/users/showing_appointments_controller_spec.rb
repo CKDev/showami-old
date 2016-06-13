@@ -49,6 +49,13 @@ module Users
         post :confirm, id: @showing.id
       end
 
+      it "reports an error if the showing is not able to be confirmed" do
+        @showing.status = "cancelled"
+        @showing.save(validate: false)
+        Notification::ErrorReporter.expects(:send).once.with(instance_of(StandardError))
+        post :confirm, id: @showing.id
+      end
+
     end
 
     describe "POST #cancel" do
@@ -68,6 +75,13 @@ module Users
 
       it "sends an SMS to the buying agent upon cancelling" do
         ShowingCancelledNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        post :cancel, id: @showing.id
+      end
+
+      it "reports an error if the showing is not able to be cancelled" do
+        @showing.status = "completed"
+        @showing.save(validate: false)
+        Notification::ErrorReporter.expects(:send).once.with(instance_of(StandardError))
         post :cancel, id: @showing.id
       end
 

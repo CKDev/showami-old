@@ -38,7 +38,7 @@ class User < ActiveRecord::Base
 
   # For showing agents - need a bank account on file
   def can_accept_showing?
-    profile.valid? && valid_bank_account? # TODO: && !blocked?
+    profile.valid? && valid_bank_token? # TODO: && !blocked?
   end
 
   # For buyer's agents - need a credit card on file
@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
     profile.cc_token.present?
   end
 
-  def valid_bank_account?
+  def valid_bank_token?
     profile.bank_token.present?
   end
 

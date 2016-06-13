@@ -1,1 +1,73 @@
-<h1>Bank Payments</h1>
+<%= content_for(:subnav) { render "shared/users/subnav_profile" } %>
+
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+  Stripe.setPublishableKey("<%= Rails.application.secrets[:stripe]["public_key"] %>");
+
+  var stripeResponseHandler = function(status, response) {
+    var $form = $("#payment-form");
+
+    if (response.error) {
+      // Show the errors on the form
+      $form.find(".payment-errors").text(response.error.message).show();
+      $form.find("button").prop("disabled", false);
+    }
+    else {
+      // The token contains id, last4, and card type
+      var token = response.id;
+      // Insert the token into the form so it gets submitted to the server, and resubmit
+      $form.append($("<input type='hidden' name='stripeToken'/>").val(token));
+      $form.get(0).submit();
+    }
+  };
+
+  jQuery(function($) {
+    $("#payment-form").submit(function(e) {
+      var $form = $(this);
+      $form.find("input[type='submit']").prop("disabled", true); // Prevent repeated clicks
+      // Stripe.card.createToken($form, stripeResponseHandler);
+
+      Stripe.bankAccount.createToken({
+        country: "US",
+        currency: "USD",
+        routing_number: $("#bank-routing-number").val(),
+        account_number: $("#bank-account-number").val(),
+        account_holder_name: $("#bank-account-holder-name").val(),
+        account_holder_type: "individual"
+      }, stripeResponseHandler);
+
+      // Prevent the form from submitting with the default action.
+      return false;
+    });
+  });
+</script>
+
+<% if current_user.valid_bank_token? %>
+  <h1>You have a valid bank account on file.</h1>
+  <p>At some point you'll be able to update it, or delete it, but not yet.</p>
+<% else %>
+
+  <h1>Add Your Bank Payment Information</h1>
+
+  <%= form_tag users_bank_payment_path, id: "payment-form" do %>
+    <p class="payment-errors alert" style="display: none;"></p>
+
+    <div>
+      <label for="bank-account-number">Account Number</label>
+      <input id="bank-account-number" type="text" data-stripe="account-number" maxlength="20" autofocus="true" />
+    </div>
+
+    <div>
+      <label for="bank-routing-number">Routing Number</label>
+      <input id="bank-routing-number" type="text" data-stripe="routing-number" maxlength="20" />
+    </div>
+
+    <div>
+      <label for="bank-account-holder-name">Account Holder Name</label>
+      <input id="bank-account-holder-name" type="text" data-stripe="account-holder-name" maxlength="40" />
+    </div>
+
+    <%= submit_tag "Save", class: "button button-primary", data: { disable_with: "Saving..." } %>
+  <% end %>
+
+<% end %>

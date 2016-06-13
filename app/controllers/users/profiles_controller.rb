@@ -38,11 +38,11 @@ module Users
       agent_type = current_user.profile.agent_type
       if agent_type == "buyers_agent" && !current_user.valid_credit_card?
         return users_cc_payment_path
-      elsif agent_type == "sellers_agent" && !current_user.valid_bank_account?
+      elsif agent_type == "sellers_agent" && !current_user.valid_bank_token?
         return users_bank_payment_path
       elsif agent_type == "both" && !current_user.valid_credit_card?
         return users_cc_payment_path
-      elsif agent_type == "both" && !current_user.valid_bank_account?
+      elsif agent_type == "both" && !current_user.valid_bank_token?
         return users_bank_payment_path
       else
         return edit_users_profile_path

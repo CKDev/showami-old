@@ -16,8 +16,8 @@ module Users
       redirect_to users_root_path, notice: "Thank you for adding your payment information, you may now schedule showings."
     rescue => e
       Notification::ErrorReporter.send(e)
-      Rails.logger.tagged("Stripe Create Payment") { Rails.logger.error "Error creating subscription for #{current_user.email}: #{e.message}" }
-      redirect_to users_root_path, alert: "An error occurred creating your subscription, we're looking into the situation."
+      Rails.logger.tagged("Stripe Create Payment") { Rails.logger.error "Error creating payment information for #{current_user.email}: #{e.message}" }
+      redirect_to users_root_path, alert: "An error occurred creating your payment information, we're looking into the situation."
     end
 
   end

@@ -78,6 +78,12 @@ module Users
         expect(@showing.showing_agent).to eq @showing_agent
       end
 
+      it "prevents the user from accepting if they don't have bank_info on record" do
+        @showing_agent.profile.update(bank_token: "")
+        post :accept, id: @showing.id
+        expect(response).to redirect_to users_bank_payment_path
+      end
+
     end
 
   end

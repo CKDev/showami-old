@@ -1,19 +1,23 @@
 <div class="status">
-  <% if showing.status == "unassigned" %>
-    <div class="three columns">
-      <span class="status light-blue">Not Assigned</span>
-    </div>
-    <div class="nine columns">
-      <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
-        <%= f.submit "Accept" %>
-      <% end %>
-    </div>
+  <% if current_user.valid_bank_token? %>
+    <% if showing.status == "unassigned" %>
+      <div class="three columns">
+        <span class="status light-blue">Not Assigned</span>
+      </div>
+      <div class="nine columns">
+        <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
+          <%= f.submit "Accept" %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="three columns">
+        <span class="status red">Reserved</span>
+      </div>
+      <div class="nine columns">
+        &nbsp;
+      </div>
+    <% end %>
   <% else %>
-    <div class="three columns">
-      <span class="status red">Reserved</span>
-    </div>
-    <div class="nine columns">
-      &nbsp;
-    </div>
+    <%= link_to "Add you bank information to be able to accept showings", users_bank_payment_path %>
   <% end %>
 </div>
