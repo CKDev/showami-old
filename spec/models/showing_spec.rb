@@ -33,6 +33,11 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
+    it "should require an MLS number" do
+      @showing = FactoryGirl.build(:showing, mls: "")
+      expect(@showing.valid?).to be false
+    end
+
     it "should require a buyer name" do
       @showing = FactoryGirl.build(:showing, buyer_name: "")
       expect(@showing.valid?).to be false

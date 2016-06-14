@@ -21,9 +21,7 @@
   </div>
 
   <div>
-    <%= f.label :mls do %>
-      MLS # <span class="note">(optional)</span>
-    <% end %>
+    <%= f.label :mls, "MLS #", class: "required" %>
     <%= f.text_field :mls %>
   </div>
 

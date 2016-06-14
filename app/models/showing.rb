@@ -11,6 +11,7 @@ class Showing < ActiveRecord::Base
   enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :no_show]
 
   validates :showing_at, presence: true
+  validates :mls, presence: true
   validates :buyer_name, presence: true
   validates :buyer_phone, presence: true
   validates :buyer_type, presence: true

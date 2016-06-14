@@ -57,6 +57,8 @@ em {
 .required:after {
   content: "*";
   font-weight: bold;
+  color: $red;
+  padding-left: 5px;
 }
 
 .left-or-right {
