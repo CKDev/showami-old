@@ -60,4 +60,16 @@ class User < ActiveRecord::Base
     blocked
   end
 
+  def buyers_agent?
+    profile.agent_type == "buyers_agent"
+  end
+
+  def sellers_agent?
+    profile.agent_type == "sellers_agent"
+  end
+
+  def both_agent_types?
+    profile.agent_type == "both"
+  end
+
 end

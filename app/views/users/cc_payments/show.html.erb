@@ -64,3 +64,7 @@
   <% end %>
 
 <% end %>
+
+<% if current_user.sellers_agent? || current_user.both_agent_types? %>
+  <%= link_to "You may also update your bank details.", users_bank_payment_path %>
+<% end %>

@@ -71,3 +71,7 @@
   <% end %>
 
 <% end %>
+
+<% if current_user.buyers_agent? || current_user.both_agent_types? %>
+  <%= link_to "You may also update your credit card details.", users_cc_payment_path %>
+<% end %>
