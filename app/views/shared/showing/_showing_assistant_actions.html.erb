@@ -5,47 +5,47 @@
       <%= f.submit "Accept" %>
     <% end %>
   <% elsif showing.status == "unconfirmed" %>
-    <div class="three columns">
+    <div class="four columns">
       <%= form_for showing, url: confirm_users_showing_appointment_path(showing), method: :post do |f| %>
         <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
         <%= f.submit "Confirm" %>
       <% end %>
     </div>
-    <div class="nine columns">
+    <div class="eight columns">
       <%= form_for showing, url: cancel_users_showing_appointment_path(showing), method: :post do |f| %>
         <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
         <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
       <% end %>
     </div>
   <% elsif showing.status == "confirmed" %>
-    <div class="three columns">
-      <span class="status orange">Confirmed</span>
+    <div class="four columns">
+      <p class="status orange">Confirmed</p>
     </div>
-    <div class="nine columns">
+    <div class="eight columns">
       <%= form_for showing, url: cancel_users_showing_appointment_path(showing), method: :post do |f| %>
         <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
         <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
       <% end %>
     </div>
   <% elsif showing.status == "cancelled" %>
-    <div class="three columns">
+    <div class="four columns">
+      <p class="status red">Cancelled</p>
+    </div>
+    <div class="eight columns">
       &nbsp;
     </div>
-    <div class="nine columns">
-      <button class="button-alert">Cancelled</button>
-    </div>
   <% elsif showing.status == "completed" %>
-    <div class="three columns">
-      <span class="status light-blue">Completed</span>
+    <div class="four columns">
+      <p class="status light-blue">Completed</p>
     </div>
-    <div class="nine columns">
+    <div class="eight columns">
       &nbsp;
     </div>
   <% elsif showing.status == "no_show" %>
-    <div class="three columns">
-      <span class="status orange">No Show</span>
+    <div class="four columns">
+      <p class="status orange">No Show</p>
     </div>
-    <div class="nine columns">
+    <div class="eight columns">
       &nbsp;
     </div>
   <% end %>

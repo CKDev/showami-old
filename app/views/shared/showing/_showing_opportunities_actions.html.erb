@@ -1,25 +1,25 @@
 <div class="status">
   <% if current_user.can_accept_showing? %>
     <% if showing.status == "unassigned" %>
-      <div class="three columns">
-        <span class="status light-blue">Not Assigned</span>
+      <div class="four columns">
+        <p class="status light-blue">Not Assigned</p>
       </div>
-      <div class="nine columns">
+      <div class="eight columns">
         <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
           <%= f.submit "Accept" %>
         <% end %>
       </div>
     <% else %>
-      <div class="three columns">
-        <span class="status red">Reserved</span>
+      <div class="four columns">
+        <p class="status red">Reserved</p>
       </div>
-      <div class="nine columns">
+      <div class="eight columns">
         &nbsp;
       </div>
     <% end %>
   <% else %>
     <% if current_user.blocked? %>
-      <p class="red">
+      <p class="status red">
         Your account has been blocked, you cannot accept showings.  Please contact us if you feel this is in error.
       </p>
     <% elsif !current_user.valid_bank_token? %>

@@ -1,8 +1,5 @@
 <div class="buyer-info">
   <div class="name">Buyer: <%= showing.buyer_name %></div>
-  <div class="row">
-    <div class="six columns phone"><%= showing.buyer_phone %></div>
-    <%# TODO: this could throw an error if missing data, move to model method. %>
-    <div class="six columns buyer-type"><%= showing.buyer_type.titleize %></div>
-  </div>
+  <div class="phone"><%= showing.buyer_phone %></div>
+  <div class="buyer-type"><%= showing.buyer_type.titleize %></div>
 </div>
