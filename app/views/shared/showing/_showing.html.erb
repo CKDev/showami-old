@@ -12,9 +12,10 @@
       <% if showing.status.in? %w(unconfirmed confirmed completed) %>
         <%= render partial: "shared/showing/showing_agent_info", locals: { showing: showing } %>
       <% end %>
-      <p class="note">
-        <%= showing.notes %>
-      </p>
+      <% if showing.notes.present? %>
+        <%# <h5>Notes</h5> %>
+        <p class="note"><%= showing.notes %></p>
+      <% end %>
       <% if buyers_requests_route? %>
         <%= render partial: "shared/showing/buyers_agent_actions", locals: { showing: showing } %>
       <% elsif showing_appointments_route? %>

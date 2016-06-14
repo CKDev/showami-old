@@ -14,3 +14,7 @@ set :output, "log/cron.log"
 every 1.minute do
   runner "Showing.update_completed"
 end
+
+every 1.minute do
+  runner "Showing.update_expired"
+end

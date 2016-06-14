@@ -8,7 +8,7 @@ class Showing < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
 
   enum buyer_type: [:individual, :couple, :family]
-  enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :no_show]
+  enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show]
 
   validates :showing_at, presence: true
   validates :mls, presence: true
@@ -28,6 +28,7 @@ class Showing < ActiveRecord::Base
   scope :in_future, -> { where("showing_at > ?", Time.zone.now) }
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
+  scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
 
   # Note: This method was copied right from the Geocoder source (within_bounding_box)
   # so that I could apply it to the Showing model instead of having to run it on
@@ -54,7 +55,6 @@ class Showing < ActiveRecord::Base
   end
 
   def valid_status_change?
-    # [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :no_show]
     if status_changed?
       if status_was == "unassigned"
         check_unassigned_state_change
@@ -66,6 +66,8 @@ class Showing < ActiveRecord::Base
         check_completed_state_change
       elsif status_was == "cancelled"
         check_cancelled_state_change
+      elsif status_was == "expired"
+        check_expired_state_change
       elsif status_was == "no_show"
         check_no_show_state_change
       end
@@ -96,7 +98,18 @@ class Showing < ActiveRecord::Base
   def self.update_completed
     Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
     updated_records = Showing.completed.update_all(status: statuses[:completed])
-    Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{updated_records} as completed." }
+    if updated_records > 0
+      Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{updated_records} as completed." }
+    end
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.update_expired
+    Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Checking for expired showings..." }
+    updated_records = Showing.expired.update_all(status: statuses[:expired])
+    if updated_records > 0
+      Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Marked #{updated_records} as expired." }
+    end
   end
 
   def no_show_eligible?
@@ -133,6 +146,10 @@ class Showing < ActiveRecord::Base
 
   def check_cancelled_state_change
     errors.add(:status, "cannot change status, once cancelled")
+  end
+
+  def check_expired_state_change
+    errors.add(:status, "cannot change status, once expired")
   end
 
   def check_no_show_state_change
