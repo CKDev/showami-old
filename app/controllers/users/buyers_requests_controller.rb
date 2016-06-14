@@ -3,6 +3,7 @@ module Users
 
     before_action :verify_valid_profile
     before_action :verify_credit_card_on_file, only: [:new, :create]
+    before_action :verify_not_blocked, only: [:new, :create]
 
     def index
       @showings = current_user.showings
@@ -38,9 +39,22 @@ module Users
     end
 
     def cancel
+      # TODO: Security around params[:id] ??
       @showing = Showing.find(params[:id])
       @showing.update(status: "cancelled")
       redirect_to users_buyers_requests_path, notice: "Showing cancelled."
+    end
+
+    def no_show
+      # TODO: Security around params[:id] ??
+      @showing = Showing.find(params[:id])
+      if @showing.update(status: "no_show")
+        @showing.showing_agent.update(blocked: true)
+        ShowingAgentBlockedNotificationWorker.perform_async(@showing.id)
+        redirect_to users_buyers_requests_path, notice: "Showing marked as a 'no-show'."
+      else
+        redirect_to users_buyers_requests_path, alert: "Unable to mark showing as a 'no show'.  Has it been more than 24 hours since the showing time?"
+      end
     end
 
     private

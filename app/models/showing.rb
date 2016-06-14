@@ -8,7 +8,7 @@ class Showing < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
 
   enum buyer_type: [:individual, :couple, :family]
-  enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled]
+  enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :no_show]
 
   validates :showing_at, presence: true
   validates :buyer_name, presence: true
@@ -53,21 +53,20 @@ class Showing < ActiveRecord::Base
   end
 
   def valid_status_change?
+    # [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :no_show]
     if status_changed?
-      if status_was == "unassigned" && status == "confirmed"
-        errors.add(:status, "cannot change from unassigned to confirmed, it must be unconfirmed first")
-      elsif status_was == "unassigned" && status == "completed"
-        errors.add(:status, "cannot change from unassigned to completed, it must be unconfirmed first")
-      elsif status_was == "unconfirmed" && status == "unassigned"
-        errors.add(:status, "cannot change from unconfirmed to unassigned")
-      elsif status_was == "unconfirmed" && status == "completed"
-        errors.add(:status, "cannot change from unconfirmed to completed, it must be confirmed first")
-      elsif status_was == "confirmed" && status == "unconfirmed"
-        errors.add(:status, "cannot change from confirmed to unconfirmed")
+      if status_was == "unassigned"
+        check_unassigned_state_change
+      elsif status_was == "unconfirmed"
+        check_unconfirmed_state_change
+      elsif status_was == "confirmed"
+        check_confirmed_state_change
       elsif status_was == "completed"
-        errors.add(:status, "cannot change status, once completed")
+        check_completed_state_change
       elsif status_was == "cancelled"
-        errors.add(:status, "cannot change status, once cancelled")
+        check_cancelled_state_change
+      elsif status_was == "no_show"
+        check_no_show_state_change
       end
     end
   end
@@ -97,6 +96,46 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
     updated_records = Showing.completed.update_all(status: statuses[:completed])
     Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{updated_records} as completed." }
+  end
+
+  def no_show_eligible?
+    return false if status != "completed"
+    return false if Time.zone.now > showing_at + 24.hours
+    true
+  end
+
+  private
+
+  def check_unassigned_state_change
+    errors.add(:status, "cannot change from unassigned to confirmed, it must be unconfirmed first") if status == "confirmed"
+    errors.add(:status, "cannot change from unassigned to completed, it must be unconfirmed first") if status == "completed"
+  end
+
+  def check_unconfirmed_state_change
+    errors.add(:status, "cannot change from unconfirmed to unassigned") if status == "unassigned"
+    errors.add(:status, "cannot change from unconfirmed to completed, it must be confirmed first") if status == "completed"
+  end
+
+  def check_confirmed_state_change
+    errors.add(:status, "cannot change from confirmed to unconfirmed") if status == "unconfirmed"
+  end
+
+  def check_completed_state_change
+    if status == "no_show"
+      if Time.zone.now > showing_at + 24.hours
+        errors.add(:status, "can only set as a 'no show' for 24 hours after the showing time")
+      end
+    else
+      errors.add(:status, "cannot change status, once completed")
+    end
+  end
+
+  def check_cancelled_state_change
+    errors.add(:status, "cannot change status, once cancelled")
+  end
+
+  def check_no_show_state_change
+    errors.add(:status, "cannot change status, once in no-show")
   end
 
 end

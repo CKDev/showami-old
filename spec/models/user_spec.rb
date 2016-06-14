@@ -86,7 +86,6 @@ describe User do
     it "should allow a user to create a showing if their profile is valid, they have a cc token on file, and they aren't blocked" do
       @user = FactoryGirl.create(:user_with_valid_profile)
       @user.profile.update(cc_token: "something")
-      # TODO: when ready, add in the blocked check
       expect(@user.can_create_showing?).to be true
     end
 
@@ -105,13 +104,18 @@ describe User do
       expect(@user.can_create_showing?).to be false
     end
 
+    it "should not allow a user to create a showing if they have been marked as blocked" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.update(blocked: true)
+      expect(@user.can_create_showing?).to be false
+    end
+
   end
 
   context "#can_accept_showing?" do
 
     it "should allow a user to accept a showing if their profile is valid, they have a valid bank transfer token on file, and they aren't blocked" do
       @user = FactoryGirl.create(:user_with_valid_profile)
-      # TODO: when ready, add in the bank transfer and  blocked check
       expect(@user.can_accept_showing?).to be true
     end
 
@@ -126,6 +130,12 @@ describe User do
     it "should not allow a user to accept a showing if they don't have a bank transfer token" do
       @user = FactoryGirl.create(:user_with_valid_profile)
       @user.profile.update(bank_token: nil)
+      expect(@user.can_accept_showing?).to be false
+    end
+
+    it "should not allow a user to accept a showing if they have been marked as blocked" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.update(blocked: true)
       expect(@user.can_accept_showing?).to be false
     end
 

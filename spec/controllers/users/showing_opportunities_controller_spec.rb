@@ -52,6 +52,7 @@ module Users
         @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
         @showing = FactoryGirl.create(:showing)
         @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+        @showing_agent.profile.update(agent_type: "sellers_agent")
         @buyers_agent.showings << @showing
         sign_in @showing_agent
       end
@@ -81,7 +82,17 @@ module Users
       it "prevents the user from accepting if they don't have bank_info on record" do
         @showing_agent.profile.update(bank_token: "")
         post :accept, id: @showing.id
+        @showing.reload
+        expect(@showing.status).to eq "unassigned"
         expect(response).to redirect_to users_bank_payment_path
+      end
+
+      it "prevents the user from accepting if they are blocked" do
+        @showing_agent.update(blocked: true)
+        post :accept, id: @showing.id
+        @showing.reload
+        expect(@showing.status).to eq "unassigned"
+        expect(response).to redirect_to users_showing_appointments_path
       end
 
     end

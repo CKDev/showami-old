@@ -3,6 +3,7 @@ module Users
 
     before_action :verify_valid_profile
     before_action :verify_bank_token_on_file, only: [:accept]
+    before_action :verify_not_blocked, only: [:accept]
 
     def index
       @showings = Showing.available(current_user.profile.geo_box_coords).paginate(page: params[:page], per_page: 5)

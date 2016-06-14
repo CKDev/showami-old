@@ -19,5 +19,11 @@ module Users
         redirect_to users_bank_payment_path, notice: "Please fill out your bank information before continuing."
       end
     end
+
+    def verify_not_blocked
+      if current_user.blocked?
+        redirect_to after_sign_in_path_for(current_user), alert: "Your user account has been blocked, please contact us if you feel this is in error."
+      end
+    end
   end
 end

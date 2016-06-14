@@ -37,13 +37,15 @@ class User < ActiveRecord::Base
   end
 
   # For showing agents - need a bank account on file
+  # TODO: where to use this?  It's not currently used.  Perhaps in the view logic.
   def can_accept_showing?
-    profile.valid? && valid_bank_token? # TODO: && !blocked?
+    profile.valid? && valid_bank_token? && !blocked?
   end
 
   # For buyer's agents - need a credit card on file
+  # TODO: where to use this?  It's not currently used.  Perhaps in the view logic.
   def can_create_showing?
-    profile.valid? && valid_credit_card? # TODO: && !blocked?
+    profile.valid? && valid_credit_card? && !blocked?
   end
 
   def valid_credit_card?
@@ -52,6 +54,10 @@ class User < ActiveRecord::Base
 
   def valid_bank_token?
     profile.bank_token.present?
+  end
+
+  def blocked?
+    blocked
   end
 
 end

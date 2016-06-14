@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe ShowingCancelledNotificationWorker do
 
-  it "should call the sms noticiation class with the correct parameters" do
+  it "should call the sms notification class with the correct parameters" do
     @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
     @showing = FactoryGirl.create(:showing)
     @showing_agent = FactoryGirl.create(:user_with_valid_profile)

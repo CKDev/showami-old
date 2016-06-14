@@ -1,5 +1,5 @@
 <div class="status">
-  <% if current_user.valid_bank_token? %>
+  <% if current_user.can_accept_showing? %>
     <% if showing.status == "unassigned" %>
       <div class="three columns">
         <span class="status light-blue">Not Assigned</span>
@@ -18,6 +18,12 @@
       </div>
     <% end %>
   <% else %>
-    <%= link_to "Add you bank information to be able to accept showings", users_bank_payment_path %>
+    <% if current_user.blocked? %>
+      <p class="red">
+        Your account has been blocked, you cannot accept showings.  Please contact us if you feel this is in error.
+      </p>
+    <% elsif !current_user.valid_bank_token? %>
+      <%= link_to "Add your bank information to be able to accept showings", users_bank_payment_path %>
+    <% end %>
   <% end %>
 </div>

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :buyers_requests, except: [:edit, :update, :delete] do
       member do
         post :cancel
+        post :no_show
       end
     end
     resources :showing_appointments, only: [:index] do

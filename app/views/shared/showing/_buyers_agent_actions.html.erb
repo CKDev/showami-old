@@ -41,7 +41,20 @@
       <span class="status light-blue">Completed</span>
     </div>
     <div class="nine columns">
-      <button class="button-secondary">No Show</button>
+      <% if showing.no_show_eligible? %>
+        <%= form_for showing, url: no_show_users_buyers_request_path(showing), method: :post do |f| %>
+          <%= f.submit "No Show", class: "button-secondary", data: { confirm: "Are you sure you want to mark this showing as a no-show?" } %>
+        <% end %>
+      <% else %>
+        &nbsp;
+      <% end %>
+    </div>
+  <% elsif showing.status == "no_show" %>
+    <div class="three columns">
+      <span class="status orange">No Show</span>
+    </div>
+    <div class="nine columns">
+      &nbsp;
     </div>
   <% end %>
 </div>

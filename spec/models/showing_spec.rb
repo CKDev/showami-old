@@ -48,8 +48,8 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
-    context "valid status changes" do
-      # enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled]
+    context "#valid_status_change?" do
+      # enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :no_show]
       it "should initially be in unassigned status" do
         @showing = FactoryGirl.create(:showing)
         expect(@showing.status).to eq "unassigned"
@@ -136,7 +136,7 @@ describe Showing do
         expect(@showing.valid?).to be true
       end
 
-      it "should not allow a showing to change status once in completed" do
+      it "should not allow a showing to change status once in completed (except to no_show)" do
         @showing = FactoryGirl.create(:showing)
         @showing.status = "completed"
         @showing.save(validate: false)
@@ -145,6 +145,23 @@ describe Showing do
           @showing.update(status: status)
           expect(@showing.valid?).to be false
         end
+      end
+
+      it "should allow a showing to go from completed to no_show" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "completed"
+        @showing.save(validate: false)
+        @showing.update(status: "no_show")
+        expect(@showing.valid?).to be true
+      end
+
+      it "should only allow a showing to go from completed to no_show for 24 hours" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "completed"
+        @showing.showing_at = Time.zone.now - 24.hours - 1.minute
+        @showing.save(validate: false)
+        @showing.update(status: "no_show")
+        expect(@showing.valid?).to be false
       end
 
       it "should not allow a showing to change status once in cancelled" do
@@ -156,6 +173,30 @@ describe Showing do
           @showing.update(status: status)
           expect(@showing.valid?).to be false
         end
+      end
+
+      it "should not allow a showing to go from completed to anything other than no_show" do
+        @showing = FactoryGirl.create(:showing)
+        ["unassigned", "unconfirmed", "confirmed", "cancelled"].each do |status|
+          @showing.status = "completed"
+          @showing.save(validate: false)
+          @showing.update(status: status)
+          expect(@showing.valid?).to be false
+        end
+        @showing.status = "completed"
+        @showing.save(validate: false)
+        @showing.update(status: "no_show")
+        expect(@showing.valid?).to be true
+      end
+    end
+
+    it "should not allow a showing to change status from no_show" do
+      @showing = FactoryGirl.create(:showing)
+      ["unassigned", "unconfirmed", "confirmed", "completed", "cancelled"].each do |status|
+        @showing.status = "no_show"
+        @showing.save(validate: false)
+        @showing.update(status: status)
+        expect(@showing.valid?).to be false
       end
     end
 
@@ -326,6 +367,33 @@ describe Showing do
         expect(@showing6.status).to eq "cancelled"
       end
 
+    end
+
+  end
+
+  context "#no_show_eligible?" do
+
+    it "should return true if it's in completed status and it is still within the 24 hour window" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "completed"
+      @showing.showing_at = Time.zone.now
+      @showing.save(validate: false)
+
+      Timecop.freeze(Time.zone.now + 23.hours + 59.minutes) do
+        expect(@showing.no_show_eligible?).to be true
+      end
+
+      Timecop.freeze(Time.zone.now + 24.hours + 1.minute) do
+        expect(@showing.no_show_eligible?).to be false
+      end
+    end
+
+    it "should return false if it's not in completed status" do
+      @showing = FactoryGirl.create(:showing)
+      @showing.status = "cancelled"
+      @showing.showing_at = Time.zone.now
+      @showing.save(validate: false)
+      expect(@showing.no_show_eligible?).to be false
     end
 
   end

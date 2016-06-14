@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe ShowingNotificationWorker do
 
-  it "should call the sms noticiation class with the correct parameters" do
+  it "should call the sms notification class with the correct parameters" do
     @user = FactoryGirl.create(:user_with_valid_profile)
     @showing = FactoryGirl.create(:showing)
     to = @user.profile.phone1

@@ -99,10 +99,20 @@ module Users
         expect(response).to render_template :new
       end
 
-      it "prevents a new showing to be created without a valid credit card on file" do
+      it "prevents a new showing from being created without a valid credit card on file" do
         @user.profile.update(cc_token: "")
-        post :create, showing: valid_attributes
+        expect do
+          post :create, showing: valid_attributes
+        end.not_to change { Showing.count }
         expect(response).to redirect_to users_cc_payment_path
+      end
+
+      it "prevents a new showing from being created when the buyer's agent is blocked" do
+        @user.update(blocked: true)
+        expect do
+          post :create, showing: valid_attributes
+        end.not_to change { Showing.count }
+        expect(response).to redirect_to users_buyers_requests_path
       end
 
     end
@@ -155,6 +165,14 @@ module Users
         expect(response).to redirect_to users_cc_payment_path
       end
 
+      it "prevents a new showing from being created when the buyer's agent is blocked" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @user.update(blocked: true)
+        sign_in @user
+        get :new
+        expect(response).to redirect_to users_buyers_requests_path
+      end
+
     end
 
     describe "GET #show" do
@@ -188,6 +206,49 @@ module Users
         post :cancel, id: @showing.id
         showing = assigns(:showing)
         expect(showing.status).to eq "cancelled"
+      end
+
+    end
+
+    describe "POST #no_show" do
+
+      before :each do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing, showing_agent: @showing_agent)
+        @showing.status = "completed"
+        @showing.save(validate: false)
+        sign_in @user
+      end
+
+      it "marks the showing as a 'no show'" do
+        post :no_show, id: @showing.id
+        @showing.reload
+        expect(@showing.status).to eq "no_show"
+      end
+
+      it "can only mark a showing as a 'no show' for 24 hours after the showing time" do
+        @showing.showing_at = Time.zone.now
+        @showing.save(validate: false)
+
+        Timecop.freeze(Time.zone.now + 24.hours + 1.minute) do
+          post :no_show, id: @showing.id
+          showing = assigns(:showing)
+          showing.reload
+          expect(showing.errors.messages.count).to eq 1
+          expect(showing.status).to eq "completed"
+        end
+      end
+
+      it "sets the blocked flag on the showing agent" do
+        post :no_show, id: @showing.id
+        @showing_agent.reload
+        expect(@showing_agent.blocked).to be true
+      end
+
+      it "sends an SMS to the showing agent that they are blocked from accepting showings" do
+        ShowingAgentBlockedNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        post :no_show, id: @showing.id
       end
 
     end
