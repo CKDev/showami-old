@@ -11,10 +11,19 @@ feature "A showing agent can perform actions on a showing" do
   scenario "can accept an available showing by visiting the show page (from SMS link) and clicking the accept button" do
     visit users_showing_opportunity_path(id: @showing.id)
     click_button "Accept"
+
     expect(current_path).to eq users_showing_appointments_path
     expect(page).to have_content "Showing accepted"
     within(".showing") do
       expect(page).to have_content @showing.address
+      expect(page).to have_button "Confirm"
+      expect(page).to have_button "Cancel"
+    end
+
+    visit users_showing_opportunity_path(@showing)
+    within(".showing") do
+      expect(page).to have_content @showing.address
+      expect(page).to have_content "Unconfirmed"
     end
   end
 
@@ -27,6 +36,26 @@ feature "A showing agent can perform actions on a showing" do
     within(".showing") do
       expect(page).to have_content @showing.address
       expect(page).to have_content "Confirmed"
+    end
+  end
+
+  scenario "will see the showing as reserved on the showing page if it has been claimed by someone else" do
+    @other_user = FactoryGirl.create(:user_with_valid_profile)
+    @showing.update(showing_agent: @other_user, status: "unconfirmed")
+
+    visit users_showing_opportunity_path(@showing)
+    within(".showing") do
+      expect(page).to have_content @showing.address
+      expect(page).to have_content "Reserved"
+    end
+  end
+
+  scenario "will see the showing as cancelled on the showing page if it has since been canelled" do
+    @showing.update(status: "cancelled")
+    visit users_showing_opportunity_path(@showing)
+    within(".showing") do
+      expect(page).to have_content @showing.address
+      expect(page).to have_content "Cancelled"
     end
   end
 

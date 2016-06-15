@@ -1,5 +1,6 @@
 <div class="status">
   <% if current_user.can_accept_showing? %>
+    <%# :unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show %>
     <% if showing.status == "unassigned" %>
       <div class="four columns">
         <p class="status light-blue">Not Assigned</p>
@@ -9,9 +10,46 @@
           <%= f.submit "Accept" %>
         <% end %>
       </div>
-    <% else %>
+    <% elsif showing.status == "unconfirmed" %>
+      <% status_str = showing.showing_agent == current_user ? "Unconfirmed" : "Reserved" %>
       <div class="four columns">
-        <p class="status red">Reserved</p>
+        <p class="status orange"><%= status_str %></p>
+      </div>
+      <div class="eight columns">
+        &nbsp;
+      </div>
+    <% elsif showing.status == "confirmed" %>
+      <% status_str = showing.showing_agent == current_user ? "Confirmed" : "Reserved" %>
+      <div class="four columns">
+        <p class="status orange"><%= status_str %></p>
+      </div>
+      <div class="eight columns">
+        &nbsp;
+      </div>
+    <% elsif showing.status == "completed" %>
+      <div class="four columns">
+        <p class="status light-blue">Completed</p>
+      </div>
+      <div class="eight columns">
+        &nbsp;
+      </div>
+    <% elsif showing.status == "cancelled" %>
+      <div class="four columns">
+        <p class="status red">Cancelled</p>
+      </div>
+      <div class="eight columns">
+        &nbsp;
+      </div>
+    <% elsif showing.status == "expired" %>
+      <div class="four columns">
+        <p class="status orange">Expired</p>
+      </div>
+      <div class="eight columns">
+        &nbsp;
+      </div>
+    <% elsif showing.status == "no_show" %>
+      <div class="four columns">
+        <p class="status red">No Show</p>
       </div>
       <div class="eight columns">
         &nbsp;
