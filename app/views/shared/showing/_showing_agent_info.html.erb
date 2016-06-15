@@ -5,7 +5,7 @@
     </div>
     <div class="eight columns">
       <div class="agent-name">Agent: <%= showing.showing_agent.full_name %></div>
-      <div class="agent-phone">Phone: <%= showing.showing_agent.profile.phone1 %></div>
+      <div class="agent-phone">Phone: <%= tel_to number_to_phone(showing.showing_agent.profile.phone1, area_code: true) %></div>
       <div class="agent-email">Email: <%= mail_to showing.showing_agent.email %></div>
     </div>
   </div>

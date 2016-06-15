@@ -14,8 +14,8 @@ FactoryGirl.define do
       after(:create) do |user|
         user.profile.first_name = "Alejandro"
         user.profile.last_name = "Brinkster"
-        user.profile.phone1 = "555 123 1234"
-        user.profile.phone2 = "555 987 1234"
+        user.profile.phone1 = "5551231234"
+        user.profile.phone2 = "5559871234"
         user.profile.company = "Showing Services, LLC"
         user.profile.agent_id = "1234 1234"
         user.profile.agent_type = 2

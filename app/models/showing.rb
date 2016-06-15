@@ -22,6 +22,12 @@ class Showing < ActiveRecord::Base
   validate :showing_agent_changed?
   validates_associated :address
 
+  validates_each :buyer_phone do |record, attr, value|
+    if value.present?
+      record.errors.add(attr, "must have exactly 10 digits") unless value.gsub(/\D/, "").length == 10
+    end
+  end
+
   accepts_nested_attributes_for :address
 
   before_save :verify_geocoding
