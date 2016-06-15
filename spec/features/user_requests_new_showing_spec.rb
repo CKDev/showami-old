@@ -36,4 +36,12 @@ feature "A buyers agent" do
     expect(page).to have_content "600 S Broadway"
   end
 
+  scenario "can click link on 'my requests' page to create a new showing" do
+    visit users_buyers_requests_path
+    within("main") do
+      first(:link, "New Request").click
+    end
+    expect(current_path).to eq new_users_buyers_request_path
+  end
+
 end
