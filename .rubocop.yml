@@ -103,6 +103,9 @@ Rails/Output:
   Exclude:
     - "db/seeds.rb"
 
+Style/RedundantSelf:
+  Enabled: false
+
 Style/PercentLiteralDelimiters:
   Exclude:
 
