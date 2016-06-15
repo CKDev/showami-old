@@ -9,7 +9,6 @@ class User < ActiveRecord::Base
 
   after_create :add_profile
 
-  delegate :greeting, to: :profile
   delegate :full_name, to: :profile
 
   scope :in_bounding_box, ->(lat, long) { joins(:profile).where("geo_box::box @> point '(#{long},#{lat})'") }

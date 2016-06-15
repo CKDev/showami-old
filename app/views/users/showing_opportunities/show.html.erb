@@ -1,4 +1,4 @@
-<%= content_for(:subnav) { render "shared/users/subnav_buyers_requests" } %>
+<%= content_for(:subnav) { render "shared/users/subnav_showing_assistant" } %>
 <h2>Showing Details</h2>
 <%= link_to "<< See the list of all Showing Opportunities", users_showing_opportunities_path %>
 <%= render partial: "shared/showing/showing", locals: { showing: @showing } %>

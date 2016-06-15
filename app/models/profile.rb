@@ -22,10 +22,6 @@ class Profile < ActiveRecord::Base
 
   enum agent_type: [:buyers_agent, :sellers_agent, :both]
 
-  def greeting
-    first_name.present? ? "Hi, #{first_name}!" : "Hi, User!"
-  end
-
   def full_name
     [first_name, last_name].join(" ").strip
   end

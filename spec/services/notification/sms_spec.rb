@@ -11,7 +11,7 @@ module Notification
       Notification::SMS.new(to, body).send
     end
 
-    it "properly logs an SMS to a valid phone number" do
+    it "properly logs an SMS to an invalid phone number" do
       to = "+15005550001"
       body = "SMS body"
       Rails.logger.expects(:info).never

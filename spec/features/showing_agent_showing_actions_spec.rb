@@ -27,6 +27,25 @@ feature "A showing agent can perform actions on a showing" do
     end
   end
 
+  scenario "cannot accept an available showing if they do not have a bank token" do
+    @user.profile.update(bank_token: "")
+    visit users_showing_opportunity_path(id: @showing.id)
+    expect(page).to have_content "Add your bank information to be able to accept showings"
+
+    visit users_showing_opportunities_path
+    expect(page).to have_content "Add your bank information to be able to accept showings"
+  end
+
+  scenario "is not shown the bank CTA if the showing isn't available" do
+    @user.profile.update(bank_token: "")
+    @other_user = FactoryGirl.create(:user_with_valid_profile)
+    @showing.update(status: "unconfirmed", showing_agent: @other_user)
+    visit users_showing_opportunity_path(id: @showing.id)
+    within(".showing") do
+      expect(page).to have_content "Assigned"
+    end
+  end
+
   scenario "can confirm an accepted (unconfirmed) showing by visiting their showings page and clicking the confirm button" do
     @showing.update(showing_agent: @user, status: "unconfirmed")
     visit users_showing_appointments_path

@@ -99,20 +99,6 @@ describe Profile do
 
   end
 
-  context "#greeting" do
-
-    it "should print the user's first name, if known" do
-      profile = Profile.new(first_name: "Alejandro")
-      expect(profile.greeting).to eq "Hi, Alejandro!"
-    end
-
-    it "should print a generic greeting, if the user's name isn't known" do
-      profile = Profile.new(first_name: "Alejandro")
-      expect(profile.greeting).to eq "Hi, Alejandro!"
-    end
-
-  end
-
   context "#full_name" do
 
     it "should print the user's full name" do

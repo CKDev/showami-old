@@ -167,4 +167,13 @@ describe User do
 
   end
 
+  context "#to_s" do
+
+    it "should return the name and email of a user" do
+      @user = FactoryGirl.create(:user_with_valid_profile, email: "a@a.com")
+      expect("#{@user}").to eq "Alejandro Brinkster (a@a.com)"
+    end
+
+  end
+
 end

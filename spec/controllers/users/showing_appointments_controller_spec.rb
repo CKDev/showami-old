@@ -39,7 +39,7 @@ module Users
         sign_in @user
         get :index
         showings = assigns(:showings)
-        puts showings # TODO: not sure why I have to access showings before it will be what I expect???
+        showings << Showing.new # Accessing the array causes the array to be in the final order, I don't understand (???)
         expect(showings.first.showing_at).to eq @showing2.showing_at
         expect(showings.second.showing_at).to eq @showing3.showing_at
         expect(showings.third.showing_at).to eq @showing1.showing_at

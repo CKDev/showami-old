@@ -61,7 +61,11 @@
         Your account has been blocked, you cannot accept showings.  Please contact us if you feel this is in error.
       </p>
     <% elsif !current_user.valid_bank_token? %>
-      <%= link_to "Add your bank information to be able to accept showings", users_bank_payment_path %>
+      <% if showing.status == "unassigned" %>
+        <%= link_to "Add your bank information to be able to accept showings", users_bank_payment_path %>
+      <% else %>
+        <p class="status orange">Assigned</p>
+      <% end %>
     <% end %>
   <% end %>
 </div>
