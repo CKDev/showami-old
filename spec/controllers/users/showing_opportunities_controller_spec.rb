@@ -79,6 +79,14 @@ module Users
         expect(@showing.showing_agent).to eq @showing_agent
       end
 
+      it "should not allow marking an accepted showing (unconfirmed) as accepted again" do
+        @showing.status = "unconfirmed"
+        @showing.save(validate: false)
+        ShowingAcceptedNotificationWorker.expects(:perform_async).never
+        post :accept, id: @showing.id
+        expect(response).to redirect_to users_showing_appointments_path
+      end
+
       it "prevents the user from accepting if they don't have bank_info on record" do
         @showing_agent.profile.update(bank_token: "")
         post :accept, id: @showing.id

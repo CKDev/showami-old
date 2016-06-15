@@ -64,6 +64,14 @@ module Users
         expect(response).to redirect_to users_showing_appointments_path
       end
 
+      it "should not allow marking a confirmed showing as confirmed again" do
+        @showing.status = "confirmed"
+        @showing.save(validate: false)
+        ShowingConfirmedNotificationWorker.expects(:perform_async).never
+        post :confirm, id: @showing.id
+        expect(response).to redirect_to users_showing_appointments_path
+      end
+
       it "sends an SMS to the buying agent upon confirming" do
         ShowingConfirmedNotificationWorker.expects(:perform_async).once.with(@showing.id)
         post :confirm, id: @showing.id

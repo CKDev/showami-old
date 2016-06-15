@@ -94,6 +94,14 @@ module Users
         post :create, showing: valid_attributes
       end
 
+      it "does not notify blocked users " do
+        @user1 = FactoryGirl.create(:user_with_valid_profile)
+        @user1.profile.update(geo_box: "(-104.98384092330923, 39.70858488314164), (-104.99103678226453, 39.70222470324933)")
+        @user1.update(blocked: true)
+        User.any_instance.expects(:notify_new_showing).never
+        post :create, showing: valid_attributes
+      end
+
       it "warns the user if the address of the showing was unable to be geocoded" do
         post :create, showing: bad_address
         expect(response).to render_template :new
@@ -199,13 +207,24 @@ module Users
 
     describe "POST #cancel" do
 
-      it "marks the showing as cancelled" do
+      before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
         @showing = FactoryGirl.create(:showing)
         sign_in @user
+      end
+
+      it "marks the showing as cancelled" do
         post :cancel, id: @showing.id
         showing = assigns(:showing)
         expect(showing.status).to eq "cancelled"
+      end
+
+      it "should not allow marking an cancelled showing as cancelled again" do
+        @showing.status = "cancelled"
+        @showing.save(validate: false)
+        post :cancel, id: @showing.id
+        expect(flash[:alert]).to be_present
+        expect(response).to redirect_to users_buyers_requests_path
       end
 
     end
@@ -238,6 +257,15 @@ module Users
           expect(showing.errors.messages.count).to eq 1
           expect(showing.status).to eq "completed"
         end
+      end
+
+      it "should not allow marking an no-show showing as no-show again" do
+        @showing.status = "no_show"
+        @showing.save(validate: false)
+        ShowingAgentBlockedNotificationWorker.expects(:perform_async).never
+        post :no_show, id: @showing.id
+        expect(flash[:alert]).to be_present
+        expect(response).to redirect_to users_buyers_requests_path
       end
 
       it "sets the blocked flag on the showing agent" do

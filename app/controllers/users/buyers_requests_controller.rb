@@ -23,7 +23,7 @@ module Users
       if @showing.save
         lat = @showing.address.latitude
         long = @showing.address.longitude
-        matched_users = User.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
+        matched_users = User.not_blocked.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
         Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info "Notifying #{matched_users.count} users of new showing: #{@showing.address}" }
         matched_users.each do |u|
           u.notify_new_showing(@showing)
@@ -42,14 +42,17 @@ module Users
     def cancel
       # TODO: Security around params[:id] ??
       @showing = Showing.find(params[:id])
-      @showing.update(status: "cancelled")
-      redirect_to users_buyers_requests_path, notice: "Showing cancelled."
+      if @showing.status != "cancelled" && @showing.update(status: "cancelled")
+        redirect_to users_buyers_requests_path, notice: "Showing cancelled."
+      else
+        redirect_to users_buyers_requests_path, alert: "Unable to mark showing as cancelled."
+      end
     end
 
     def no_show
       # TODO: Security around params[:id] ??
       @showing = Showing.find(params[:id])
-      if @showing.update(status: "no_show")
+      if @showing.status != "no_show" && @showing.update(status: "no_show")
         @showing.showing_agent.update(blocked: true)
         ShowingAgentBlockedNotificationWorker.perform_async(@showing.id)
         redirect_to users_buyers_requests_path, notice: "Showing marked as a 'no-show'."

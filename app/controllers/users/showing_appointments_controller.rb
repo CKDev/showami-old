@@ -11,13 +11,12 @@ module Users
 
     def confirm
       @showing = Showing.find(params[:id])
-      # TODO: what if the showing is already confirmed?
-      if @showing.update(status: "confirmed")
+      if @showing.status != "confirmed" && @showing.update(status: "confirmed")
         ShowingConfirmedNotificationWorker.perform_async(@showing.id)
         redirect_to users_showing_appointments_path, notice: "Showing confirmed."
       else
         redirect_path = request.env["HTTP_REFERER"] || users_showing_appointments_path
-        redirect_to redirect_path, alert: "Unable to confirm showing, please try again."
+        redirect_to redirect_path, alert: "Unable to confirm showing."
         Notification::ErrorReporter.send(StandardError.new("Unable to confirm showing."))
       end
     end

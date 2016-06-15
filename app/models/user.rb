@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   scope :in_bounding_box, ->(lat, long) { joins(:profile).where("geo_box::box @> point '(#{long},#{lat})'") }
   scope :sellers_agents, -> { joins(:profile).where("profiles.agent_type <> ? ", Profile.agent_types[:buyers_agent]) }
   scope :not_self, ->(id) { where("users.id <> ?", id) }
+  scope :not_blocked, -> { where(blocked: false) }
 
   def send_devise_notification(notification, *args)
     # Sidekiq is picking this job up more quickly than the user can be saved.
@@ -41,7 +42,6 @@ class User < ActiveRecord::Base
   end
 
   # For showing agents - need a bank account on file
-  # TODO: where to use this?  It's not currently used.  Perhaps in the view logic.
   def can_accept_showing?
     profile.valid? && valid_bank_token? && !blocked?
   end
