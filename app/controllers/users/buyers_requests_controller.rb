@@ -35,23 +35,24 @@ module Users
     end
 
     def show
-      # TODO: Security around params[:id] ??
-      @showing = Showing.find(params[:id])
+      @showing = current_user.showings.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to users_buyers_requests_path, alert: "No showing found with the given id."
     end
 
     def cancel
-      # TODO: Security around params[:id] ??
-      @showing = Showing.find(params[:id])
+      @showing = current_user.showings.find(params[:id])
       if @showing.status != "cancelled" && @showing.update(status: "cancelled")
         redirect_to users_buyers_requests_path, notice: "Showing cancelled."
       else
         redirect_to users_buyers_requests_path, alert: "Unable to mark showing as cancelled."
       end
+    rescue ActiveRecord::RecordNotFound
+      redirect_to users_buyers_requests_path, alert: "No showing found with the given id."
     end
 
     def no_show
-      # TODO: Security around params[:id] ??
-      @showing = Showing.find(params[:id])
+      @showing = current_user.showings.find(params[:id])
       if @showing.status != "no_show" && @showing.update(status: "no_show")
         @showing.showing_agent.update(blocked: true)
         ShowingAgentBlockedNotificationWorker.perform_async(@showing.id)
@@ -59,6 +60,8 @@ module Users
       else
         redirect_to users_buyers_requests_path, alert: "Unable to mark showing as a 'no-show'.  Has it been more than 24 hours since the showing time?"
       end
+    rescue ActiveRecord::RecordNotFound
+      redirect_to users_buyers_requests_path, alert: "No showing found with the given id."
     end
 
     private

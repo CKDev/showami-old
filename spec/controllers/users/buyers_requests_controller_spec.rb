@@ -187,11 +187,21 @@ module Users
 
       it "assigns the requested showing and address" do
         @user = FactoryGirl.create(:user_with_valid_profile)
-        @showing = FactoryGirl.create(:showing)
+        @showing = FactoryGirl.create(:showing, user: @user)
         sign_in @user
         get :show, id: @showing.id
         showing = assigns(:showing)
         expect(showing).to be_an_instance_of(Showing)
+      end
+
+      it "doesn't assign the showing if it's not the current user's showing" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @other_user = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing, user: @other_user)
+        sign_in @user
+        get :show, id: @showing.id
+        expect(assigns(:showing)).to be nil
+        expect(response).to redirect_to users_buyers_requests_path
       end
 
       it "should redirect to the user profile view if the user's profile isn't valid" do
@@ -209,7 +219,7 @@ module Users
 
       before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
-        @showing = FactoryGirl.create(:showing)
+        @showing = FactoryGirl.create(:showing, user: @user)
         sign_in @user
       end
 
@@ -227,6 +237,17 @@ module Users
         expect(response).to redirect_to users_buyers_requests_path
       end
 
+      it "doesn't allow someone to cancel a showing that isn't theirs" do
+        @other_user = FactoryGirl.create(:user_with_valid_profile)
+        @other_user_showing = FactoryGirl.create(:showing, user: @other_user)
+        sign_in @user
+        post :cancel, id: @other_user_showing.id
+        @other_user_showing.reload
+        expect(assigns(:showing)).to be nil
+        expect(@other_user_showing.status).to eq "unassigned"
+        expect(response).to redirect_to users_buyers_requests_path
+      end
+
     end
 
     describe "POST #no_show" do
@@ -234,7 +255,7 @@ module Users
       before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
         @showing_agent = FactoryGirl.create(:user_with_valid_profile)
-        @showing = FactoryGirl.create(:showing, showing_agent: @showing_agent)
+        @showing = FactoryGirl.create(:showing, showing_agent: @showing_agent, user: @user)
         @showing.status = "completed"
         @showing.save(validate: false)
         sign_in @user
@@ -277,6 +298,19 @@ module Users
       it "sends an SMS to the showing agent that they are blocked from accepting showings" do
         ShowingAgentBlockedNotificationWorker.expects(:perform_async).once.with(@showing.id)
         post :no_show, id: @showing.id
+      end
+
+      it "doesn't allow someone to mark a showing as a no-show that isn't theirs" do
+        @other_user = FactoryGirl.create(:user_with_valid_profile)
+        @other_user_showing = FactoryGirl.create(:showing, user: @other_user)
+        @other_user_showing.status = "completed"
+        @other_user_showing.save(validate: false)
+        sign_in @user
+        post :no_show, id: @other_user_showing.id
+        @other_user_showing.reload
+        expect(assigns(:showing)).to be nil
+        expect(@other_user_showing.status).to eq "completed"
+        expect(response).to redirect_to users_buyers_requests_path
       end
 
     end
