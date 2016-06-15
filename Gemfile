@@ -38,6 +38,7 @@ gem "local_time" # Client-side timezone rendering
 gem "geocoder" # Convert addresses into lat/long
 gem "twilio-ruby" # Sending SMS messages
 gem "whenever", require: false # Cron scheduling
+gem "paper_trail" # Model auditing
 
 # Pagination
 gem "will_paginate"

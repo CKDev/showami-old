@@ -35,6 +35,7 @@ module Users
     end
 
     def show
+      # TODO: Security around params[:id] ??
       @showing = Showing.find(params[:id])
     end
 
@@ -53,7 +54,7 @@ module Users
         ShowingAgentBlockedNotificationWorker.perform_async(@showing.id)
         redirect_to users_buyers_requests_path, notice: "Showing marked as a 'no-show'."
       else
-        redirect_to users_buyers_requests_path, alert: "Unable to mark showing as a 'no show'.  Has it been more than 24 hours since the showing time?"
+        redirect_to users_buyers_requests_path, alert: "Unable to mark showing as a 'no-show'.  Has it been more than 24 hours since the showing time?"
       end
     end
 

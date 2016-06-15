@@ -3,6 +3,8 @@ require "geocoder/stores/base"
 
 class Showing < ActiveRecord::Base
 
+  has_paper_trail # Auditing
+
   belongs_to :user
   belongs_to :showing_agent, class_name: "User"
   has_one :address, as: :addressable, dependent: :destroy
@@ -23,6 +25,7 @@ class Showing < ActiveRecord::Base
   accepts_nested_attributes_for :address
 
   before_save :verify_geocoding
+  after_save :log_change
 
   default_scope { order("showing_at DESC") }
   scope :in_future, -> { where("showing_at > ?", Time.zone.now) }
@@ -90,6 +93,15 @@ class Showing < ActiveRecord::Base
     end
   end
 
+  def log_change
+    unless Rails.env.test?
+      version = self.versions.last
+      modified_by_id = version.whodunnit
+      modified_by = modified_by_id.present? ? User.find(modified_by_id).to_s : "<System>"
+      Rails.logger.tagged("Showing Update", id) { Rails.logger.info "#{self}, Modified By: #{modified_by}" }
+    end
+  end
+
   def self.available(geo_box_coords)
     Showing.in_bounding_box(geo_box_coords).in_future.unassigned
   end
@@ -97,18 +109,20 @@ class Showing < ActiveRecord::Base
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_completed
     Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
-    updated_records = Showing.completed.update_all(status: statuses[:completed])
-    if updated_records > 0
-      Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{updated_records} as completed." }
+    # I'm running this in a loop (vs update_all) to make sure callbacks fire.  It runs every minute so performance shouldn't be an issue.
+    Showing.completed.each do |s|
+      s.update(status: statuses[:completed])
+      Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{s} as completed." }
     end
   end
 
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_expired
     Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Checking for expired showings..." }
-    updated_records = Showing.expired.update_all(status: statuses[:expired])
-    if updated_records > 0
-      Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Marked #{updated_records} as expired." }
+    # I'm running this in a loop (vs update_all) to make sure callbacks fire.  It runs every minute so performance shouldn't be an issue.
+    Showing.expired.each do |s|
+      s.update(status: statuses[:expired])
+      Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Marked #{s} as expired." }
     end
   end
 
@@ -116,6 +130,10 @@ class Showing < ActiveRecord::Base
     return false if status != "completed"
     return false if Time.zone.now > showing_at + 24.hours
     true
+  end
+
+  def to_s
+    "Showing #{id}: Buyer's Agent: #{user}, Address: #{address.single_line}, MLS: #{mls}, Showing Status: #{status}, Updated At: #{updated_at}"
   end
 
   private

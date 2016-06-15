@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_greeting
 
+  before_filter :set_paper_trail_whodunnit # To make current_user available to model auditing
+
   def after_sign_in_path_for(resource)
     stored_location = stored_location_for(resource) # This resets after being called, so store.
     return admin_root_path if resource.admin?
