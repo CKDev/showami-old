@@ -14,7 +14,7 @@ feature "A showing agent can perform actions on a showing" do
     expect(current_path).to eq users_showing_appointments_path
     expect(page).to have_content "Showing accepted"
     within(".showing") do
-      expect(page).to have_content @showing.address.single_line
+      expect(page).to have_content @showing.address
     end
   end
 
@@ -25,7 +25,7 @@ feature "A showing agent can perform actions on a showing" do
     expect(current_path).to eq users_showing_appointments_path
     expect(page).to have_content "Showing confirmed"
     within(".showing") do
-      expect(page).to have_content @showing.address.single_line
+      expect(page).to have_content @showing.address
       expect(page).to have_content "Confirmed"
     end
   end
@@ -37,7 +37,7 @@ feature "A showing agent can perform actions on a showing" do
     expect(current_path).to eq users_showing_appointments_path
     expect(page).to have_content "Showing cancelled"
     within(".showing") do
-      expect(page).to have_content @showing.address.single_line
+      expect(page).to have_content @showing.address
       expect(page).to have_content "Cancelled"
     end
   end

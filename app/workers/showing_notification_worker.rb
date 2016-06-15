@@ -14,7 +14,7 @@ class ShowingNotificationWorker
     showing_url = users_showing_opportunity_url(showing_id)
 
     body = "New Showami showing available: #{showing_url}"
-    log_msg = "Sending SMS showing notification to #{user.full_name} (#{user.profile.phone1}) -  New Showing: #{showing.address.single_line}"
+    log_msg = "Sending SMS showing notification to #{user.full_name} (#{user.profile.phone1}) -  New Showing: #{showing.address}"
     Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
     Notification::SMS.new(to, body).send
   end

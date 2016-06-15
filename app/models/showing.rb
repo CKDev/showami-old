@@ -133,7 +133,7 @@ class Showing < ActiveRecord::Base
   end
 
   def to_s
-    "Showing #{id}: Buyer's Agent: #{user}, Address: #{address.single_line}, MLS: #{mls}, Showing Status: #{status}, Updated At: #{updated_at}"
+    "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Updated At: #{updated_at}"
   end
 
   private

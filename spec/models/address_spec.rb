@@ -77,6 +77,10 @@ describe Address do
       expect(@address.single_line).to eq "600 S Broadway Denver, CO 80209"
     end
 
+    it "should return nil if one of the required fields is blank" do
+      expect(Address.new.single_line).to be nil
+    end
+
   end
 
 end

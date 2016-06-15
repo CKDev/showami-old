@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
   end
 
   def notify_new_showing(showing)
-    log_msg = "Pushing SMS showing notification to background: #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address.single_line}"
+    log_msg = "Pushing SMS showing notification to background: #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address}"
     Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
     ShowingNotificationWorker.perform_async(id, showing.id)
   end

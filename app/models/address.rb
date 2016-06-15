@@ -8,11 +8,14 @@ class Address < ActiveRecord::Base
   geocoded_by :single_line
   after_validation :geocode
 
-  # TODO: refactor to to_s
   def single_line
-    return if line1.empty? || city.empty? || state.empty? || zip.empty?
+    return if line1.blank? || city.blank? || state.blank? || zip.blank?
     adr2 = line2.blank? ? " " : " " + line2 + " "
     line1 + adr2 + city + ", " + state + " " + zip
+  end
+
+  def to_s
+    single_line || super
   end
 
 end

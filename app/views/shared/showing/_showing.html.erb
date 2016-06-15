@@ -5,7 +5,7 @@
     </div>
     <div class="nine columns">
       <div class="address">
-        <h4><%= showing.address.single_line %></h4>
+        <h4><%= showing.address %></h4>
       </div>
       <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
       <%# TODO: make the below a model method? %>

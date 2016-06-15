@@ -14,7 +14,7 @@ feature "A buyers agent cancels an unassigned showing" do
     click_button "Cancel"
     expect(current_path).to eq users_buyers_requests_path
     expect(page).to have_content "Showing cancelled"
-    expect(page).to have_content @showing.address.single_line
+    expect(page).to have_content @showing.address
   end
 
 end

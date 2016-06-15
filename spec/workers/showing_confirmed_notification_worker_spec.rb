@@ -9,7 +9,7 @@ describe ShowingConfirmedNotificationWorker do
     @buyers_agent.showings << @showing
 
     to = @buyers_agent.profile.phone1
-    body = "Your showing request was confirmed: #{@showing.address.single_line}.  For more details visit: http://localhost:3000/users/buyers_requests"
+    body = "Your showing request was confirmed: #{@showing.address}.  For more details visit: http://localhost:3000/users/buyers_requests"
     success_object = stub(send: true)
     Notification::SMS.expects(:new).once.with(to, body).returns(success_object)
     worker = ShowingConfirmedNotificationWorker.new
