@@ -8,8 +8,7 @@
         <h4><%= showing.address %></h4>
       </div>
       <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
-      <%# TODO: make the below a model method? %>
-      <% if showing.status.in? %w(unconfirmed confirmed completed) %>
+      <% if showing.showing_agent_visible? %>
         <%= render partial: "shared/showing/showing_agent_info", locals: { showing: showing } %>
       <% end %>
       <% if showing.notes.present? %>

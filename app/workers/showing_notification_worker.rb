@@ -8,9 +8,6 @@ class ShowingNotificationWorker
     user = User.find(user_id)
     showing = Showing.find(showing_id)
     to = user.profile.phone1
-
-    # TODO: If needed, this should be done on save of the showing model, not here.
-    # showing_url = Googl.shorten(users_showing_opportunity_path(showing_id))
     showing_url = users_showing_opportunity_url(showing_id)
 
     body = "New Showami showing available: #{showing_url}"

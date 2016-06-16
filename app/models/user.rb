@@ -75,4 +75,8 @@ class User < ActiveRecord::Base
     profile.agent_type == "both"
   end
 
+  def primary_phone
+    profile.phone1
+  end
+
 end

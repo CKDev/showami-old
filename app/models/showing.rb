@@ -138,6 +138,14 @@ class Showing < ActiveRecord::Base
     true
   end
 
+  def showing_agent_visible?
+    status.in? %w(unconfirmed confirmed completed no_show)
+  end
+
+  def showing_agent_phone
+    showing_agent.primary_phone
+  end
+
   def to_s
     "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Updated At: #{updated_at}"
   end
