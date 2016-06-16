@@ -1,71 +1,19 @@
-<div class="status">
-  <% if current_user.can_accept_showing? %>
-    <%# :unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show %>
+<% if current_user.can_accept_showing? %>
+  <% begin %>
+    <%= render partial: "/shared/showing/actions/#{showing.status}", locals: { showing: showing, type: :showing_opportunities } %>
+  <% rescue ActionView::MissingTemplate %>
+    <%# Make sure the view never breaks for a new showing status. %>
+  <% end %>
+<% else %>
+  <% if current_user.blocked? %>
+    <p class="status red">
+      Your account has been blocked, you cannot accept showings.  Please contact us if you feel this is in error.
+    </p>
+  <% elsif !current_user.valid_bank_token? %>
     <% if showing.status == "unassigned" %>
-      <div class="four columns">
-        <p class="status light-blue">Not Assigned</p>
-      </div>
-      <div class="eight columns">
-        <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
-          <%= f.submit "Accept" %>
-        <% end %>
-      </div>
-    <% elsif showing.status == "unconfirmed" %>
-      <% status_str = showing.showing_agent == current_user ? "Unconfirmed" : "Reserved" %>
-      <div class="four columns">
-        <p class="status orange"><%= status_str %></p>
-      </div>
-      <div class="eight columns">
-        &nbsp;
-      </div>
-    <% elsif showing.status == "confirmed" %>
-      <% status_str = showing.showing_agent == current_user ? "Confirmed" : "Reserved" %>
-      <div class="four columns">
-        <p class="status orange"><%= status_str %></p>
-      </div>
-      <div class="eight columns">
-        &nbsp;
-      </div>
-    <% elsif showing.status == "completed" %>
-      <div class="four columns">
-        <p class="status light-blue">Completed</p>
-      </div>
-      <div class="eight columns">
-        &nbsp;
-      </div>
-    <% elsif showing.status == "cancelled" %>
-      <div class="four columns">
-        <p class="status red">Cancelled</p>
-      </div>
-      <div class="eight columns">
-        &nbsp;
-      </div>
-    <% elsif showing.status == "expired" %>
-      <div class="four columns">
-        <p class="status orange">Expired</p>
-      </div>
-      <div class="eight columns">
-        &nbsp;
-      </div>
-    <% elsif showing.status == "no_show" %>
-      <div class="four columns">
-        <p class="status red">No Show</p>
-      </div>
-      <div class="eight columns">
-        &nbsp;
-      </div>
-    <% end %>
-  <% else %>
-    <% if current_user.blocked? %>
-      <p class="status red">
-        Your account has been blocked, you cannot accept showings.  Please contact us if you feel this is in error.
-      </p>
-    <% elsif !current_user.valid_bank_token? %>
-      <% if showing.status == "unassigned" %>
-        <%= link_to "Add your bank information to be able to accept showings", users_bank_payment_path %>
-      <% else %>
-        <p class="status orange">Assigned</p>
-      <% end %>
+      <%= link_to "Add your bank information to be able to accept showings", users_bank_payment_path %>
+    <% else %>
+      <p class="status orange">Assigned</p>
     <% end %>
   <% end %>
-</div>
+<% end %>

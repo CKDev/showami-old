@@ -6,16 +6,16 @@
     <div class="nine columns">
       <div class="address">
         <h4><%= showing.address %></h4>
-        <p>MLS #: <%= showing.mls %></p>
       </div>
+      <p><strong>MLS #: </strong><%= showing.mls %></p>
       <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
       <% if showing.showing_agent_visible? %>
         <%= render partial: "shared/showing/showing_agent_info", locals: { showing: showing } %>
       <% end %>
       <% if showing.notes.present? %>
-        <%# <h5>Notes</h5> %>
-        <p class="note"><%= showing.notes %></p>
+        <p class="note"><strong>Notes:</strong> <%= showing.notes %></p>
       <% end %>
+
       <% if buyers_requests_route? %>
         <%= render partial: "shared/showing/buyers_agent_actions", locals: { showing: showing } %>
       <% elsif showing_appointments_route? %>
@@ -23,6 +23,7 @@
       <% elsif showing_opportunities_route? %>
         <%= render partial: "shared/showing/showing_opportunities_actions", locals: { showing: showing } %>
       <% end %>
+
     </div>
   </div>
 </div>

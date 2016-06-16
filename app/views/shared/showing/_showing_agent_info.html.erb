@@ -1,12 +1,15 @@
 <div class="showing-agent-info">
   <div class="avatar row">
-    <div class="four columns">
-      <%= image_tag showing.showing_agent.profile.avatar.url(:mini), class: "size-75" %>
+    <div class="six columns">
+      <div class="agent-name"><strong>Agent: </strong><%= showing.showing_agent.full_name %></div>
+      <div class="agent-phone">
+        <strong>Phone: </strong>
+        <%= tel_to number_to_phone(showing.showing_agent.profile.phone1, area_code: true) %>
+      </div>
+      <div class="agent-email"><strong>Email: </strong><%= mail_to showing.showing_agent.email %></div>
     </div>
-    <div class="eight columns">
-      <div class="agent-name">Agent: <%= showing.showing_agent.full_name %></div>
-      <div class="agent-phone">Phone: <%= tel_to number_to_phone(showing.showing_agent.profile.phone1, area_code: true) %></div>
-      <div class="agent-email">Email: <%= mail_to showing.showing_agent.email %></div>
+    <div class="six columns">
+      <%= image_tag showing.showing_agent.profile.avatar.url(:mini), class: "size-75" %>
     </div>
   </div>
 </div>
