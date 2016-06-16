@@ -14,7 +14,7 @@ feature "A registered user can change their account information" do
     fill_in "user[email]", with: "alex+new@commercekitchen.com"
     fill_in "user[current_password]", with: "asdfasdf"
     click_button "Update"
-    expect(current_path).to eq(root_path)
+    expect(current_path).to eq(edit_users_profile_path) # Redirected from root_path
     expect(page).to have_content("You updated your account successfully, but we need to verify your new email address. Please check your email and follow the confirm link to confirm your new email address.")
   end
 
@@ -27,7 +27,7 @@ feature "A registered user can change their account information" do
     fill_in "user[password_confirmation]", with: "ASDFASDF1234"
     fill_in "user[current_password]", with: "asdfasdf"
     click_button "Update"
-    expect(current_path).to eq(root_path)
+    expect(current_path).to eq(edit_users_profile_path) # Redirected from root_path
     expect(page).to have_content("Your account has been updated successfully.")
   end
 

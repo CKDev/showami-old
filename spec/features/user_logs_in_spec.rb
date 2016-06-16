@@ -26,11 +26,18 @@ feature "A user logs in" do
     expect(page).to have_content "First name"
   end
 
+  scenario "is redirected to their default path when hitting the homepage" do
+    @user = FactoryGirl.create(:user_with_valid_profile)
+    log_in @user
+    visit root_path
+    expect(current_path).to eq users_buyers_requests_path
+  end
+
   scenario "is not able to get to the admin dashboard" do
     @user = FactoryGirl.create(:user_with_valid_profile)
     log_in @user
     visit admin_root_path
-    expect(current_path).to eq(root_path)
+    expect(current_path).to eq(users_buyers_requests_path) # Redirected from root_path
   end
 
   scenario "is not able to get to the sidekiq dashboard" do
