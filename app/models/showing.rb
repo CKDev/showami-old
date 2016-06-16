@@ -12,6 +12,8 @@ class Showing < ActiveRecord::Base
   enum buyer_type: [:individual, :couple, :family]
   enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show]
 
+  before_validation :strip_phone_numbers
+
   validates :showing_at, presence: true
   validates :mls, presence: true
   validates :buyer_name, presence: true
@@ -186,6 +188,10 @@ class Showing < ActiveRecord::Base
 
   def check_no_show_state_change
     errors.add(:status, "cannot change status, once in no-show")
+  end
+
+  def strip_phone_numbers
+    self.buyer_phone = buyer_phone.gsub(/\D/, "") unless buyer_phone.blank?
   end
 
 end

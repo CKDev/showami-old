@@ -37,12 +37,15 @@ describe Profile do
 
       @profile.update(phone1: "(720) 123 - 1234")
       expect(@profile.valid?).to be true
+      expect(@profile.phone1).to eq "7201231234"
 
       @profile.update(phone1: "(720)123-1234")
       expect(@profile.valid?).to be true
+      expect(@profile.phone1).to eq "7201231234"
 
       @profile.update(phone1: "720.123.1234")
       expect(@profile.valid?).to be true
+      expect(@profile.phone1).to eq "7201231234"
 
       @profile.update(phone1: "123456789")
       expect(@profile.valid?).to be false

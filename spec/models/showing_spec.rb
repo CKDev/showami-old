@@ -48,6 +48,34 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
+    it "requires phone to be a ten digit number" do
+      @showing = FactoryGirl.build(:showing, buyer_phone: "")
+
+      @showing.update(buyer_phone: "7208881234")
+      expect(@showing.valid?).to be true
+
+      @showing.update(buyer_phone: "(720) 123 - 1234")
+      expect(@showing.valid?).to be true
+      expect(@showing.buyer_phone).to eq "7201231234"
+
+      @showing.update(buyer_phone: "(720)123-1234")
+      expect(@showing.valid?).to be true
+      expect(@showing.buyer_phone).to eq "7201231234"
+
+      @showing.update(buyer_phone: "720.123.1234")
+      expect(@showing.valid?).to be true
+      expect(@showing.buyer_phone).to eq "7201231234"
+
+      @showing.update(buyer_phone: "123456789")
+      expect(@showing.valid?).to be false
+
+      @showing.update(buyer_phone: "12345678901")
+      expect(@showing.valid?).to be false
+
+      @showing.update(buyer_phone: "(720)123-1234 x 1234")
+      expect(@showing.valid?).to be false
+    end
+
     it "should require a buyer type" do
       @showing = FactoryGirl.build(:showing, buyer_type: "")
       expect(@showing.valid?).to be false
