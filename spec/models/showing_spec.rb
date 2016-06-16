@@ -54,7 +54,7 @@ describe Showing do
     end
 
     context "#valid_status_change?" do
-      # enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show]
+
       it "should initially be in unassigned status" do
         @showing = FactoryGirl.create(:showing)
         expect(@showing.status).to eq "unassigned"
@@ -193,27 +193,42 @@ describe Showing do
         @showing.update(status: "no_show")
         expect(@showing.valid?).to be true
       end
-    end
 
-    it "should not allow a showing to change status once in expired" do
-      @showing = FactoryGirl.create(:showing)
-      @showing.status = "expired"
-      @showing.save(validate: false)
-      expect(@showing.status).to eq "expired"
-      Showing.statuses.keys.reject { |k| k == "expired" }.each do |status, _v|
-        @showing.update(status: status)
-        expect(@showing.valid?).to be false
-      end
-    end
-
-    it "should not allow a showing to change status from no_show" do
-      @showing = FactoryGirl.create(:showing)
-      Showing.statuses.keys.reject { |k| k == "no_show" }.each do |status, _v|
-        @showing.status = "no_show"
+      it "should not allow a showing to change status once in expired" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "expired"
         @showing.save(validate: false)
-        @showing.update(status: status)
-        expect(@showing.valid?).to be false
+        expect(@showing.status).to eq "expired"
+        Showing.statuses.keys.reject { |k| k == "expired" }.each do |status, _v|
+          @showing.update(status: status)
+          expect(@showing.valid?).to be false
+        end
       end
+
+      it "should not allow a showing to change status from no_show" do
+        @showing = FactoryGirl.create(:showing)
+        Showing.statuses.keys.reject { |k| k == "no_show" }.each do |status, _v|
+          @showing.status = "no_show"
+          @showing.save(validate: false)
+          @showing.update(status: status)
+          expect(@showing.valid?).to be false
+        end
+      end
+
+    end
+
+    context "#showing_agent_changed?" do
+
+      it "should not allow a showing agent to change once set" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @user2 = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing, showing_agent: @user)
+        expect(@showing.update(showing_agent: @user2)).to be false
+        expect(@showing.errors.full_messages.first).to eq "Showing agent cannot change the showing agent"
+        @showing.reload
+        expect(@showing.showing_agent).to eq @user
+      end
+
     end
 
   end
