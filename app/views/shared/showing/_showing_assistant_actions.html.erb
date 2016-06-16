@@ -7,7 +7,6 @@
   <% elsif showing.status == "unconfirmed" %>
     <div class="four columns">
       <%= form_for showing, url: confirm_users_showing_appointment_path(showing), method: :post do |f| %>
-        <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
         <%= f.submit "Confirm" %>
       <% end %>
     </div>

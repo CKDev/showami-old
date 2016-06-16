@@ -6,6 +6,7 @@
     <div class="nine columns">
       <div class="address">
         <h4><%= showing.address %></h4>
+        <p>MLS #: <%= showing.mls %></p>
       </div>
       <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
       <% if showing.showing_agent_visible? %>
