@@ -10,7 +10,11 @@ class Showing < ActiveRecord::Base
   has_one :address, as: :addressable, dependent: :destroy
 
   enum buyer_type: [:individual, :couple, :family]
-  enum status: [:unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show]
+  enum status: [:unassigned, :unconfirmed, :confirmed, :completed,
+    :cancelled, :expired, :no_show, :processing_payment, :paid]
+  enum payment_status: [:unpaid,
+    :charging_buyers_agent, :charging_buyers_agent_success, :charging_buyers_agent_failure,
+    :paying_sellers_agent, :paying_sellers_agent_started, :paying_sellers_agent_success, :paying_sellers_agent_failure]
 
   before_validation :strip_phone_numbers
 
@@ -40,6 +44,8 @@ class Showing < ActiveRecord::Base
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
+  scope :ready_for_payment, -> { where("status = ? AND showing_at < ?", statuses[:completed], Time.zone.now - 24.hours) }
+  scope :ready_for_transfer, -> { where("status = ? AND payment_status = ?", statuses[:processing_payment], payment_statuses[:charging_buyers_agent_success]) }
 
   # Note: This method was copied right from the Geocoder source (within_bounding_box)
   # so that I could apply it to the Showing model instead of having to run it on
@@ -81,6 +87,10 @@ class Showing < ActiveRecord::Base
         check_expired_state_change
       elsif status_was == "no_show"
         check_no_show_state_change
+      elsif status_was == "processing_payment"
+        check_processing_payment_state_change
+      elsif status_was == "paid"
+        check_paid_state_change
       end
     end
   end
@@ -117,7 +127,6 @@ class Showing < ActiveRecord::Base
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_completed
     Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
-    # I'm running this in a loop (vs update_all) to make sure callbacks fire.  It runs every minute so performance shouldn't be an issue.
     Showing.completed.each do |s|
       s.update(status: statuses[:completed])
       Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{s} as completed." }
@@ -127,10 +136,29 @@ class Showing < ActiveRecord::Base
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_expired
     Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Checking for expired showings..." }
-    # I'm running this in a loop (vs update_all) to make sure callbacks fire.  It runs every minute so performance shouldn't be an issue.
     Showing.expired.each do |s|
       s.update(status: statuses[:expired])
       Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Marked #{s} as expired." }
+    end
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.start_payment_charges
+    Rails.logger.tagged("Cron - Showing.start_payment_charges") { Rails.logger.info "Checking for showings in need of making payments..." }
+    Showing.ready_for_payment.each do |showing|
+      showing.update(status: statuses[:processing_payment])
+      Rails.logger.tagged("Cron - Showing.start_payment_charges") { Rails.logger.info "Created charge payment job for #{showing}." }
+      ChargeWorker.perform_async(showing.id)
+    end
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.start_payment_transfers
+    Rails.logger.tagged("Cron - Showing.start_payment_transfers") { Rails.logger.info "Checking for showings in need of making transfers..." }
+    Showing.ready_for_transfer.each do |showing|
+      showing.update(status: statuses[:processing_payment]) # Should already be in processing_payment.
+      Rails.logger.tagged("Cron - Showing.start_payment_transfers") { Rails.logger.info "Created transfer payment job for #{showing}." }
+      TransferWorker.perform_async(showing.id)
     end
   end
 
@@ -171,10 +199,14 @@ class Showing < ActiveRecord::Base
   def check_completed_state_change
     if status == "no_show"
       if Time.zone.now > showing_at + 24.hours
-        errors.add(:status, "can only set as a 'no show' for 24 hours after the showing time")
+        errors.add(:status, "can only set as a 'no-show' for 24 hours after the showing time")
+      end
+    elsif status == "processing_payment"
+      if Time.zone.now < showing_at + 24.hours
+        errors.add(:status, "can only start the payment process 24 hours after the showing time")
       end
     else
-      errors.add(:status, "cannot change status, once completed")
+      errors.add(:status, "can only change from completed to payment-processing or no-show")
     end
   end
 
@@ -188,6 +220,14 @@ class Showing < ActiveRecord::Base
 
   def check_no_show_state_change
     errors.add(:status, "cannot change status, once in no-show")
+  end
+
+  def check_processing_payment_state_change
+    errors.add(:status, "can only change from payment-processing to paid") unless status == "paid"
+  end
+
+  def check_paid_state_change
+    errors.add(:status, "cannot change status, once in paid")
   end
 
   def strip_phone_numbers

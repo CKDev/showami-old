@@ -169,12 +169,12 @@ describe Showing do
         expect(@showing.valid?).to be true
       end
 
-      it "should not allow a showing to change status once in completed (except to no_show)" do
+      it "should allow a completed showing to only change to no_show or processing_payment" do
         @showing = FactoryGirl.create(:showing)
         @showing.status = "completed"
         @showing.save(validate: false)
         expect(@showing.status).to eq "completed"
-        Showing.statuses.keys.reject { |k| k == "no_show" || k == "completed" }.each do |status, _v|
+        Showing.statuses.keys.reject { |k| k == "completed" || k == "no_show" || k == "processing_payment" }.each do |status, _v|
           @showing.update(status: status)
           expect(@showing.valid?).to be false
         end
@@ -197,6 +197,42 @@ describe Showing do
         expect(@showing.valid?).to be false
       end
 
+      it "should allow a showing to go from completed to processing_payment" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "completed"
+        @showing.showing_at = Time.zone.now - 24.hours - 1.minute
+        @showing.save(validate: false)
+        @showing.update(status: "processing_payment")
+        expect(@showing.valid?).to be true
+      end
+
+      it "should only allow a showing to go from completed to processing_payment after 24 hours" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "completed"
+        @showing.showing_at = Time.zone.now - 23.hours - 59.minutes
+        @showing.save(validate: false)
+        @showing.update(status: "processing_payment")
+        expect(@showing.valid?).to be false
+      end
+
+      it "should not allow a showing to go from processing_payment to anthing other than paid" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "processing_payment"
+        @showing.save(validate: false)
+        Showing.statuses.keys.reject { |k| k == "processing_payment" || k == "paid" }.each do |status, _v|
+          @showing.update(status: status)
+          expect(@showing.valid?).to be false
+        end
+      end
+
+      it "should allow a showing to go from processing_payment to paid" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "processing_payment"
+        @showing.save(validate: false)
+        @showing.update(status: "paid")
+        expect(@showing.valid?).to be true
+      end
+
       it "should not allow a showing to change status once in cancelled" do
         @showing = FactoryGirl.create(:showing)
         @showing.status = "cancelled"
@@ -208,14 +244,8 @@ describe Showing do
         end
       end
 
-      it "should not allow a showing to go from completed to anything other than no_show" do
+      it "should allow a showing to go from completed to no_show" do
         @showing = FactoryGirl.create(:showing)
-        Showing.statuses.keys.reject { |k| k == "no_show" || k == "completed" }.each do |status, _v|
-          @showing.status = "completed"
-          @showing.save(validate: false)
-          @showing.update(status: status)
-          expect(@showing.valid?).to be false
-        end
         @showing.status = "completed"
         @showing.save(validate: false)
         @showing.update(status: "no_show")
@@ -237,6 +267,16 @@ describe Showing do
         @showing = FactoryGirl.create(:showing)
         Showing.statuses.keys.reject { |k| k == "no_show" }.each do |status, _v|
           @showing.status = "no_show"
+          @showing.save(validate: false)
+          @showing.update(status: status)
+          expect(@showing.valid?).to be false
+        end
+      end
+
+      it "should not allow a showing to change status from paid" do
+        @showing = FactoryGirl.create(:showing)
+        Showing.statuses.keys.reject { |k| k == "paid" }.each do |status, _v|
+          @showing.status = "paid"
           @showing.save(validate: false)
           @showing.update(status: status)
           expect(@showing.valid?).to be false
@@ -313,196 +353,80 @@ describe Showing do
 
   end
 
-  context "#in_bounding_box" do
+  context "query scopes" do
 
-    it "should return all showings in the given bounding box" do
-      @valid_showing = FactoryGirl.create(:showing)
-      @vail_showing = FactoryGirl.create(:showing)
-      @vail_address = FactoryGirl.create(:vail_address)
-      @vail_showing.update(address: @vail_address)
-      expect(Showing.in_bounding_box([[39.500, -105.000], [39.749, -104.800]])).to contain_exactly @valid_showing
-    end
+    context ".in_bounding_box" do
 
-    it "should handle invalid input" do
-      @valid_showing = FactoryGirl.create(:showing)
-      @vail_showing = FactoryGirl.create(:showing)
-      @vail_address = FactoryGirl.create(:vail_address)
-      @vail_showing.update(address: @vail_address)
-      expect(Showing.in_bounding_box(["invalid_data"])).to eq []
-    end
+      it "should return all showings in the given bounding box" do
+        @valid_showing = FactoryGirl.create(:showing)
+        @vail_showing = FactoryGirl.create(:showing)
+        @vail_address = FactoryGirl.create(:vail_address)
+        @vail_showing.update(address: @vail_address)
+        expect(Showing.in_bounding_box([[39.500, -105.000], [39.749, -104.800]])).to contain_exactly @valid_showing
+      end
 
-  end
-
-  context "#in_future" do
-
-    it "should return all showings where the showing_at is in the future" do
-      @past_showing = FactoryGirl.create(:showing)
-      @past_showing.showing_at = Time.zone.now - 1.hour
-      @past_showing.save(validate: false)
-      @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hours)
-      expect(Showing.in_future).to contain_exactly @future_showing
-    end
-
-  end
-
-  context "#unassigned" do
-
-    it "should return all showings in unassigned status" do
-      @unassigned_showing = FactoryGirl.create(:showing)
-      @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
-      expect(Showing.unassigned).to contain_exactly @unassigned_showing
-    end
-
-  end
-
-  context "#available" do
-
-    it "should return all available showings (showings in the bounding box, in the future, and unassigned)" do
-      @in_bounding_box = FactoryGirl.create(:showing)
-      @vail_showing = FactoryGirl.create(:showing)
-      @vail_address = FactoryGirl.create(:vail_address)
-      @vail_showing.update(address: @vail_address)
-      @past_showing = FactoryGirl.create(:showing)
-      @past_showing.showing_at = Time.zone.now - 1.hour
-      @past_showing.save(validate: false)
-      @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hours)
-      @unassigned_showing = FactoryGirl.create(:showing)
-      @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
-      expect(Showing.available([[39.500, -105.000], [39.749, -104.800]])).to contain_exactly @in_bounding_box, @future_showing, @unassigned_showing
-    end
-
-  end
-
-  context ".update_completed" do
-
-    it "should set confirmed showings whos showing date/time has past to completed status" do
-      @showing1 = FactoryGirl.create(:showing)
-      @showing1.status = "confirmed"
-      @showing1.showing_at = Time.zone.now - 1.minute
-      @showing1.save(validate: false)
-
-      @showing2 = FactoryGirl.create(:showing)
-      @showing2.status = "confirmed"
-      @showing2.showing_at = Time.zone.now + 1.minute
-      @showing2.save(validate: false)
-
-      @showing3 = FactoryGirl.create(:showing)
-      @showing3.status = "confirmed"
-      @showing3.showing_at = Time.zone.now + 3.hours
-      @showing3.save(validate: false)
-
-      @showing4 = FactoryGirl.create(:showing)
-      @showing4.status = "unconfirmed"
-      @showing4.showing_at = Time.zone.now - 1.minute
-      @showing4.save(validate: false)
-
-      @showing5 = FactoryGirl.create(:showing)
-      @showing5.status = "unassigned"
-      @showing5.showing_at = Time.zone.now - 1.minute
-      @showing5.save(validate: false)
-
-      @showing6 = FactoryGirl.create(:showing)
-      @showing6.status = "cancelled"
-      @showing6.showing_at = Time.zone.now - 1.minute
-      @showing6.save(validate: false)
-
-      Showing.update_completed
-      [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6].each(&:reload)
-      expect(@showing1.status).to eq "completed"
-      expect(@showing2.status).to eq "confirmed"
-      expect(@showing3.status).to eq "confirmed"
-      expect(@showing4.status).to eq "unconfirmed"
-      expect(@showing5.status).to eq "unassigned"
-      expect(@showing6.status).to eq "cancelled"
-
-      Timecop.freeze(Time.zone.now + 3.hours + 1.minute) do
-        Showing.update_completed
-        [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6].each(&:reload)
-        expect(@showing1.status).to eq "completed"
-        expect(@showing2.status).to eq "completed"
-        expect(@showing3.status).to eq "completed"
-        expect(@showing4.status).to eq "unconfirmed"
-        expect(@showing5.status).to eq "unassigned"
-        expect(@showing6.status).to eq "cancelled"
+      it "should handle invalid input" do
+        @valid_showing = FactoryGirl.create(:showing)
+        @vail_showing = FactoryGirl.create(:showing)
+        @vail_address = FactoryGirl.create(:vail_address)
+        @vail_showing.update(address: @vail_address)
+        expect(Showing.in_bounding_box(["invalid_data"])).to eq []
       end
 
     end
 
-  end
+    context ".in_future" do
 
-  context ".update_expired" do
+      it "should return all showings where the showing_at is in the future" do
+        @past_showing = FactoryGirl.create(:showing)
+        @past_showing.showing_at = Time.zone.now - 1.hour
+        @past_showing.save(validate: false)
+        @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hours)
+        expect(Showing.in_future).to contain_exactly @future_showing
+      end
 
-    # :unassigned, :unconfirmed, :confirmed, :completed, :cancelled, :expired, :no_show
-    it "should set unassigned and unconfirmed showings whos showing date/time has past to expired status" do
-      @showing1 = FactoryGirl.create(:showing)
-      @showing1.status = "unassigned"
-      @showing1.showing_at = Time.zone.now - 1.minute
-      @showing1.save(validate: false)
+    end
 
-      @showing2 = FactoryGirl.create(:showing)
-      @showing2.status = "unassigned"
-      @showing2.showing_at = Time.zone.now + 1.minute
-      @showing2.save(validate: false)
+    context ".unassigned" do
 
-      @showing3 = FactoryGirl.create(:showing)
-      @showing3.status = "unassigned"
-      @showing3.showing_at = Time.zone.now + 3.hours
-      @showing3.save(validate: false)
+      it "should return all showings in unassigned status" do
+        @unassigned_showing = FactoryGirl.create(:showing)
+        @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
+        expect(Showing.unassigned).to contain_exactly @unassigned_showing
+      end
 
-      @showing4 = FactoryGirl.create(:showing)
-      @showing4.status = "unconfirmed"
-      @showing4.showing_at = Time.zone.now - 1.minute
-      @showing4.save(validate: false)
+    end
 
-      @showing5 = FactoryGirl.create(:showing)
-      @showing5.status = "confirmed"
-      @showing5.showing_at = Time.zone.now - 1.minute
-      @showing5.save(validate: false)
+    context ".available" do
 
-      @showing6 = FactoryGirl.create(:showing)
-      @showing6.status = "completed"
-      @showing6.showing_at = Time.zone.now - 1.minute
-      @showing6.save(validate: false)
+      it "should return all available showings (showings in the bounding box, in the future, and unassigned)" do
+        @in_bounding_box = FactoryGirl.create(:showing)
+        @vail_showing = FactoryGirl.create(:showing)
+        @vail_address = FactoryGirl.create(:vail_address)
+        @vail_showing.update(address: @vail_address)
+        @past_showing = FactoryGirl.create(:showing)
+        @past_showing.showing_at = Time.zone.now - 1.hour
+        @past_showing.save(validate: false)
+        @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hours)
+        @unassigned_showing = FactoryGirl.create(:showing)
+        @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
+        expect(Showing.available([[39.500, -105.000], [39.749, -104.800]])).to contain_exactly @in_bounding_box, @future_showing, @unassigned_showing
+      end
 
-      @showing7 = FactoryGirl.create(:showing)
-      @showing7.status = "cancelled"
-      @showing7.showing_at = Time.zone.now - 1.minute
-      @showing7.save(validate: false)
+    end
 
-      @showing8 = FactoryGirl.create(:showing)
-      @showing8.status = "expired"
-      @showing8.showing_at = Time.zone.now - 1.minute
-      @showing8.save(validate: false)
+    context ".ready_for_payment" do
 
-      @showing9 = FactoryGirl.create(:showing)
-      @showing9.status = "no_show"
-      @showing9.showing_at = Time.zone.now - 1.minute
-      @showing9.save(validate: false)
-
-      Showing.update_expired
-      [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6, @showing7, @showing8, @showing9].each(&:reload)
-      expect(@showing1.status).to eq "expired"
-      expect(@showing2.status).to eq "unassigned"
-      expect(@showing3.status).to eq "unassigned"
-      expect(@showing4.status).to eq "expired"
-      expect(@showing5.status).to eq "confirmed"
-      expect(@showing6.status).to eq "completed"
-      expect(@showing7.status).to eq "cancelled"
-      expect(@showing8.status).to eq "expired"
-      expect(@showing9.status).to eq "no_show"
-
-      Timecop.freeze(Time.zone.now + 3.hours + 1.minute) do
-        Showing.update_expired
-        [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6, @showing7, @showing8, @showing9].each(&:reload)
-        expect(@showing1.status).to eq "expired"
-        expect(@showing2.status).to eq "expired"
-        expect(@showing3.status).to eq "expired"
-        expect(@showing4.status).to eq "expired"
-        expect(@showing5.status).to eq "confirmed"
-        expect(@showing6.status).to eq "completed"
-        expect(@showing7.status).to eq "cancelled"
-        expect(@showing8.status).to eq "expired"
-        expect(@showing9.status).to eq "no_show"
+      it "should return all showings in completed status that are 24 hours past the showing time" do
+        @showing1 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 24.hours - 1.minute)
+        @showing2 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 23.hours - 59.minutes)
+        @showing3 = FactoryGirl.build(:showing, status: "paid", showing_at: Time.zone.now - 24.hours - 1.minute)
+        @showing4 = FactoryGirl.build(:showing, status: "expired", showing_at: Time.zone.now - 24.hours - 1.minute)
+        [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
+        expect(Showing.ready_for_payment).to contain_exactly @showing1
+        Timecop.freeze(Time.zone.now + 3.minutes) do
+          expect(Showing.ready_for_payment).to contain_exactly @showing1, @showing2
+        end
       end
 
     end
@@ -532,6 +456,192 @@ describe Showing do
       @showing.showing_at = Time.zone.now
       @showing.save(validate: false)
       expect(@showing.no_show_eligible?).to be false
+    end
+
+  end
+
+  context "cron job status changes" do
+
+    context ".update_completed" do
+
+      it "should set confirmed showings whos showing date/time has past to completed status" do
+        @showing1 = FactoryGirl.create(:showing)
+        @showing1.status = "confirmed"
+        @showing1.showing_at = Time.zone.now - 1.minute
+        @showing1.save(validate: false)
+
+        @showing2 = FactoryGirl.create(:showing)
+        @showing2.status = "confirmed"
+        @showing2.showing_at = Time.zone.now + 1.minute
+        @showing2.save(validate: false)
+
+        @showing3 = FactoryGirl.create(:showing)
+        @showing3.status = "confirmed"
+        @showing3.showing_at = Time.zone.now + 3.hours
+        @showing3.save(validate: false)
+
+        @showing4 = FactoryGirl.create(:showing)
+        @showing4.status = "unconfirmed"
+        @showing4.showing_at = Time.zone.now - 1.minute
+        @showing4.save(validate: false)
+
+        @showing5 = FactoryGirl.create(:showing)
+        @showing5.status = "unassigned"
+        @showing5.showing_at = Time.zone.now - 1.minute
+        @showing5.save(validate: false)
+
+        @showing6 = FactoryGirl.create(:showing)
+        @showing6.status = "cancelled"
+        @showing6.showing_at = Time.zone.now - 1.minute
+        @showing6.save(validate: false)
+
+        Showing.update_completed
+        [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6].each(&:reload)
+        expect(@showing1.status).to eq "completed"
+        expect(@showing2.status).to eq "confirmed"
+        expect(@showing3.status).to eq "confirmed"
+        expect(@showing4.status).to eq "unconfirmed"
+        expect(@showing5.status).to eq "unassigned"
+        expect(@showing6.status).to eq "cancelled"
+
+        Timecop.freeze(Time.zone.now + 3.hours + 1.minute) do
+          Showing.update_completed
+          [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6].each(&:reload)
+          expect(@showing1.status).to eq "completed"
+          expect(@showing2.status).to eq "completed"
+          expect(@showing3.status).to eq "completed"
+          expect(@showing4.status).to eq "unconfirmed"
+          expect(@showing5.status).to eq "unassigned"
+          expect(@showing6.status).to eq "cancelled"
+        end
+
+      end
+
+    end
+
+    context ".update_expired" do
+
+      it "should set unassigned and unconfirmed showings whos showing date/time has past to expired status" do
+        @showing1 = FactoryGirl.create(:showing)
+        @showing1.status = "unassigned"
+        @showing1.showing_at = Time.zone.now - 1.minute
+        @showing1.save(validate: false)
+
+        @showing2 = FactoryGirl.create(:showing)
+        @showing2.status = "unassigned"
+        @showing2.showing_at = Time.zone.now + 1.minute
+        @showing2.save(validate: false)
+
+        @showing3 = FactoryGirl.create(:showing)
+        @showing3.status = "unassigned"
+        @showing3.showing_at = Time.zone.now + 3.hours
+        @showing3.save(validate: false)
+
+        @showing4 = FactoryGirl.create(:showing)
+        @showing4.status = "unconfirmed"
+        @showing4.showing_at = Time.zone.now - 1.minute
+        @showing4.save(validate: false)
+
+        @showing5 = FactoryGirl.create(:showing)
+        @showing5.status = "confirmed"
+        @showing5.showing_at = Time.zone.now - 1.minute
+        @showing5.save(validate: false)
+
+        @showing6 = FactoryGirl.create(:showing)
+        @showing6.status = "completed"
+        @showing6.showing_at = Time.zone.now - 1.minute
+        @showing6.save(validate: false)
+
+        @showing7 = FactoryGirl.create(:showing)
+        @showing7.status = "cancelled"
+        @showing7.showing_at = Time.zone.now - 1.minute
+        @showing7.save(validate: false)
+
+        @showing8 = FactoryGirl.create(:showing)
+        @showing8.status = "expired"
+        @showing8.showing_at = Time.zone.now - 1.minute
+        @showing8.save(validate: false)
+
+        @showing9 = FactoryGirl.create(:showing)
+        @showing9.status = "no_show"
+        @showing9.showing_at = Time.zone.now - 1.minute
+        @showing9.save(validate: false)
+
+        Showing.update_expired
+        [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6, @showing7, @showing8, @showing9].each(&:reload)
+        expect(@showing1.status).to eq "expired"
+        expect(@showing2.status).to eq "unassigned"
+        expect(@showing3.status).to eq "unassigned"
+        expect(@showing4.status).to eq "expired"
+        expect(@showing5.status).to eq "confirmed"
+        expect(@showing6.status).to eq "completed"
+        expect(@showing7.status).to eq "cancelled"
+        expect(@showing8.status).to eq "expired"
+        expect(@showing9.status).to eq "no_show"
+
+        Timecop.freeze(Time.zone.now + 3.hours + 1.minute) do
+          Showing.update_expired
+          [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6, @showing7, @showing8, @showing9].each(&:reload)
+          expect(@showing1.status).to eq "expired"
+          expect(@showing2.status).to eq "expired"
+          expect(@showing3.status).to eq "expired"
+          expect(@showing4.status).to eq "expired"
+          expect(@showing5.status).to eq "confirmed"
+          expect(@showing6.status).to eq "completed"
+          expect(@showing7.status).to eq "cancelled"
+          expect(@showing8.status).to eq "expired"
+          expect(@showing9.status).to eq "no_show"
+        end
+
+      end
+
+    end
+
+    context ".start_payment_charges" do
+
+      it "should kick off a background job to charge credit card when a showing has been completed for 24 hours" do
+        @showing1 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 24.hours - 1.minute)
+        @showing1.save(validate: false)
+        @showing2 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 23.hours - 59.minutes)
+        @showing2.save(validate: false)
+
+        ChargeWorker.expects(:perform_async).once.with(@showing1.id)
+        Showing.start_payment_charges
+
+        [@showing1, @showing2].each(&:reload)
+        expect(@showing1.status).to eq "processing_payment"
+        expect(@showing2.status).to eq "completed"
+
+        Timecop.freeze(Time.zone.now + 3.minutes) do
+          ChargeWorker.expects(:perform_async).once.with(@showing2.id)
+          Showing.start_payment_charges
+
+          [@showing1, @showing2].each(&:reload)
+          expect(@showing1.status).to eq "processing_payment"
+          expect(@showing2.status).to eq "processing_payment"
+        end
+
+      end
+
+    end
+
+    context ".start_payment_transfers" do
+
+      it "should kick off a background job to transfer bank payment after a successful credit card charge" do
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment")
+        @showing1.save(validate: false)
+        # @showing2 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 23.hours - 59.minutes)
+        # @showing2.save(validate: false)
+
+        # ChargeWorker.expects(:perform_async).once.with(@showing1.id)
+        Showing.start_payment_transfers
+
+        [@showing1].each(&:reload)
+        expect(@showing1.status).to eq "processing_payment"
+        # expect(@showing2.status).to eq "completed"
+
+      end
+
     end
 
   end
