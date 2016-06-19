@@ -15,7 +15,7 @@ module Payment
         customer: @token,
         description: "Buyer's agent charge for a successfully completed showing: #{@showing}"
       )
-      # TODO: what to do with the charge response?
+      @showing.update(charge_txn: charge.id)
       Rails.logger.tagged("Stripe Charge") { Rails.logger.info "Charge successful" }
       return true
     rescue Stripe::CardError => e

@@ -47,10 +47,20 @@ class Showing < ActiveRecord::Base
   scope :ready_for_payment, -> { where("status = ? AND showing_at < ?", statuses[:completed], Time.zone.now - 24.hours) }
   scope :ready_for_transfer, -> { where("status = ? AND payment_status = ?", statuses[:processing_payment], payment_statuses[:charging_buyers_agent_success]) }
 
-  # Note: This method was copied right from the Geocoder source (within_bounding_box)
-  # so that I could apply it to the Showing model instead of having to run it on
-  # the Address model, which caused all kinds of complications.
+  scope :ready_for_paid, lambda {
+    # We can only safely assume that a transfer is complete after 5 days of not receiving a transfer.failed message.
+    # So, 24 hours after showing time + 5 days of in process.
+    where("status = ? AND payment_status = ? AND showing_at < ?",
+      statuses[:processing_payment],
+      payment_statuses[:charging_buyers_agent_started],
+      Time.zone.now - 6.days
+    )
+  }
+
   scope :in_bounding_box, lambda { |bounds|
+    # Note: This method was copied right from the Geocoder source (within_bounding_box)
+    # so that I could apply it to the Showing model instead of having to run it on
+    # the Address model, which caused all kinds of complications.
     sw_lat, sw_lng, ne_lat, ne_lng = bounds.flatten if bounds
     if sw_lat && sw_lng && ne_lat && ne_lng
       joins(:address).where(
@@ -159,6 +169,15 @@ class Showing < ActiveRecord::Base
       showing.update(status: statuses[:processing_payment]) # Should already be in processing_payment.
       Rails.logger.tagged("Cron - Showing.start_payment_transfers") { Rails.logger.info "Created transfer payment job for #{showing}." }
       TransferWorker.perform_async(showing.id)
+    end
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.update_paid
+    Rails.logger.tagged("Cron - Showing.update_paid") { Rails.logger.info "Checking for showings that can be safely marked as paid" }
+    Showing.ready_for_paid.each do |showing|
+      showing.update(status: statuses[:paid])
+      Rails.logger.tagged("Cron - Showing.update_paid") { Rails.logger.info "Mark #{showing} as paid." }
     end
   end
 

@@ -16,4 +16,5 @@ every 1.minute do
   runner "Showing.update_expired"
   runner "Showing.start_payment_charges"
   runner "Showing.start_payment_transfers"
+  runner "Showing.update_paid"
 end

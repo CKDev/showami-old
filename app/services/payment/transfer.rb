@@ -15,7 +15,7 @@ module Payment
         recipient: @token,
         statement_descriptor: "Seller's agent payment transfer for a successfully completed showing: #{@showing}"
       )
-      # TODO: Log transfer response?  https://stripe.com/docs/api/ruby#create_transfer
+      @showing.update(transfer_txn: transfer.id)
       Rails.logger.tagged("Stripe Transfer") { Rails.logger.info "Transfer initiated for showing_id: #{@showing.id}" }
       return true
     rescue StandardError => e

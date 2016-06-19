@@ -1,0 +1,56 @@
+{
+    "created": 1326853478,
+    "livemode": false,
+    "id": "evt_00000000000000",
+    "type": "transfer.failed",
+    "object": "event",
+    "request": null,
+    "pending_webhooks": 1,
+    "api_version": "2016-03-07",
+    "data": {
+        "object": {
+            "id": "tr_00000000000000",
+            "object": "transfer",
+            "amount": 4000,
+            "amount_reversed": 0,
+            "application_fee": null,
+            "balance_transaction": "txn_00000000000000",
+            "bank_account": {
+                "id": "ba_00000000000000",
+                "object": "bank_account",
+                "account_holder_name": "Alex Brinkman",
+                "account_holder_type": "individual",
+                "bank_name": "STRIPE TEST BANK",
+                "country": "US",
+                "currency": "usd",
+                "fingerprint": "7lROYMVp5kehtdD3",
+                "last4": "6789",
+                "routing_number": "110000000",
+                "status": "new"
+            },
+            "created": 1466295306,
+            "currency": "usd",
+            "date": 1466295306,
+            "description": null,
+            "destination": "ba_18M0mwBdMtfS76GaSIKwr2gy",
+            "failure_code": null,
+            "failure_message": null,
+            "livemode": false,
+            "metadata": {},
+            "recipient": "rp_00000000000000",
+            "reversals": {
+                "object": "list",
+                "data": [],
+                "has_more": false,
+                "total_count": 0,
+                "url": "/v1/transfers/tr_18NtagBdMtfS76GaJ6WzkA6O/reversals"
+            },
+            "reversed": false,
+            "source_transaction": null,
+            "source_type": "card",
+            "statement_descriptor": "Sellers agent payment transfer for a successfully completed showing: Showing 36: Buyers Agent: Alex Brinkman (alex@commercekitchen.com), Address: 100 Bridge Street 201 Vail, CO 81657, MLS: 12345, Showing Status: processing_payment, Updated At: 2016-06-18 18:15:04 -0600",
+            "status": "failed",
+            "type": "bank_account"
+        }
+    }
+}

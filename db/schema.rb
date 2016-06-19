@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160617222833) do
+ActiveRecord::Schema.define(version: 20160619162529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,8 @@ ActiveRecord::Schema.define(version: 20160617222833) do
     t.integer  "status",           default: 0
     t.integer  "showing_agent_id"
     t.integer  "payment_status",   default: 0
+    t.string   "charge_txn"
+    t.string   "transfer_txn"
   end
 
   create_table "users", force: :cascade do |t|

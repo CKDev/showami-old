@@ -48,6 +48,9 @@ Rails.application.routes.draw do
   get "privacy", to: "privacy#show"
   get "contact", to: "contact#show"
 
+  # Webhooks (Stripe only, for now)
+  post "webhook/receive"
+
   # Sidekiq web interface is a Sinatra app.
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => "/sidekiq"
