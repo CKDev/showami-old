@@ -126,7 +126,7 @@ class Showing < ActiveRecord::Base
       version = self.versions.last
       modified_by_id = version.whodunnit
       modified_by = modified_by_id.present? ? User.find(modified_by_id).to_s : "<System>"
-      Rails.logger.tagged("Showing Update", id) { Rails.logger.info "#{self}, Modified By: #{modified_by}" }
+      Rails.logger.tagged("Showing: #{id}", "Showing Update") { Rails.logger.info "#{self}, Modified By: #{modified_by}" }
     end
   end
 
@@ -136,49 +136,49 @@ class Showing < ActiveRecord::Base
 
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_completed
-    Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
-    Showing.completed.each do |s|
-      s.update(status: statuses[:completed])
-      Rails.logger.tagged("Cron - Showing.update_completed") { Rails.logger.info "Marked #{s} as completed." }
+    Rails.logger.tagged("Cron", "Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
+    Showing.completed.each do |showing|
+      showing.update(status: statuses[:completed])
+      Rails.logger.tagged("Cron", "Showing.update_completed", "Showing: #{showing.id}") { Rails.logger.info "Marked as completed." }
     end
   end
 
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_expired
-    Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Checking for expired showings..." }
-    Showing.expired.each do |s|
-      s.update(status: statuses[:expired])
-      Rails.logger.tagged("Cron - Showing.update_expired") { Rails.logger.info "Marked #{s} as expired." }
+    Rails.logger.tagged("Cron", "Showing.update_expired") { Rails.logger.info "Checking for expired showings..." }
+    Showing.expired.each do |showing|
+      showing.update(status: statuses[:expired])
+      Rails.logger.tagged("Cron", "Showing.update_expired", "Showing: #{showing.id}") { Rails.logger.info "Marked as expired." }
     end
   end
 
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.start_payment_charges
-    Rails.logger.tagged("Cron - Showing.start_payment_charges") { Rails.logger.info "Checking for showings in need of making payments..." }
+    Rails.logger.tagged("Cron", "Showing.start_payment_charges") { Rails.logger.info "Checking for showings in need of making payments..." }
     Showing.ready_for_payment.each do |showing|
       showing.update(status: statuses[:processing_payment])
-      Rails.logger.tagged("Cron - Showing.start_payment_charges") { Rails.logger.info "Created charge payment job for #{showing}." }
+      Rails.logger.tagged("Cron", "Showing.start_payment_charges", "Showing: #{showing.id}") { Rails.logger.info "Created charge payment job." }
       ChargeWorker.perform_async(showing.id)
     end
   end
 
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.start_payment_transfers
-    Rails.logger.tagged("Cron - Showing.start_payment_transfers") { Rails.logger.info "Checking for showings in need of making transfers..." }
+    Rails.logger.tagged("Cron", "Showing.start_payment_transfers") { Rails.logger.info "Checking for showings in need of making transfers..." }
     Showing.ready_for_transfer.each do |showing|
       showing.update(status: statuses[:processing_payment]) # Should already be in processing_payment.
-      Rails.logger.tagged("Cron - Showing.start_payment_transfers") { Rails.logger.info "Created transfer payment job for #{showing}." }
+      Rails.logger.tagged("Cron", "Showing.start_payment_transfers", "Showing: #{showing.id}") { Rails.logger.info "Created transfer payment job." }
       TransferWorker.perform_async(showing.id)
     end
   end
 
   # NOTE: called from a cron job, keep name in sync with schedule.rb.
   def self.update_paid
-    Rails.logger.tagged("Cron - Showing.update_paid") { Rails.logger.info "Checking for showings that can be safely marked as paid" }
+    Rails.logger.tagged("Cron", "Showing.update_paid") { Rails.logger.info "Checking for showings that can be safely marked as paid" }
     Showing.ready_for_paid.each do |showing|
       showing.update(status: statuses[:paid])
       showing.update(payment_status: statuses[:paying_sellers_agent_success])
-      Rails.logger.tagged("Cron - Showing.update_paid") { Rails.logger.info "Mark #{showing} as paid." }
+      Rails.logger.tagged("Cron", "Showing.update_paid", "Showing: #{showing.id}") { Rails.logger.info "Mark as paid." }
     end
   end
 
@@ -197,7 +197,7 @@ class Showing < ActiveRecord::Base
   end
 
   def to_s
-    "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Updated At: #{updated_at}"
+    "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Payment Status: #{payment_status}, Updated At: #{updated_at}"
   end
 
   private

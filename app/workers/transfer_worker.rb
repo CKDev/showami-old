@@ -9,13 +9,14 @@ class TransferWorker
     raise ArgumentError unless showing.status == "processing_payment"
     raise ArgumentError unless showing.payment_status.in? ["charging_buyers_agent_success", "paying_sellers_agent"]
 
-    log_msg = "Sending a transfer request to Stripe"
-    Rails.logger.tagged("Transfer Worker") { Rails.logger.info log_msg }
+    Rails.logger.tagged("Showing: #{showing.id}", "Transfer Worker") { Rails.logger.info "Sending Stripe Transfer request..." }
     showing.update(payment_status: "paying_sellers_agent")
     if Payment::Transfer.new(showing.showing_agent.profile.bank_token, showing).send
       showing.update(payment_status: "paying_sellers_agent_started")
+      Rails.logger.tagged("Showing: #{showing.id}", "Transfer Worker") { Rails.logger.info "Stripe Transfer request sucessful." }
     else
       showing.update(payment_status: "paying_sellers_agent_failure")
+      Rails.logger.tagged("Showing: #{showing.id}", "Transfer Worker") { Rails.logger.error "Stripe Transfer request failed." }
     end
   end
 

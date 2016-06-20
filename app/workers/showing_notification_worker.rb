@@ -12,7 +12,7 @@ class ShowingNotificationWorker
 
     body = "New Showami showing available: #{showing_url}"
     log_msg = "Sending SMS showing notification to #{user.full_name} (#{user.profile.phone1}) -  New Showing: #{showing.address}"
-    Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
+    Rails.logger.tagged("Showing: #{showing.id}", "Showing Notification SMS") { Rails.logger.info log_msg }
     Notification::SMS.new(to, body).send
   end
 end

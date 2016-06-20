@@ -4,13 +4,15 @@ describe TransferWorker do
 
   before :each do
     @user = FactoryGirl.create(:user_with_valid_profile)
-    @showing = FactoryGirl.build(:showing, user: @user, status: "processing_payment", payment_status: "charging_buyers_agent_success")
+    @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+    @showing = FactoryGirl.build(:showing, user: @user, showing_agent: @showing_agent,
+      status: "processing_payment", payment_status: "charging_buyers_agent_success")
     @showing.save(validate: false)
   end
 
   it "should call the Payments::Transfer class with valid params" do
     success_object = stub(send: true)
-    Payment::Transfer.expects(:new).once.with(@user.profile.bank_token, @showing).returns(success_object)
+    Payment::Transfer.expects(:new).once.with(@showing_agent.profile.bank_token, @showing).returns(success_object)
     TransferWorker.new.perform(@showing.id)
     @showing.reload
     expect(@showing.payment_status).to eq "paying_sellers_agent_started"
@@ -18,7 +20,7 @@ describe TransferWorker do
 
   it "should set the payment_status correctly on failed Payments::Transfer" do
     failure_object = stub(send: false)
-    Payment::Transfer.expects(:new).once.with(@user.profile.bank_token, @showing).returns(failure_object)
+    Payment::Transfer.expects(:new).once.with(@showing_agent.profile.bank_token, @showing).returns(failure_object)
     TransferWorker.new.perform(@showing.id)
     @showing.reload
     expect(@showing.payment_status).to eq "paying_sellers_agent_failure"

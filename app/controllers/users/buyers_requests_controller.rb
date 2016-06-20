@@ -24,7 +24,7 @@ module Users
         lat = @showing.address.latitude
         long = @showing.address.longitude
         matched_users = User.not_blocked.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
-        Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info "Notifying #{matched_users.count} users of new showing: #{@showing.address}" }
+        Rails.logger.tagged("Showing: #{@showing.id}", "Showing Notification SMS") { Rails.logger.info "Notifying #{matched_users.count} users of new showing: #{@showing.address}" }
         matched_users.each do |u|
           u.notify_new_showing(@showing)
         end
