@@ -52,7 +52,7 @@ class Showing < ActiveRecord::Base
     # So, 24 hours after showing time + 5 days of in process.
     where("status = ? AND payment_status = ? AND showing_at < ?",
       statuses[:processing_payment],
-      payment_statuses[:charging_buyers_agent_started],
+      payment_statuses[:paying_sellers_agent_started],
       Time.zone.now - 6.days
     )
   }
@@ -177,6 +177,7 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron - Showing.update_paid") { Rails.logger.info "Checking for showings that can be safely marked as paid" }
     Showing.ready_for_paid.each do |showing|
       showing.update(status: statuses[:paid])
+      showing.update(payment_status: statuses[:paying_sellers_agent_success])
       Rails.logger.tagged("Cron - Showing.update_paid") { Rails.logger.info "Mark #{showing} as paid." }
     end
   end
