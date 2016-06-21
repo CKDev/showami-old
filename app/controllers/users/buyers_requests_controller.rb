@@ -42,11 +42,20 @@ module Users
 
     def cancel
       @showing = current_user.showings.find(params[:id])
-      if @showing.status != "cancelled" && @showing.update(status: "cancelled")
-        ShowingCancelledNotifyShowingAgentWorker.perform_async(@showing.id)
-        redirect_to users_buyers_requests_path, notice: "Showing cancelled."
+      if @showing.after_deadline?
+        if @showing.status != "cancelled_with_payment" && @showing.update(status: "cancelled_with_payment")
+          ShowingCancelledNotifyShowingAgentWorker.perform_async(@showing.id, true)
+          redirect_to users_buyers_requests_path, notice: "Showing cancelled, payment will still be required."
+        else
+          redirect_to users_buyers_requests_path, alert: "Unable to mark showing as cancelled."
+        end
       else
-        redirect_to users_buyers_requests_path, alert: "Unable to mark showing as cancelled."
+        if @showing.status != "cancelled" && @showing.update(status: "cancelled")
+          ShowingCancelledNotifyShowingAgentWorker.perform_async(@showing.id, false)
+          redirect_to users_buyers_requests_path, notice: "Showing cancelled, no payment will be required."
+        else
+          redirect_to users_buyers_requests_path, alert: "Unable to mark showing as cancelled."
+        end
       end
     rescue ActiveRecord::RecordNotFound
       redirect_to users_buyers_requests_path, alert: "No showing found with the given id."

@@ -11,7 +11,7 @@ class Showing < ActiveRecord::Base
 
   enum buyer_type: [:individual, :couple, :family]
   enum status: [:unassigned, :unconfirmed, :confirmed, :completed,
-    :cancelled, :expired, :no_show, :processing_payment, :paid]
+    :cancelled, :expired, :no_show, :processing_payment, :paid, :cancelled_with_payment]
   enum payment_status: [:unpaid,
     :charging_buyers_agent, :charging_buyers_agent_success, :charging_buyers_agent_failure,
     :paying_sellers_agent, :paying_sellers_agent_started, :paying_sellers_agent_success, :paying_sellers_agent_failure]
@@ -44,7 +44,11 @@ class Showing < ActiveRecord::Base
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
-  scope :ready_for_payment, -> { where("status = ? AND showing_at < ?", statuses[:completed], Time.zone.now - 24.hours) }
+  scope :ready_for_payment, -> {
+    where("(status = ? AND showing_at < ?) OR (status = ? AND showing_at < ?)",
+      statuses[:completed], Time.zone.now - 24.hours,
+      statuses[:cancelled_with_payment], Time.zone.now)
+  }
   scope :ready_for_transfer, -> { where("status = ? AND payment_status = ?", statuses[:processing_payment], payment_statuses[:charging_buyers_agent_success]) }
 
   scope :ready_for_paid, lambda {
@@ -101,6 +105,8 @@ class Showing < ActiveRecord::Base
         check_processing_payment_state_change
       elsif status_was == "paid"
         check_paid_state_change
+      elsif status_was == "cancelled_with_payment"
+        check_cancelled_with_payment_status
       end
     end
   end
@@ -188,6 +194,10 @@ class Showing < ActiveRecord::Base
     true
   end
 
+  def after_deadline?
+    showing_at < Time.zone.now + 4.hours
+  end
+
   def showing_agent_visible?
     status.in? %w(unconfirmed confirmed completed no_show)
   end
@@ -247,11 +257,15 @@ class Showing < ActiveRecord::Base
   end
 
   def check_processing_payment_state_change
-    errors.add(:status, "can only change from payment-processing to paid") unless status == "paid"
+    errors.add(:status, "can only change from processing_payment to paid") unless status == "paid"
   end
 
   def check_paid_state_change
     errors.add(:status, "cannot change status, once in paid")
+  end
+
+  def check_cancelled_with_payment_status
+    errors.add(:status, "can only change from cancelled_with_payment to processing_payment") unless status == "processing_payment"
   end
 
   def strip_phone_numbers

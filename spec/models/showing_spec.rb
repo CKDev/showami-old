@@ -283,6 +283,24 @@ describe Showing do
         end
       end
 
+      it "should not allow a showing to go from cancelled_with_payment to anthing other than processing_payment" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "cancelled_with_payment"
+        @showing.save(validate: false)
+        Showing.statuses.keys.reject { |k| k == "cancelled_with_payment" || k == "processing_payment" }.each do |status, _v|
+          @showing.update(status: status)
+          expect(@showing.valid?).to be false
+        end
+      end
+
+      it "should allow a showing to go from cancelled_with_payment to processing_payment" do
+        @showing = FactoryGirl.create(:showing)
+        @showing.status = "cancelled_with_payment"
+        @showing.save(validate: false)
+        @showing.update(status: "processing_payment")
+        expect(@showing.valid?).to be true
+      end
+
     end
 
     context "#showing_agent_changed?" do
@@ -426,6 +444,17 @@ describe Showing do
         expect(Showing.ready_for_payment).to contain_exactly @showing1
         Timecop.freeze(Time.zone.now + 3.minutes) do
           expect(Showing.ready_for_payment).to contain_exactly @showing1, @showing2
+        end
+      end
+
+      it "should return all showings in cancelled_with_payment status, whos showing time has passed" do
+        @showing1 = FactoryGirl.build(:showing, status: "cancelled_with_payment", showing_at: Time.zone.now - 1.minute)
+        @showing2 = FactoryGirl.build(:showing, status: "cancelled_with_payment", showing_at: Time.zone.now + 1.minute)
+        @showing3 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 23.hours - 59.minutes)
+        [@showing1, @showing2, @showing3].each { |s| s.save(validate: false) }
+        expect(Showing.ready_for_payment).to contain_exactly @showing1
+        Timecop.freeze(Time.zone.now + 3.minutes) do
+          expect(Showing.ready_for_payment).to contain_exactly @showing1, @showing2, @showing3
         end
       end
 
@@ -642,6 +671,20 @@ describe Showing do
 
       end
 
+    end
+
+  end
+
+  context "#after_deadline?" do
+
+    it "should return true if the showing_at is less than 4 hours away" do
+      @showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 3.hours + 59.minutes)
+      expect(@showing.after_deadline?).to be true
+    end
+
+    it "should return false if the showing_at is more than 4 hours away" do
+      @showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 4.hours + 1.second)
+      expect(@showing.after_deadline?).to be false
     end
 
   end

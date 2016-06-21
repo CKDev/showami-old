@@ -219,7 +219,7 @@ module Users
 
       before :each do
         @user = FactoryGirl.create(:user_with_valid_profile)
-        @showing = FactoryGirl.create(:showing, user: @user)
+        @showing = FactoryGirl.create(:showing, user: @user, showing_at: Time.zone.now + 4.hours + 1.minute)
         sign_in @user
       end
 
@@ -248,9 +248,24 @@ module Users
         expect(response).to redirect_to users_buyers_requests_path
       end
 
-      it "sends an SMS to the showing agent that the showing is cancelled" do
-        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id).once
+      it "sends an SMS to the showing agent that the showing is cancelled, but no payment is required" do
+        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id, false).once
         post :cancel, id: @showing.id
+      end
+
+      it "sends an SMS to the showing agent that the showing is cancelled, and payment will be required" do
+        @showing.update(showing_at: Time.zone.now + 3.hours + 59.minutes)
+        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id, true).once
+        post :cancel, id: @showing.id
+      end
+
+      it "sets the showing in a cancelled_with_payment status if the buyers agent cancels it with less than 4 hours notice" do
+        @showing.status = "confirmed"
+        @showing.showing_at = Time.zone.now + 3.hours + 59.minutes
+        @showing.save(validate: false)
+        post :cancel, id: @showing.id
+        @showing.reload
+        expect(@showing.status).to eq "cancelled_with_payment"
       end
 
     end
