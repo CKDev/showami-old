@@ -34,4 +34,13 @@ describe ApplicationController do
 
   end
 
+  describe "#after_sign_out_path_for" do
+
+    it "should redirect users to the sign_in page, not the homepage" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      expect(@controller.after_sign_out_path_for(@user)).to eq new_user_session_path
+    end
+
+  end
+
 end
