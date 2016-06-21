@@ -248,6 +248,11 @@ module Users
         expect(response).to redirect_to users_buyers_requests_path
       end
 
+      it "sends an SMS to the showing agent that the showing is cancelled" do
+        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id).once
+        post :cancel, id: @showing.id
+      end
+
     end
 
     describe "POST #no_show" do

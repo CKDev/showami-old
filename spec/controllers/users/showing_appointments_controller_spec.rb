@@ -102,7 +102,7 @@ module Users
       end
 
       it "sends an SMS to the buying agent upon cancelling" do
-        ShowingCancelledNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        ShowingCancelledNotifyBuyersAgentWorker.expects(:perform_async).once.with(@showing.id)
         post :cancel, id: @showing.id
       end
 

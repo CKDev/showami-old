@@ -43,6 +43,7 @@ module Users
     def cancel
       @showing = current_user.showings.find(params[:id])
       if @showing.status != "cancelled" && @showing.update(status: "cancelled")
+        ShowingCancelledNotifyShowingAgentWorker.perform_async(@showing.id)
         redirect_to users_buyers_requests_path, notice: "Showing cancelled."
       else
         redirect_to users_buyers_requests_path, alert: "Unable to mark showing as cancelled."

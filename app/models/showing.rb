@@ -196,6 +196,10 @@ class Showing < ActiveRecord::Base
     showing_agent.primary_phone
   end
 
+  def buyers_agent_phone
+    user.primary_phone
+  end
+
   def to_s
     "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Payment Status: #{payment_status}, Updated At: #{updated_at}"
   end

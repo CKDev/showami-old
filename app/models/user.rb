@@ -75,6 +75,7 @@ class User < ActiveRecord::Base
     profile.agent_type == "both"
   end
 
+  # TODO: update uses to use this method.
   def primary_phone
     profile.phone1
   end

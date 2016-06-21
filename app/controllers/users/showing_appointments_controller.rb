@@ -24,7 +24,7 @@ module Users
     def cancel
       @showing = Showing.find(params[:id])
       if @showing.update(status: "cancelled")
-        ShowingCancelledNotificationWorker.perform_async(@showing.id)
+        ShowingCancelledNotifyBuyersAgentWorker.perform_async(@showing.id)
         redirect_to users_showing_appointments_path, notice: "Showing cancelled."
       else
         redirect_path = request.env["HTTP_REFERER"] || users_showing_appointments_path
