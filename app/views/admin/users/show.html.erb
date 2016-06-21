@@ -1,0 +1,35 @@
+<h1>User Details</h1>
+
+<h3>Contact Information</h3>
+<ul>
+  <li><%= @user.full_name %> (<%= mail_to @user.email %>)</li>
+  <li><strong>Phone:</strong> <%= @user.primary_phone %></li>
+</ul>
+
+<% if @user.blocked? %>
+  <p class="status red">User is blocked.</p>
+  <%= form_for @user, url: unblock_admin_user_path(@user), method: :post do |f| %>
+    <%= f.submit "Unblock", class: "button-secondary", data: { confirm: "Are you sure you want to unblock this user?" } %>
+  <% end %>
+<% else %>
+  <p>User is not blocked.</p>
+<% end %>
+
+<% if @user.showings.count > 0 %>
+<h3>Buyer's Agent Showings</h3>
+<ul>
+  <% @user.showings.each do |showing| %>
+    <%= showing %>
+  <% end %>
+</ul>
+<% end %>
+
+<%# TODO: move this into the controller %>
+<% if Showing.where(showing_agent: @user).count > 0 %>
+  <h3>Seller's Agent Showing Information</h3>
+  <ul>
+    <% Showing.where(showing_agent: @user).each do |showing| %>
+      <li><%= showing %></li>
+    <% end %>
+  </ul>
+<% end %>

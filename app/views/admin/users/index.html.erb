@@ -1,0 +1,18 @@
+<h1>Users</h1>
+
+<table class="u-full-width">
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Agent Type</th>
+    <th>Details</th>
+  </tr>
+<% @users.each do |u| %>
+  <tr>
+    <td><%= u.full_name %></td>
+    <td><%= u.email %></td>
+    <td><%= u.profile.agent_type %></td>
+    <td><%= link_to "Show Details", admin_user_path(u) %></td>
+  </tr>
+<% end %>
+</table>

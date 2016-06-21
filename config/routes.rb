@@ -32,6 +32,11 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root "dashboard#index"
+    resources :users, only: [:show, :index] do
+      member do
+        post :unblock
+      end
+    end
   end
 
   devise_for :users, controllers: {
