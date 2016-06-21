@@ -1,5 +1,5 @@
 class WebhookController < ApplicationController
-  skip_before_filter :verify_authenticity_token
+  skip_before_action :verify_authenticity_token
 
   def receive
     # The only status we care about at this time is the failure.

@@ -21,7 +21,6 @@ describe WebhookController do
     expect(@showing.payment_status).to eq "paying_sellers_agent_failure"
   end
 
-
   it "should ignore other webhooks besides the transfer.failed" do
     fixture_path = "#{Rails.root}/spec/fixtures/webhooks/transfer.paid.json"
     @transfer_paid_json = JSON.parse(File.read(fixture_path))

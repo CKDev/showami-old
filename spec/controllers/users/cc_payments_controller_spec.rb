@@ -31,8 +31,8 @@ module Users
         @user = FactoryGirl.create(:user_with_valid_profile)
         @user.profile.update(cc_token: "")
         sign_in @user
-        Stripe::Customer.expects(:create).once.with(source: "cc_tok", email: @user.email).raises(StandardError, "A Stripe error ocurred")
-        Notification::ErrorReporter.expects(:send).once.with(instance_of(StandardError))
+        Stripe::Customer.expects(:create).once.with(source: "cc_tok", email: @user.email).raises(Stripe::CardError.new("A", "B", "C"))
+        Notification::ErrorReporter.expects(:send).once.with(instance_of(Stripe::CardError))
         post :create, stripeToken: "cc_tok"
         expect(@user.profile.cc_token).to eq ""
         expect(response).to redirect_to users_root_path

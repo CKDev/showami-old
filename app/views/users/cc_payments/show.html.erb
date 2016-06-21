@@ -25,7 +25,14 @@
     $("#payment-form").submit(function(e) {
       var $form = $(this);
       $form.find("button").prop("disabled", true); // Prevent repeated clicks
-      Stripe.card.createToken($form, stripeResponseHandler);
+
+      var isValidZip = /(^\d{5}$)/.test($("#cc-address-zip").val());
+      if (!isValidZip) {
+        $form.find(".payment-errors").text("Please enter a 5 digit zip code.").show();
+      }
+      else {
+        Stripe.card.createToken($form, stripeResponseHandler);
+      }
 
       // Prevent the form from submitting with the default action.
       return false;
@@ -34,35 +41,40 @@
 </script>
 
 <% if current_user.valid_credit_card? %>
-  <h1>You have a valid credit card on file.</h1>
-  <p>At some point you'll be able to update it, or delete it, but not yet.</p>
+  <div class="flash-message">
+    <p class="notice">You have a valid credit card on file. You may use this form to update your credit card details.</p>
+  </div>
+  <h1>Buyer's Agents Edit Your Payment Information</h1>
 <% else %>
-
   <h1>Buyer's Agents Add Your Payment Information</h1>
+<% end %>
 
-  <%= form_tag users_cc_payment_path, id: "payment-form" do %>
-    <p class="payment-errors alert" style="display: none;"></p>
+<%= form_tag users_cc_payment_path, id: "payment-form" do %>
+  <p class="payment-errors alert" style="display: none;"></p>
 
-    <div>
-      <label for="cc-num">Credit Card Number</label>
-      <input id="cc-num" type="text" data-stripe="number" maxlength="20" autofocus="true" />
-    </div>
+  <div>
+    <label for="cc-num">Credit Card Number</label>
+    <input id="cc-num" type="text" data-stripe="number" maxlength="20" autofocus="true" />
+  </div>
 
-    <div>
-      <label for="cc-cvc">CVC</label>
-      <input id="cc-cvc" type="text" data-stripe="cvc" maxlength="4" />
-    </div>
+  <div>
+    <label for="cc-cvc">CVC</label>
+    <input id="cc-cvc" type="text" data-stripe="cvc" maxlength="4" />
+  </div>
 
-    <div>
-      <label for="cc-exp-month">Expiration Date <span class="note">(mm/yyyy)</span></label>
-      <input id="cc-exp-month" type="text" data-stripe="exp-month" maxlength="2" style="display: inline-block; width: 50px;" />
-      <span> / </span>
-      <input id="cc-exp-year" type="text" data-stripe="exp-year" maxlength="4" style="display: inline-block; width: 100px;" />
-    </div>
+  <div>
+    <label for="cc-exp-month">Expiration Date <span class="note">(mm/yyyy)</span></label>
+    <input id="cc-exp-month" type="text" data-stripe="exp-month" maxlength="2" style="display: inline-block; width: 50px;" />
+    <span> / </span>
+    <input id="cc-exp-year" type="text" data-stripe="exp-year" maxlength="4" style="display: inline-block; width: 100px;" />
+  </div>
 
-    <%= submit_tag "Save", class: "button button-primary", data: { disable_with: "Saving..." } %>
-  <% end %>
+  <div>
+    <label for="cc-address-zip">Zip Code</label>
+    <input id="cc-address-zip" type="text" data-stripe="address-zip" maxlength="5" style="display: inline-block; width: 163px;" />
+  </div>
 
+  <%= submit_tag "Save", class: "button button-primary", data: { disable_with: "Saving..." } %>
 <% end %>
 
 <% if current_user.sellers_agent? || current_user.both_agent_types? %>
