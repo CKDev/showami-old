@@ -248,24 +248,34 @@ module Users
         expect(response).to redirect_to users_buyers_requests_path
       end
 
-      it "sends an SMS to the showing agent that the showing is cancelled, but no payment is required" do
+      it "checks that the showing is more than 4 hours away, sends an SMS to the showing agent that the showing is cancelled, and no payment will be made" do
+        @showing.showing_at = Time.zone.now + 4.hours + 1.minute
+        @showing.status = "confirmed"
+        @showing.save(validate: false)
         ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id, false).once
         post :cancel, id: @showing.id
+        @showing.reload
+        expect(@showing.status).to eq "cancelled"
       end
 
-      it "sends an SMS to the showing agent that the showing is cancelled, and payment will be required" do
-        @showing.update(showing_at: Time.zone.now + 3.hours + 59.minutes)
-        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id, true).once
-        post :cancel, id: @showing.id
-      end
-
-      it "sets the showing in a cancelled_with_payment status if the buyers agent cancels it with less than 4 hours notice" do
-        @showing.status = "confirmed"
+      it "checks that the showing is less than 4 hours away, sends an SMS to the showing agent that the showing is cancelled, and payment will be made" do
         @showing.showing_at = Time.zone.now + 3.hours + 59.minutes
+        @showing.status = "confirmed"
         @showing.save(validate: false)
+        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id, true).once
         post :cancel, id: @showing.id
         @showing.reload
         expect(@showing.status).to eq "cancelled_with_payment"
+      end
+
+      it "sets the showing to cancelled, and doesn't send SMS (handled by worker, not here) if no showing agent accepted the showing" do
+        @showing.showing_at = Time.zone.now + 3.hours + 59.minutes
+        @showing.status = "unassigned"
+        @showing.save(validate: false)
+        ShowingCancelledNotifyShowingAgentWorker.expects(:perform_async).with(@showing.id, false).once
+        post :cancel, id: @showing.id
+        @showing.reload
+        expect(@showing.status).to eq "cancelled"
       end
 
     end

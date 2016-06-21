@@ -26,4 +26,10 @@ describe ShowingCancelledNotifyShowingAgentWorker do
     worker.perform(@showing.id, true)
   end
 
+  it "should not call the sms notification class if no showing agent is available (cancelled before accepted)" do
+    @showing = FactoryGirl.create(:showing)
+    Notification::SMS.expects(:new).never
+    ShowingCancelledNotifyShowingAgentWorker.new.perform(@showing.id, true)
+  end
+
 end
