@@ -1,1 +1,5 @@
 <p class="status">Status: <span class="red">Cancelled</span></p>
+<% @who_cancelled ||= showing.who_cancelled %>
+<% if @who_cancelled.present? %>
+  <p class="note"><%= @who_cancelled %></p>
+<% end %>

@@ -210,6 +210,17 @@ class Showing < ActiveRecord::Base
     user.primary_phone
   end
 
+  def who_cancelled
+    changeset = versions.last.changeset
+    if changeset.keys.include?("status") && changeset[:status].second.in?(["cancelled", "cancelled_with_payment"])
+      user = User.find(versions.last.whodunnit)
+      return "Cancelled by: #{user.full_name} on #{versions.last.created_at.strftime(Constants.datetime_format)}"
+    end
+    ""
+  rescue
+    ""
+  end
+
   def to_s
     "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Payment Status: #{payment_status}, Updated At: #{updated_at}"
   end
