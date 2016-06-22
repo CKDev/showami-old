@@ -8,6 +8,7 @@ class Showing < ActiveRecord::Base
   belongs_to :user
   belongs_to :showing_agent, class_name: "User"
   has_one :address, as: :addressable, dependent: :destroy
+  has_many :event_logs
 
   enum buyer_type: [:individual, :couple, :family]
   enum status: [:unassigned, :unconfirmed, :confirmed, :completed,
@@ -132,7 +133,7 @@ class Showing < ActiveRecord::Base
       version = self.versions.last
       modified_by_id = version.whodunnit
       modified_by = modified_by_id.present? ? User.find(modified_by_id).to_s : "<System>"
-      Rails.logger.tagged("Showing: #{id}", "Showing Update") { Rails.logger.info "#{self}, Modified By: #{modified_by}" }
+      Log::EventLogger.info(nil, id, "#{self}, Modified By: #{modified_by}", "Showing: #{id}", "Showing Update")
     end
   end
 
@@ -145,7 +146,7 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron", "Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
     Showing.completed.each do |showing|
       showing.update(status: statuses[:completed])
-      Rails.logger.tagged("Cron", "Showing.update_completed", "Showing: #{showing.id}") { Rails.logger.info "Marked as completed." }
+      Log::EventLogger.info(nil, showing.id, "Marked as completed.", "Cron", "Showing.update_completed", "Showing: #{showing.id}")
     end
   end
 
@@ -154,7 +155,7 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron", "Showing.update_expired") { Rails.logger.info "Checking for expired showings..." }
     Showing.expired.each do |showing|
       showing.update(status: statuses[:expired])
-      Rails.logger.tagged("Cron", "Showing.update_expired", "Showing: #{showing.id}") { Rails.logger.info "Marked as expired." }
+      Log::EventLogger.info(nil, showing.id, "Marked as expired.", "Cron", "Showing.update_expired", "Showing: #{showing.id}")
     end
   end
 
@@ -163,7 +164,7 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron", "Showing.start_payment_charges") { Rails.logger.info "Checking for showings in need of making payments..." }
     Showing.ready_for_payment.each do |showing|
       showing.update(status: statuses[:processing_payment])
-      Rails.logger.tagged("Cron", "Showing.start_payment_charges", "Showing: #{showing.id}") { Rails.logger.info "Created charge payment job." }
+      Log::EventLogger.info(nil, showing.id, "Created charge payment job.", "Cron", "Showing.start_payment_charges", "Showing: #{showing.id}")
       ChargeWorker.perform_async(showing.id)
     end
   end
@@ -173,7 +174,7 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron", "Showing.start_payment_transfers") { Rails.logger.info "Checking for showings in need of making transfers..." }
     Showing.ready_for_transfer.each do |showing|
       showing.update(status: statuses[:processing_payment]) # Should already be in processing_payment.
-      Rails.logger.tagged("Cron", "Showing.start_payment_transfers", "Showing: #{showing.id}") { Rails.logger.info "Created transfer payment job." }
+      Log::EventLogger.info(nil, showing.id, "Created transfer payment job.", "Cron", "Showing.start_payment_transfers", "Showing: #{showing.id}")
       TransferWorker.perform_async(showing.id)
     end
   end
@@ -184,7 +185,7 @@ class Showing < ActiveRecord::Base
     Showing.ready_for_paid.each do |showing|
       showing.update(status: statuses[:paid])
       showing.update(payment_status: statuses[:paying_sellers_agent_success])
-      Rails.logger.tagged("Cron", "Showing.update_paid", "Showing: #{showing.id}") { Rails.logger.info "Mark as paid." }
+      Log::EventLogger.info(nil, showing.id, "Marked as paid.", "Cron", "Showing.update_paid", "Showing: #{showing.id}")
     end
   end
 

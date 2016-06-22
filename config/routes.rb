@@ -37,6 +37,7 @@ Rails.application.routes.draw do
         post :unblock
       end
     end
+    resources :showings, only: [:show]
   end
 
   devise_for :users, controllers: {

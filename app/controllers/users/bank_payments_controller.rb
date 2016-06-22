@@ -21,8 +21,9 @@ module Users
       redirect_to users_root_path, notice: "Thank you for adding your payment information, you may accept showing invitations."
     rescue => e
       Notification::ErrorReporter.send(e)
-      Rails.logger.tagged("User: #{current_user.id}", "Create Bank Token") { Rails.logger.error "Error creating bank token for #{current_user}: #{e.message}" }
-      redirect_to users_root_path, alert: "An error occurred creating your bank token, we're looking into the situation."
+      log_msg = "Error creating bank token: #{e.message}"
+      Log::EventLogger.error(current_user.id, nil, log_msg, "Create Bank Token")
+      redirect_to users_root_path, alert: "An error occurred creating your bank token."
     end
 
   end

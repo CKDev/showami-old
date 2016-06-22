@@ -29,7 +29,12 @@
   <h3>Seller's Agent Showing Information</h3>
   <ul>
     <% Showing.where(showing_agent: @user).each do |showing| %>
-      <li><%= showing %></li>
+      <li><%= link_to "Showing #{showing.id}", admin_showing_path(showing) %></li>
     <% end %>
   </ul>
+<% end %>
+
+<h3>User Events</h3>
+<% @events.each do |event| %>
+<p><%= event.details %></p>
 <% end %>

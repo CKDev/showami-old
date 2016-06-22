@@ -1,0 +1,14 @@
+<h1>Showing Details</h1>
+
+<%= @showing %>
+
+<h3>Showing Events</h3>
+<% @events.each do |event| %>
+<p><%= event.details %></p>
+<% end %>
+
+<h3>Showing Audit</h3>
+
+<% @showing.versions.each do |v| %>
+<p><%= v.changeset %></p>
+<% end %>

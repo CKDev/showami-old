@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
 
   has_one :profile
   has_many :showings, -> { order("showing_at DESC") }
+  has_many :event_logs
 
   after_create :add_profile
 
@@ -36,7 +37,7 @@ class User < ActiveRecord::Base
 
   def notify_new_showing(showing)
     log_msg = "Pushing SMS showing notification to background: #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address}"
-    Rails.logger.tagged("Showing: #{showing.id}", "Showing Notification SMS") { Rails.logger.info log_msg }
+    Log::EventLogger.info(id, showing.id, log_msg, "Showing: #{showing.id}", "Showing Notification SMS")
     ShowingNotificationWorker.perform_async(id, showing.id)
   end
 

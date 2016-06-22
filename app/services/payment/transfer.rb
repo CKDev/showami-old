@@ -7,7 +7,7 @@ module Payment
     end
 
     def send
-      Rails.logger.tagged("Showing: #{@showing.id}", "Stripe Transfer") { Rails.logger.info "Attempting payment transfer..." }
+      Log::EventLogger.info(nil, @showing.id, "Attempting payment transfer...", "Showing: #{@showing.id}", "Stripe Transfer")
       Stripe.api_key = Rails.application.secrets[:stripe]["private_key"]
       transfer = Stripe::Transfer.create(
         amount: 4_000, # Amount in cents - $40
@@ -16,10 +16,10 @@ module Payment
         statement_descriptor: "Seller's agent payment transfer for a successfully completed showing: #{@showing}"
       )
       @showing.update(transfer_txn: transfer.id)
-      Rails.logger.tagged("Showing: #{@showing.id}", "Stripe Transfer") { Rails.logger.info "Transfer initiated." }
+      Log::EventLogger.info(nil, @showing.id, "Transfer initiated.", "Showing: #{@showing.id}", "Stripe Transfer")
       return true
     rescue StandardError => e
-      Rails.logger.tagged("Showing: #{@showing.id}", "Stripe Transfer") { Rails.logger.error "Transfer error: #{e}" }
+      Log::EventLogger.info(nil, @showing.id, "Transfer error: #{e}", "Showing: #{@showing.id}", "Stripe Transfer")
       return false
     end
 

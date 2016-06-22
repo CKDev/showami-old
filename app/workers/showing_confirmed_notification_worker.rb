@@ -9,7 +9,7 @@ class ShowingConfirmedNotificationWorker
     to = showing.user.profile.phone1
     body = "Your showing request was confirmed: #{showing.address}.  For more details visit: #{users_buyers_requests_url}"
     log_msg = "Sending SMS showing confirmed notification to #{showing.user.full_name} (#{showing.user.profile.phone1}) - #{body}"
-    Rails.logger.tagged("Showing: #{showing.id}", "Showing Confirmed Notification SMS") { Rails.logger.info log_msg }
+    Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Confirmed Notification SMS")
     Notification::SMS.new(to, body).send
   end
 end

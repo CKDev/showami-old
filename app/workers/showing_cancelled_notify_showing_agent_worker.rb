@@ -10,11 +10,11 @@ class ShowingCancelledNotifyShowingAgentWorker
       to = showing.showing_agent_phone
       body = msg(showing, after_deadline)
       log_msg = "Sending SMS showing cancelled notification to #{showing.showing_agent.full_name} (#{showing.showing_agent_phone}) - #{body}"
-      Rails.logger.tagged("Showing: #{showing.id}", "Showing Cancelled Showing Agent Notification SMS") { Rails.logger.info log_msg }
+      Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Cancelled Showing Agent Notification SMS")
       Notification::SMS.new(to, body).send
     else
       log_msg = "No showing agent assigned, no cancellation SMS needed."
-      Rails.logger.tagged("Showing: #{showing.id}", "Showing Cancelled Showing Agent Notification SMS") { Rails.logger.info log_msg }
+      Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Cancelled Showing Agent Notification SMS")
     end
   end
 
