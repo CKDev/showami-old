@@ -22,9 +22,9 @@ class ShowingCancelledNotifyShowingAgentWorker
 
   def msg(showing, after_deadline)
     if after_deadline
-      "Your showing appointment for #{showing.address} was cancelled after the 4 hour deadline. Payments will be required."
+      "Your showing appointment for #{showing.address} was cancelled after the 4 hour deadline. You will still be paid."
     else
-      "Your showing appointment for #{showing.address} was cancelled before the 4 hour deadline. No payments will be required."
+      "Your showing appointment for #{showing.address} was cancelled before the 4 hour deadline. You will not be paid."
     end
   end
 end
