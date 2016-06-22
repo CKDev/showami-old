@@ -7,6 +7,9 @@ module Payment
     end
 
     def send
+      raise ArgumentError unless @token.present?
+      raise ArgumentError unless @showing.present?
+
       Log::EventLogger.info(nil, @showing.id, "Attempting payment transfer...", "Showing: #{@showing.id}", "Stripe Transfer")
       Stripe.api_key = Rails.application.secrets[:stripe]["private_key"]
       transfer = Stripe::Transfer.create(
@@ -18,8 +21,9 @@ module Payment
       @showing.update(transfer_txn: transfer.id)
       Log::EventLogger.info(nil, @showing.id, "Transfer initiated.", "Showing: #{@showing.id}", "Stripe Transfer")
       return true
-    rescue StandardError => e
-      Log::EventLogger.info(nil, @showing.id, "Transfer error: #{e}", "Showing: #{@showing.id}", "Stripe Transfer")
+    rescue Stripe::StripeError => e
+      Notification::ErrorReporter.send(e)
+      Log::EventLogger.error(nil, @showing.id, "Transfer error: #{e}", "Showing: #{@showing.id}", "Stripe Transfer")
       return false
     end
 

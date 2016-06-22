@@ -7,6 +7,9 @@ module Payment
     end
 
     def send
+      raise ArgumentError unless @token.present?
+      raise ArgumentError unless @showing.present?
+
       Log::EventLogger.info(nil, @showing.id, "Charging card for showing.", "Showing: #{@showing.id}", "Stripe Charge")
       Stripe.api_key = Rails.application.secrets[:stripe]["private_key"]
       charge = Stripe::Charge.create(
@@ -19,6 +22,7 @@ module Payment
       Log::EventLogger.info(nil, @showing.id, "Charge successful.", "Showing: #{@showing.id}", "Stripe Charge")
       return true
     rescue Stripe::CardError => e
+      Notification::ErrorReporter.send(e)
       Log::EventLogger.error(nil, @showing.id, "Charge error: #{e.code} - #{e.message}", "Showing: #{@showing.id}", "Stripe Charge")
       return false
     end

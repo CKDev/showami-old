@@ -1,7 +1,8 @@
 <% if current_user.can_accept_showing? %>
   <% begin %>
     <%= render partial: "/shared/showing/actions/#{showing.status}", locals: { showing: showing, type: :showing_opportunities } %>
-  <% rescue ActionView::MissingTemplate %>
+  <% rescue ActionView::MissingTemplate => e %>
+    <% Notification::ErrorReporter.send(e) %>
     <%# Make sure the view never breaks for a new showing status. %>
   <% end %>
 <% else %>
