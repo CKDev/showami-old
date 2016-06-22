@@ -31,9 +31,13 @@ gem "skylight"
 # Payments
 gem "stripe"
 
+# File uploads to S3
+gem "carrierwave"
+gem "fog-aws"
+gem "mini_magick"
+gem "file_validators" # For image validation
+
 # Misc
-gem "aws-sdk", "< 2.0" # To store Paperclip uploads on S3
-gem "paperclip" # File uploads
 gem "local_time" # Client-side timezone rendering
 gem "geocoder" # Convert addresses into lat/long
 gem "twilio-ruby" # Sending SMS messages

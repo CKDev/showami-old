@@ -16,10 +16,12 @@ module Users
     end
 
     def delete_avatar
-      current_user.profile.avatar.destroy
-      current_user.profile.avatar = nil
-      current_user.profile.save
-      redirect_to edit_users_profile_path, notice: "Avatar successfully removed."
+      current_user.profile.remove_avatar!
+      if current_user.profile.save
+        redirect_to edit_users_profile_path, notice: "Avatar successfully removed."
+      else
+        redirect_to edit_users_profile_path, alert: "Unable to remove avatar."
+      end
     end
 
     private

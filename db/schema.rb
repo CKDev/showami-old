@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160622005817) do
+ActiveRecord::Schema.define(version: 20160622174608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,18 +50,15 @@ ActiveRecord::Schema.define(version: 20160622005817) do
     t.string   "phone2"
     t.string   "company"
     t.string   "agent_id"
-    t.integer  "agent_type",          default: 2
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-    t.string   "avatar_file_name"
-    t.string   "avatar_content_type"
-    t.integer  "avatar_file_size"
-    t.datetime "avatar_updated_at"
+    t.integer  "agent_type",   default: 2
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
     t.string   "geo_box"
-    t.integer  "geo_box_zoom",        default: 12
+    t.integer  "geo_box_zoom", default: 12
     t.string   "stripe_token"
     t.string   "cc_token"
     t.string   "bank_token"
+    t.string   "avatar"
   end
 
   create_table "showings", force: :cascade do |t|
