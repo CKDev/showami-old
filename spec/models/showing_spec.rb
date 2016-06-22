@@ -460,6 +460,33 @@ describe Showing do
 
     end
 
+    context ".ready_for_transfer" do
+
+      it "should return all showings in processing_payment that have successfully charged the buyer's agent" do
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success")
+        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_failure")
+        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent")
+        @showing4 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent")
+        @showing5 = FactoryGirl.build(:showing, status: "paid", payment_status: "charging_buyers_agent_success")
+        [@showing1, @showing2, @showing3, @showing4, @showing5].each { |s| s.save(validate: false) }
+        expect(Showing.ready_for_transfer).to contain_exactly @showing1
+      end
+
+    end
+
+    context ".ready_for_paid" do
+
+      it "should return all showings in status processing_payment and have been in payment_status: paying_sellers_agent_started for 5 days" do
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
+        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 5.days - 23.hours)
+        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success", showing_at: Time.zone.now - 6.days - 1.minute)
+        @showing4 = FactoryGirl.build(:showing, status: "paid", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
+        [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
+        expect(Showing.ready_for_paid).to contain_exactly @showing1
+      end
+
+    end
+
   end
 
   context "#no_show_eligible?" do
@@ -657,18 +684,34 @@ describe Showing do
     context ".start_payment_transfers" do
 
       it "should kick off a background job to transfer bank payment after a successful credit card charge" do
-        @showing1 = FactoryGirl.build(:showing, status: "processing_payment")
-        @showing1.save(validate: false)
-        # @showing2 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 23.hours - 59.minutes)
-        # @showing2.save(validate: false)
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success")
+        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_failure")
+        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent")
+        @showing4 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent")
+        @showing5 = FactoryGirl.build(:showing, status: "paid", payment_status: "charging_buyers_agent_success")
+        [@showing1, @showing2, @showing3, @showing4, @showing5].each { |s| s.save(validate: false) }
 
-        # ChargeWorker.expects(:perform_async).once.with(@showing1.id)
+        TransferWorker.expects(:perform_async).once.with(@showing1.id)
         Showing.start_payment_transfers
-
-        [@showing1].each(&:reload)
+        @showing1.reload
         expect(@showing1.status).to eq "processing_payment"
-        # expect(@showing2.status).to eq "completed"
+      end
 
+    end
+
+    context ".update_paid" do
+
+      it "should mark all ready_for_paid showings as paid" do
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
+        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 5.days - 23.hours)
+        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success", showing_at: Time.zone.now - 6.days - 1.minute)
+        @showing4 = FactoryGirl.build(:showing, status: "paid", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
+        [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
+
+        Showing.update_paid
+        @showing1.reload
+        expect(@showing1.status).to eq "paid"
+        expect(@showing1.payment_status).to eq "paying_sellers_agent_success"
       end
 
     end
@@ -685,6 +728,42 @@ describe Showing do
     it "should return false if the showing_at is more than 4 hours away" do
       @showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 4.hours + 1.second)
       expect(@showing.after_deadline?).to be false
+    end
+
+  end
+
+  context "#showing_agent_visible?" do
+
+    it "should show the showing agent, only in unconfirmed confirmed completed and no_show statuses" do
+      showing = Showing.new
+      Showing.statuses.each do |status, _index|
+        showing.status = status
+        if %w(unconfirmed confirmed completed no_show).include? status
+          expect(showing.showing_agent_visible?).to be true
+        else
+          expect(showing.showing_agent_visible?).to be false
+        end
+      end
+    end
+
+  end
+
+  context "helper methods" do
+
+    before :each do
+      @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
+      @buyers_agent.profile.update(phone1: "1231231234")
+      @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing_agent.profile.update(phone1: "9879879879")
+      @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
+    end
+
+    it "showing_agent_phone should return the showing agent's phone1" do
+      expect(@showing.showing_agent_phone).to eq "9879879879"
+    end
+
+    it "buyers_agent_phone should return the buyers agent's phone1" do
+      expect(@showing.buyers_agent_phone).to eq "1231231234"
     end
 
   end

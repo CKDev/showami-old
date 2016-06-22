@@ -183,7 +183,7 @@ class Showing < ActiveRecord::Base
     Rails.logger.tagged("Cron", "Showing.update_paid") { Rails.logger.info "Checking for showings that can be safely marked as paid" }
     Showing.ready_for_paid.each do |showing|
       showing.update(status: statuses[:paid])
-      showing.update(payment_status: statuses[:paying_sellers_agent_success])
+      showing.update(payment_status: payment_statuses[:paying_sellers_agent_success])
       Log::EventLogger.info(nil, showing.id, "Marked as paid.", "Cron", "Showing.update_paid", "Showing: #{showing.id}")
     end
   end
