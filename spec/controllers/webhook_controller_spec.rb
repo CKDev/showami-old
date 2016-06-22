@@ -3,7 +3,8 @@ require "rails_helper"
 describe WebhookController do
 
   before :each do
-    @showing = FactoryGirl.build(:showing,
+    @showing = FactoryGirl.build(
+      :showing,
       status: "processing_payment",
       payment_status: "paying_sellers_agent_started",
       transfer_txn: "tr_00000000000000" # Set to the same as the mock response

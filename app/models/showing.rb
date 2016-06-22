@@ -45,7 +45,7 @@ class Showing < ActiveRecord::Base
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
-  scope :ready_for_payment, -> {
+  scope :ready_for_payment, lambda {
     where("(status = ? AND showing_at < ?) OR (status = ? AND showing_at < ?)",
       statuses[:completed], Time.zone.now - 24.hours,
       statuses[:cancelled_with_payment], Time.zone.now)
@@ -58,8 +58,7 @@ class Showing < ActiveRecord::Base
     where("status = ? AND payment_status = ? AND showing_at < ?",
       statuses[:processing_payment],
       payment_statuses[:paying_sellers_agent_started],
-      Time.zone.now - 6.days
-    )
+      Time.zone.now - 6.days)
   }
 
   scope :in_bounding_box, lambda { |bounds|
