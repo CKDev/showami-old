@@ -44,10 +44,9 @@
 
 <% if current_user.valid_bank_token? %>
   <p class="notice">You have a valid bank account on file. You may use this form to update your bank details.</p>
-  <h1>Showing Assistants Edit Your Bank Payment Information</h1>
-<% else %>
-  <h1>Showing Assistants Add Your Bank Payment Information</h1>
 <% end %>
+
+<h1>Showing Assistant's Payment Information</h1>
 
 <%= form_tag users_bank_payment_path, id: "payment-form" do %>
   <p class="payment-errors alert" style="display: none;"></p>

@@ -42,10 +42,9 @@
 
 <% if current_user.valid_credit_card? %>
   <p class="notice">You have a valid credit card on file. You may use this form to update your credit card details.</p>
-  <h1>Buyer's Agents Edit Your Payment Information</h1>
-<% else %>
-  <h1>Buyer's Agents Add Your Payment Information</h1>
 <% end %>
+
+<h1>Buyer's Agent Credit Card Information</h1>
 
 <%= form_tag users_cc_payment_path, id: "payment-form" do %>
   <p class="payment-errors alert" style="display: none;"></p>
