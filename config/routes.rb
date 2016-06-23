@@ -31,10 +31,12 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    root "dashboard#index"
+    root "users#index"
     resources :users, only: [:show, :index] do
       member do
         post :unblock
+        post :block
+        post :confirm
       end
     end
     resources :showings, only: [:show]

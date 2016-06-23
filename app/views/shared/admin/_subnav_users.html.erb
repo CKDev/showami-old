@@ -1,0 +1,14 @@
+<div class="subnav">
+  <h1>Admin</h1>
+</div>
+<div class="subnav-2">
+  <div class="container">
+    <div class="twelve columns active">
+      <% if (current_page? admin_users_path) || (current_page? admin_root_path) %>
+        <%= link_to "Users Dashboard", admin_users_path %>
+      <% elsif current_page?(action: "show") %>
+        <span class="menu-item">User Details</span>
+      <% end %>
+    </div>
+  </div>
+</div>

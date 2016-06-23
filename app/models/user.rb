@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
   scope :sellers_agents, -> { joins(:profile).where("profiles.agent_type <> ? ", Profile.agent_types[:buyers_agent]) }
   scope :not_self, ->(id) { where("users.id <> ?", id) }
   scope :not_blocked, -> { where(blocked: false) }
+  scope :not_admin, -> { where(admin: false) }
+  scope :order_by_first_name, -> { joins(:profile).order("profiles.first_name") }
 
   def send_devise_notification(notification, *args)
     # Sidekiq is picking this job up more quickly than the user can be saved.
@@ -29,6 +31,10 @@ class User < ActiveRecord::Base
 
   def admin?
     admin
+  end
+
+  def safe_full_name
+    full_name.present? ? full_name : "<not yet entered>"
   end
 
   def to_s
@@ -79,6 +85,10 @@ class User < ActiveRecord::Base
   # TODO: update uses to use this method.
   def primary_phone
     profile.phone1
+  end
+
+  def secondary_phone
+    profile.phone2
   end
 
 end

@@ -9,12 +9,18 @@ module Admin
         @admin = FactoryGirl.create(:user_with_valid_profile, admin: true)
         @user1 = FactoryGirl.create(:user_with_valid_profile)
         @user2 = FactoryGirl.create(:user_with_valid_profile)
-        sign_in @admin
       end
 
-      it "assigns all users in the system" do
+      it "assigns all users in the system, except for the logged in admin" do
+        sign_in @admin
         get :index
-        expect(assigns(:users).count).to eq 3
+        expect(assigns(:users).count).to eq 2
+      end
+
+      it "is not available to non-admins" do
+        sign_in @user1
+        get :index
+        expect(response).to redirect_to root_path
       end
 
     end
@@ -24,13 +30,18 @@ module Admin
       before :each do
         @admin = FactoryGirl.create(:user_with_valid_profile, admin: true)
         @user1 = FactoryGirl.create(:user_with_valid_profile)
-        @user2 = FactoryGirl.create(:user_with_valid_profile)
-        sign_in @admin
       end
 
       it "assigns the requested user" do
-        get :show, id: @user2.id
-        expect(assigns(:user)).to eq @user2
+        sign_in @admin
+        get :show, id: @user1.id
+        expect(assigns(:user)).to eq @user1
+      end
+
+      it "is not available to non-admins" do
+        sign_in @user1
+        get :show, id: @user1.id
+        expect(response).to redirect_to root_path
       end
 
     end
@@ -40,14 +51,66 @@ module Admin
       before :each do
         @admin = FactoryGirl.create(:user_with_valid_profile, admin: true)
         @user1 = FactoryGirl.create(:user_with_valid_profile, blocked: true)
-        sign_in @admin
       end
 
       it "assigns the requested user" do
+        sign_in @admin
         expect(@user1.blocked?).to be true
         post :unblock, id: @user1.id
         @user1.reload
         expect(@user1.blocked?).to be false
+      end
+
+      it "is not available to non-admins" do
+        sign_in @user1
+        post :unblock, id: @user1.id
+        expect(response).to redirect_to root_path
+      end
+
+    end
+
+    describe "POST #block" do
+
+      before :each do
+        @admin = FactoryGirl.create(:user_with_valid_profile, admin: true)
+        @user1 = FactoryGirl.create(:user_with_valid_profile)
+      end
+
+      it "assigns the requested user" do
+        sign_in @admin
+        expect(@user1.blocked?).to be false
+        post :block, id: @user1.id
+        @user1.reload
+        expect(@user1.blocked?).to be true
+      end
+
+      it "is not available to non-admins" do
+        sign_in @user1
+        post :block, id: @user1.id
+        expect(response).to redirect_to root_path
+      end
+
+    end
+
+    describe "POST #confirm" do
+
+      before :each do
+        @admin = FactoryGirl.create(:user_with_valid_profile, admin: true)
+        @user1 = FactoryGirl.create(:user_with_valid_profile)
+      end
+
+      it "assigns the requested user" do
+        sign_in @admin
+        @user1.update(confirmed_at: nil)
+        post :confirm, id: @user1.id
+        @user1.reload
+        expect(@user1.confirmed_at).to be_within(2.seconds).of(Time.zone.now)
+      end
+
+      it "is not available to non-admins" do
+        sign_in @user1
+        post :confirm, id: @user1.id
+        expect(response).to redirect_to root_path
       end
 
     end

@@ -6,7 +6,7 @@ module Users
     def index
       @showings = Showing.includes(:showing_agent, :address)
         .where(showing_agent: current_user)
-        .paginate(page: params[:page], per_page: 5)
+        .paginate(page: params[:page], per_page: 25)
     end
 
     def confirm

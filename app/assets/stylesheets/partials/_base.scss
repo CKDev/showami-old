@@ -160,6 +160,10 @@ select.day, select.hour, select.minute {
   color: $light-blue;
 }
 
+.dark-blue {
+  color: $dark-blue;
+}
+
 .orange {
   color: $orange;
 }
@@ -168,4 +172,9 @@ select.day, select.hour, select.minute {
   color: $white;
   display: inline-block;
   background-color: $red;
+}
+
+.top-and-bottom-padding {
+  padding-top: 1em;
+  padding-bottom: 1em;
 }

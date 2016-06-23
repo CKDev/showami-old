@@ -27,6 +27,13 @@ class Profile < ActiveRecord::Base
     [first_name, last_name].join(" ").strip
   end
 
+  def agent_type_str
+    return "Showing" if agent_type == "sellers_agent"
+    return "Buyers" if agent_type == "buyers_agent"
+    return "Both" if agent_type == "both"
+    return "<not set>"
+  end
+
   def geo_box_coords
     # [[sw_lat, sw_lon], [ne_lat, ne_lon]]
     # (-104.682, 39.822), (-105.358, 39.427) -> [[" 39.427", " -105.358"], [" 39.822", "-104.682"]]

@@ -1,40 +1,69 @@
-<h1>User Details</h1>
+<%= content_for(:subnav) { render "shared/admin/subnav_users" } %>
 
-<h3>Contact Information</h3>
-<ul>
-  <li><%= @user.full_name %> (<%= mail_to @user.email %>)</li>
-  <li><strong>Phone:</strong> <%= @user.primary_phone %></li>
-</ul>
+<p><%= link_to "<< Back to all users", admin_users_path %></p>
 
-<% if @user.blocked? %>
-  <p class="status red">User is blocked.</p>
-  <%= form_for @user, url: unblock_admin_user_path(@user), method: :post do |f| %>
-    <%= f.submit "Unblock", class: "button-secondary", data: { confirm: "Are you sure you want to unblock this user?" } %>
-  <% end %>
-<% else %>
-  <p>User is not blocked.</p>
-<% end %>
+<h4 class="dark-blue">Contact Info</h4>
 
-<% if @user.showings.count > 0 %>
-<h3>Buyer's Agent Showings</h3>
-<ul>
-  <% @user.showings.each do |showing| %>
-    <%= showing %>
-  <% end %>
-</ul>
-<% end %>
+<div class="row top-and-bottom-padding">
+  <div class="four columns">
+    <%= @user.safe_full_name || "<not yet entered>" %>
+  </div>
+  <div class="four columns">
+    <%= mail_to @user.email %>
+  </div>
+  <div class="four columns">
+    &nbsp;
+  </div>
+</div>
 
-<%# TODO: move this into the controller %>
-<% if Showing.where(showing_agent: @user).count > 0 %>
-  <h3>Seller's Agent Showing Information</h3>
-  <ul>
-    <% Showing.where(showing_agent: @user).each do |showing| %>
-      <li><%= link_to "Showing #{showing.id}", admin_showing_path(showing) %></li>
+<div class="row top-and-bottom-padding">
+  <div class="four columns">
+    <strong>Cell phone: </strong><%= tel_to number_to_phone(@user.primary_phone, area_code: true) %>
+  </div>
+  <div class="four columns">
+    <strong>Office phone: </strong><%= tel_to number_to_phone(@user.secondary_phone, area_code: true) %>
+  </div>
+  <div class="four columns">
+    &nbsp;
+  </div>
+</div>
+
+<div class="row top-and-bottom-padding">
+  <div class="four columns">
+    <strong>Agent ID: </strong><%= @user.profile.agent_id %>
+  </div>
+  <div class="four columns">
+    <strong>Agent Type: </strong><%= @user.profile.agent_type_str %>
+  </div>
+  <div class="four columns">
+    <strong>Company: </strong><%= @user.profile.company %>
+  </div>
+</div>
+
+<% if @user.confirmed_at.present? %>
+  <div class="top-and-bottom-padding">
+    <% if @user.blocked? %>
+      <%= form_for @user, url: unblock_admin_user_path(@user), method: :post do |f| %>
+        <span class="status red">User is blocked.</span>
+        <%= f.submit "Unblock", class: "button-secondary", data: { confirm: "Are you sure you want to unblock this user?" } %>
+      <% end %>
+    <% else %>
+      <%= form_for @user, url: block_admin_user_path(@user), method: :post do |f| %>
+        <span class="status light-blue">User is not blocked.</span>
+        <%= f.submit "Block", class: "button-secondary", data: { confirm: "Are you sure you want to block this user?" } %>
+      <% end %>
     <% end %>
-  </ul>
+  </div>
+<% else %>
+  <%= form_for @user, url: confirm_admin_user_path(@user), method: :post do |f| %>
+    <span class="status light-blue">User is not confirmed.</span>
+    <%= f.submit "Confirm", class: "button-secondary", data: { confirm: "Are you sure you want to confirm this user?" } %>
+  <% end %>
 <% end %>
 
-<h3>User Events</h3>
+<hr />
+
+<h4 class="dark-blue">User Events</h4>
 <% @events.each do |event| %>
-<p><%= event.details %></p>
+  <p><%= simple_format event.to_s %></p>
 <% end %>
