@@ -198,6 +198,10 @@ class Showing < ActiveRecord::Base
     showing_at < Time.zone.now + 4.hours
   end
 
+  def cancel_causes_payment?
+    after_deadline? && status.in?(%w(unconfirmed confirmed))
+  end
+
   def showing_agent_visible?
     status.in? %w(unconfirmed confirmed completed no_show)
   end

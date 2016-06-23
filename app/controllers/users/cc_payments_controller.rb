@@ -8,6 +8,7 @@ module Users
     end
 
     def create
+      # TODO: move this to Stripe module
       Stripe.api_key = Rails.application.secrets[:stripe]["private_key"]
       token = params[:stripeToken]
       customer = Stripe::Customer.create(source: token, email: current_user.email)

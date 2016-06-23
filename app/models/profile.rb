@@ -31,7 +31,7 @@ class Profile < ActiveRecord::Base
     return "Showing" if agent_type == "sellers_agent"
     return "Buyers" if agent_type == "buyers_agent"
     return "Both" if agent_type == "both"
-    return "<not set>"
+    "<not set>"
   end
 
   def geo_box_coords

@@ -167,6 +167,34 @@ describe User do
 
   end
 
+  context "#primary_phone" do
+
+    it "should return the phone1 value from the associated profile, if available" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      expect(@user.primary_phone).to eq "5551231234"
+    end
+
+    it "should return an empty string if the profile isn't available" do
+      @user = User.new
+      expect(@user.primary_phone).to eq ""
+    end
+
+  end
+
+  context "#secondary_phone" do
+
+    it "should return the phone2 value from the associated profile, if available" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      expect(@user.secondary_phone).to eq "5559871234"
+    end
+
+    it "should return an empty string if the profile isn't available" do
+      @user = User.new
+      expect(@user.secondary_phone).to eq ""
+    end
+
+  end
+
   context "#to_s" do
 
     it "should return the name and email of a user" do

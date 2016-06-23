@@ -4,7 +4,7 @@ feature "The entire showing process" do
 
   before :each do
     @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
-    @buyers_agent.profile.update(cc_token: "cus_8gHK0QFjGGKAMH")  # Needs to be a real test env token.
+    @buyers_agent.profile.update(cc_token: "cus_8gHK0QFjGGKAMH") # Needs to be a real test env token.
     @showing_agent = FactoryGirl.create(:user_with_valid_profile)
     @showing_agent.profile.update(bank_token: "rp_18PGQxBdMtfS76Ga7u9Nqjnb") # Needs to be a real test env token.
   end

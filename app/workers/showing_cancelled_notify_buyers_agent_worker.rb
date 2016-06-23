@@ -6,7 +6,7 @@ class ShowingCancelledNotifyBuyersAgentWorker
 
   def perform(showing_id)
     showing = Showing.find(showing_id)
-    to = showing.user.profile.phone1
+    to = showing.user.primary_phone
     body = "Your showing request was cancelled: #{showing.address}.  For more details visit: #{users_buyers_requests_url}"
     log_msg = "Sending SMS showing cancelled notification to #{showing.user.full_name} (#{showing.buyers_agent_phone}) - #{body}"
     Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Cancelled Buyers Agent Notification SMS")

@@ -25,7 +25,7 @@ Metrics/ModuleLength:
 
 Metrics/ClassLength:
   # Max: 150
-  Max: 227
+  Max: 250
 
 Metrics/LineLength:
   Max: 210

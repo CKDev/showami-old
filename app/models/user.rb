@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   end
 
   def notify_new_showing(showing)
-    log_msg = "Pushing SMS showing notification to background: #{full_name} (#{profile.phone1}) -  New Showing: #{showing.address}"
+    log_msg = "Pushing SMS showing notification to background: #{full_name} (#{primary_phone}) -  New Showing: #{showing.address}"
     Log::EventLogger.info(id, showing.id, log_msg, "Showing: #{showing.id}", "Showing Notification SMS")
     ShowingNotificationWorker.perform_async(id, showing.id)
   end
@@ -53,7 +53,6 @@ class User < ActiveRecord::Base
   end
 
   # For buyer's agents - need a credit card on file
-  # TODO: where to use this?  It's not currently used.  Perhaps in the view logic.
   def can_create_showing?
     profile.valid? && valid_credit_card? && !blocked?
   end
@@ -82,13 +81,12 @@ class User < ActiveRecord::Base
     profile.agent_type == "both"
   end
 
-  # TODO: update uses to use this method.
   def primary_phone
-    profile.phone1
+    profile.try(:phone1) || ""
   end
 
   def secondary_phone
-    profile.phone2
+    profile.try(:phone2) || ""
   end
 
 end

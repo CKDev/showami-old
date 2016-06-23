@@ -4,7 +4,7 @@
       <div class="agent-name"><strong>Agent: </strong><%= showing.showing_agent.full_name %></div>
       <div class="agent-phone">
         <strong>Phone: </strong>
-        <%= tel_to number_to_phone(showing.showing_agent.profile.phone1, area_code: true) %>
+        <%= tel_to number_to_phone(showing.showing_agent.primary_phone, area_code: true) %>
       </div>
       <div class="agent-email"><strong>Email: </strong><%= mail_to showing.showing_agent.email %></div>
     </div>

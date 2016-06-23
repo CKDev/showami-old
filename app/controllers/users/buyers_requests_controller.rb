@@ -42,8 +42,7 @@ module Users
 
     def cancel
       @showing = current_user.showings.find(params[:id])
-      # TODO: move this to a model method
-      if @showing.after_deadline? && @showing.status.in?(%w(unconfirmed confirmed))
+      if @showing.cancel_causes_payment?
         if @showing.update(status: "cancelled_with_payment")
           ShowingCancelledNotifyShowingAgentWorker.perform_async(@showing.id, true)
           redirect_to users_buyers_requests_path, notice: "Showing cancelled, payment will still be required."

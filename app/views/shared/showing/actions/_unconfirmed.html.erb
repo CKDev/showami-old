@@ -1,8 +1,7 @@
 <% if type == :buyers_agent %>
   <p class="status">Status: <span class="orange">Unconfirmed</span></p>
   <%= form_for showing, url: cancel_users_buyers_request_path(showing), method: :post do |f| %>
-    <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
-    <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
+    <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Clicking OK will cancel this showing." } %>
   <% end %>
 <% elsif type == :showing_assistant %>
   <div class="row">
@@ -13,8 +12,7 @@
     </div>
     <div class="eight columns">
       <%= form_for showing, url: cancel_users_showing_appointment_path(showing), method: :post do |f| %>
-        <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
-        <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
+        <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Clicking OK will cancel this showing." } %>
       <% end %>
     </div>
   </div>
@@ -29,8 +27,7 @@
       </div>
       <div class="eight columns">
         <%= form_for showing, url: cancel_users_showing_appointment_path(showing), method: :post do |f| %>
-          <%# TODO: this confirm language is bad, ok to cancel and cancel not to cancel? %>
-          <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Are you sure you want to cancel this showing?" } %>
+          <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Clicking OK will cancel this showing." } %>
         <% end %>
       </div>
     </div>

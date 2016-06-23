@@ -721,13 +721,35 @@ describe Showing do
   context "#after_deadline?" do
 
     it "should return true if the showing_at is less than 4 hours away" do
-      @showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 3.hours + 59.minutes)
+      @showing = FactoryGirl.build(:showing, showing_at: Time.zone.now + 3.hours + 59.minutes)
       expect(@showing.after_deadline?).to be true
     end
 
     it "should return false if the showing_at is more than 4 hours away" do
-      @showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 4.hours + 1.second)
+      @showing = FactoryGirl.build(:showing, showing_at: Time.zone.now + 4.hours + 1.second)
       expect(@showing.after_deadline?).to be false
+    end
+
+  end
+
+  context "#cancel_causes_payment?" do
+
+    it "should return false if it's not after the deadline" do
+      @showing = FactoryGirl.build(:showing, showing_at: Time.zone.now + 4.hours + 1.minute)
+      expect(@showing.cancel_causes_payment?).to be false
+    end
+
+    it "should return false if it's after the deadline, but the showing wasn't ever accepted" do
+      @showing = FactoryGirl.build(:showing, showing_at: Time.zone.now + 3.hours + 59.minutes, status: "unassigned")
+      expect(@showing.cancel_causes_payment?).to be false
+    end
+
+    it "should return true if it's after the deadline, and the showing was accepted" do
+      @showing = FactoryGirl.build(:showing, showing_at: Time.zone.now + 3.hours + 59.minutes, status: "unconfirmed")
+      expect(@showing.cancel_causes_payment?).to be true
+
+      @showing.status = "confirmed"
+      expect(@showing.cancel_causes_payment?).to be true
     end
 
   end

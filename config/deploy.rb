@@ -26,7 +26,7 @@ set :ssh_options, {
 }
 
 # Rollbar config
-set :rollbar_token, "4d7af520311e439facd623155165a56b" # TODO, is there way to pull this from secrets?
+set :rollbar_token, "4d7af520311e439facd623155165a56b"
 set :rollbar_env, Proc.new { fetch :stage }
 set :rollbar_role, Proc.new { :app }
 
