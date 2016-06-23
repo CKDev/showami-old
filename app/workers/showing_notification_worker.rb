@@ -12,7 +12,7 @@ class ShowingNotificationWorker
 
     body = "New Showami showing available: #{showing_url}"
     log_msg = "Sending SMS showing notification to #{user.full_name} (#{user.primary_phone}) -  New Showing: #{showing.address}"
-    Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Notification SMS")
+    Log::EventLogger.info(user.id, showing.id, log_msg, "User: #{user.id}", "Showing: #{showing.id}", "Showing Notification SMS")
     Notification::SMS.new(to, body).send
   end
 end

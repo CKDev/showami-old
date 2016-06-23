@@ -8,7 +8,7 @@ class ShowingAgentBlockedNotificationWorker
     to = showing.showing_agent_phone
     body = "You have been blocked from further showings due to a no-show."
     log_msg = "Sending SMS showing agent blocked notification to #{showing.showing_agent} (#{to}) - #{body}"
-    Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Agent Blocked Notification SMS")
+    Log::EventLogger.info(showing.showing_agent.id, showing.id, log_msg, "User: #{showing.showing_agent.id}", "Showing: #{showing.id}", "Showing Agent Blocked Notification SMS")
     Notification::SMS.new(to, body).send
   end
 end

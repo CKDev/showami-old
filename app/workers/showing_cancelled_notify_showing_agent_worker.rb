@@ -10,7 +10,7 @@ class ShowingCancelledNotifyShowingAgentWorker
       to = showing.showing_agent_phone
       body = msg(showing, after_deadline)
       log_msg = "Sending SMS showing cancelled notification to #{showing.showing_agent.full_name} (#{showing.showing_agent_phone}) - #{body}"
-      Log::EventLogger.info(nil, showing.id, log_msg, "Showing: #{showing.id}", "Showing Cancelled Showing Agent Notification SMS")
+      Log::EventLogger.info(showing.showing_agent.id, showing.id, log_msg, "User: #{showing.showing_agent.id}", "Showing: #{showing.id}", "Showing Cancelled Showing Agent Notification SMS")
       Notification::SMS.new(to, body).send
     else
       log_msg = "No showing agent assigned, no cancellation SMS needed."

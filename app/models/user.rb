@@ -42,8 +42,6 @@ class User < ActiveRecord::Base
   end
 
   def notify_new_showing(showing)
-    log_msg = "Pushing SMS showing notification to background: #{full_name} (#{primary_phone}) -  New Showing: #{showing.address}"
-    Log::EventLogger.info(id, showing.id, log_msg, "Showing: #{showing.id}", "Showing Notification SMS")
     ShowingNotificationWorker.perform_async(id, showing.id)
   end
 
