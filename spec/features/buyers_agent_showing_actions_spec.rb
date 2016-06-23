@@ -2,7 +2,7 @@ require "feature_helper"
 
 feature "A buyers agent can perform actions on a showing" do
 
-  context "Can create and viewing a new showing" do
+  context "Can create a new showing" do
 
     before :each do
       @user = FactoryGirl.create(:user_with_valid_profile)
@@ -39,6 +39,23 @@ feature "A buyers agent can perform actions on a showing" do
         first(:link, "New Request").click
       end
       expect(current_path).to eq new_users_buyers_request_path
+    end
+
+    scenario "must fill out required fields" do
+      visit new_users_buyers_request_path
+      click_button "Submit"
+      expect(page).to have_content "The following errors prohibited this record from being saved:"
+      expect(page).to have_content "MLS can't be blank" # And many others.
+    end
+
+  end
+
+  context "Can view a showing" do
+
+    before :each do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @showing_agent = FactoryGirl.create(:user_with_valid_profile) # To receive the notification
+      log_in @user
     end
 
     scenario "can view the show page of a single showing" do
@@ -83,17 +100,33 @@ feature "A buyers agent can perform actions on a showing" do
 
     before :each do
       @user = FactoryGirl.create(:user_with_valid_profile)
-      @showing = FactoryGirl.create(:showing)
-      @user.showings << @showing
+      @showing = FactoryGirl.create(:showing, user: @user)
       log_in @user
     end
 
-    scenario "cancels an unassigned showing by visiting the buyers requests page and clicking the cancel button" do
+    scenario "cancels an unassigned showing, after the deadline" do
       visit users_buyers_requests_path
       click_button "Cancel"
       expect(current_path).to eq users_buyers_requests_path
-      expect(page).to have_content "Showing cancelled"
-      expect(page).to have_content @showing.address
+      expect(page).to have_content "Showing cancelled, no payment will be required."
+    end
+
+    scenario "cancels an assigned showing, after the deadline" do
+      @showing_agent = FactoryGirl.create(:user)
+      @showing.update(status: "unconfirmed", showing_agent: @showing_agent)
+      visit users_buyers_requests_path
+      click_button "Cancel"
+      expect(current_path).to eq users_buyers_requests_path
+      expect(page).to have_content "Showing cancelled, payment will still be required."
+    end
+
+    scenario "cancels an assigned showing, before the deadline" do
+      @showing_agent = FactoryGirl.create(:user)
+      @showing.update(status: "unconfirmed", showing_agent: @showing_agent, showing_at: Time.zone.now + 4.hours + 1.minute)
+      visit users_buyers_requests_path
+      click_button "Cancel"
+      expect(current_path).to eq users_buyers_requests_path
+      expect(page).to have_content "Showing cancelled, no payment will be required."
     end
 
   end
