@@ -12,5 +12,6 @@
     </main>
   </div>
   <%= render "shared/footer" %>
+  <%= render "shared/ga" if Rails.env.production? %>
 </body>
 </html>
