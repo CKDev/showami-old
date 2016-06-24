@@ -23,6 +23,7 @@ FactoryGirl.define do
         user.profile.geo_box = "(-104.682, 39.822), (-105.358, 39.427)"
         user.profile.cc_token = "valid_cc_token"
         user.profile.bank_token = "valid_bank_token"
+        user.profile.sent_welcome_sms = true
         user.profile.save
       end
     end

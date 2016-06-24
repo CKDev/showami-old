@@ -25,10 +25,6 @@ class User < ActiveRecord::Base
     devise_mailer.send(notification, self, *args).deliver_later(wait: 5.seconds)
   end
 
-  def add_profile
-    build_profile.save(validate: false)
-  end
-
   def admin?
     admin
   end
@@ -85,6 +81,12 @@ class User < ActiveRecord::Base
 
   def secondary_phone
     profile.try(:phone2) || ""
+  end
+
+  private
+
+  def add_profile
+    build_profile.save(validate: false)
   end
 
 end

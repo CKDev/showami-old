@@ -6,6 +6,30 @@ describe Profile do
     expect(Profile.new.agent_type).to eq "both"
   end
 
+  it "should send a welcome SMS to the user (only) the first time they fully update their profile" do
+    @user = FactoryGirl.create(:user)
+    expect do
+      @user.profile.first_name = "Alejandro"
+      @user.profile.last_name = "Brinkster"
+      @user.profile.phone1 = "5551231234"
+      @user.profile.phone2 = "5559871234"
+      @user.profile.company = "Showing Services, LLC"
+      @user.profile.agent_id = "1234 1234"
+      @user.profile.agent_type = 2
+      @user.profile.avatar = fixture_file_upload(Rails.root.join("spec", "fixtures", "avatar.png"), "image/png")
+      @user.profile.geo_box = "(-104.682, 39.822), (-105.358, 39.427)"
+      @user.profile.sent_welcome_sms = false
+      @user.profile.save
+    end.to change { Sidekiq::Worker.jobs.count }.by(1)
+
+    Sidekiq::Worker.clear_all
+
+    expect do
+      @user.profile.update(first_name: "Alex")
+    end.to_not change { Sidekiq::Worker.jobs.count }
+
+  end
+
   context "validations" do
 
     before :each do

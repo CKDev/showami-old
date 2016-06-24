@@ -2,6 +2,7 @@ class Profile < ActiveRecord::Base
   belongs_to :user
 
   before_validation :strip_phone_numbers
+  after_update :send_welcome_text
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -47,6 +48,13 @@ class Profile < ActiveRecord::Base
   def strip_phone_numbers
     self.phone1 = phone1.gsub(/\D/, "") unless phone1.blank?
     self.phone2 = phone2.gsub(/\D/, "") unless phone2.blank?
+  end
+
+  def send_welcome_text
+    unless sent_welcome_sms
+      update(sent_welcome_sms: true)
+      WelcomeNotificationWorker.perform_async(self.user.id)
+    end
   end
 
 end

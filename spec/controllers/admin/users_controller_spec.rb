@@ -41,7 +41,7 @@ module Admin
       it "assigns the requested events in ascending date order" do
         @event1 = FactoryGirl.create(:event_log, user: @user1, created_at: Time.zone.now - 2.days)
         @event2 = FactoryGirl.create(:event_log, user: @user1, created_at: Time.zone.now - 5.days)
-        @event3 = FactoryGirl.create(:event_log, user: @user1, created_at: Time.zone.now - 1.days)
+        @event3 = FactoryGirl.create(:event_log, user: @user1, created_at: Time.zone.now - 1.day)
         sign_in @admin
         get :show, id: @user1.id
         user = assigns(:user)
