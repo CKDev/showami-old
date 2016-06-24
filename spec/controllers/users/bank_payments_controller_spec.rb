@@ -17,29 +17,21 @@ module Users
 
     describe "#POST create" do
 
-      it "should properly set the bank_token value on the user's profile" do
+      it "should call the Payment::Recipient service to create a new recipient" do
         @user = FactoryGirl.create(:user_with_valid_profile)
         sign_in @user
-        recipient_stub = stub(id: "btok_8cACLVzy8yNsq0")
-        Stripe::Recipient.expects(:create)
-          .once.with(name: @user.full_name, type: "individual", email: @user.email, bank_account: "cus_tok")
-          .returns(recipient_stub)
+        success_object = stub(send: true)
+        Payment::Recipient.expects(:new).once.with("cus_tok", @user).returns(success_object)
         post :create, stripeToken: "cus_tok"
-        @user.reload
-        expect(@user.profile.bank_token).to eq "btok_8cACLVzy8yNsq0"
       end
 
       it "should properly handle a failed Stripe call" do
         @user = FactoryGirl.create(:user_with_valid_profile)
-        @user.profile.update(bank_token: "")
         sign_in @user
-        Stripe::Recipient.expects(:create)
-          .once.with(name: @user.full_name, type: "individual", email: @user.email, bank_account: "cus_tok")
-          .raises(StandardError, "A Stripe Error Occurred")
-        Notification::ErrorReporter.expects(:send).once.with(instance_of(StandardError))
+        failure_object = stub(send: false)
+        Payment::Recipient.expects(:new).once.with("cus_tok", @user).returns(failure_object)
         post :create, stripeToken: "cus_tok"
-        expect(@user.profile.bank_token).to eq ""
-        expect(response).to redirect_to users_root_path
+        expect(flash[:alert]).to eq "There was an error adding payment information, please try again or contact us."
       end
 
     end
