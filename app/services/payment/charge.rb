@@ -13,7 +13,7 @@ module Payment
       Log::EventLogger.info(nil, @showing.id, "Charging card for showing.", "Showing: #{@showing.id}", "Stripe Charge")
       Stripe.api_key = Rails.application.secrets[:stripe]["private_key"]
       charge = Stripe::Charge.create(
-        amount: 5_000, # Amount in cents - $50
+        amount: 4_000, # Amount in cents - $40
         currency: "usd",
         customer: @token,
         description: "Buyer's agent charge for a successfully completed showing: #{@showing}"

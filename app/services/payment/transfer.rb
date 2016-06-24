@@ -13,7 +13,7 @@ module Payment
       Log::EventLogger.info(nil, @showing.id, "Attempting payment transfer...", "Showing: #{@showing.id}", "Stripe Transfer")
       Stripe.api_key = Rails.application.secrets[:stripe]["private_key"]
       transfer = Stripe::Transfer.create(
-        amount: 4_000, # Amount in cents - $40
+        amount: 3_000, # Amount in cents - $30
         currency: "usd",
         recipient: @token,
         statement_descriptor: "Seller's agent payment transfer for a successfully completed showing: #{@showing}"

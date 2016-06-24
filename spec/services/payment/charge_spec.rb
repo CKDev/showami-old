@@ -12,7 +12,7 @@ module Payment
     it "properly sends a Charge request to Stripe" do
       customer_stub = stub(id: "txn_123")
       Stripe::Charge.expects(:create).once
-        .with(amount: 5_000, currency: "usd", customer: @token, description: "Buyer's agent charge for a successfully completed showing: #{@showing}")
+        .with(amount: 4_000, currency: "usd", customer: @token, description: "Buyer's agent charge for a successfully completed showing: #{@showing}")
         .returns(customer_stub)
       Payment::Charge.new(@token, @showing).send
       @showing.reload

@@ -12,7 +12,7 @@ module Payment
     it "properly sends a Transfer request to Stripe" do
       transfer_stub = stub(id: "txn_123")
       Stripe::Transfer.expects(:create).once
-        .with(amount: 4_000, currency: "usd", recipient: @token,
+        .with(amount: 3_000, currency: "usd", recipient: @token,
           statement_descriptor: "Seller's agent payment transfer for a successfully completed showing: #{@showing}")
         .returns(transfer_stub)
       Payment::Transfer.new(@token, @showing).send
