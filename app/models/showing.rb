@@ -24,6 +24,7 @@ class Showing < ActiveRecord::Base
   validates :buyer_name, presence: true
   validates :buyer_phone, presence: true
   validates :buyer_type, presence: true
+  validates :notes, length: { maximum: 400 }
   validate :showing_at_must_be_in_range, on: :create
   validate :valid_status_change?
   validate :showing_agent_changed?

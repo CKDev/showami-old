@@ -94,7 +94,9 @@
   </div>
 
   <div>
-    <%= f.label :notes %>
+    <%= f.label :notes do %>
+      Notes <span class="note">(400 character limit)</span>
+    <% end %>
     <%= f.text_area :notes %>
   </div>
 

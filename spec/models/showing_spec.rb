@@ -81,6 +81,17 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
+    it "should limit the notes to 400 characters" do
+      @showing = FactoryGirl.build(:showing)
+      notes = ""
+      400.times { notes << "a" }
+      @showing.notes = notes
+      expect(@showing.valid?).to be true
+
+      @showing.notes << "a"
+      expect(@showing.valid?).to be false
+    end
+
     context "#valid_status_change?" do
 
       it "should initially be in unassigned status" do
