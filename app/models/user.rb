@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
 
   has_one :profile
   has_many :showings, -> { order("showing_at DESC") }
-  has_many :event_logs
+  has_many :event_logs, -> { order("created_at DESC") }
 
   after_create :add_profile
 

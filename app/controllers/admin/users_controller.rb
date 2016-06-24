@@ -8,8 +8,7 @@ module Admin
     end
 
     def show
-      @user = User.find(params[:id])
-      @events = @user.event_logs
+      @user = User.includes(:event_logs).find(params[:id])
     end
 
     def unblock

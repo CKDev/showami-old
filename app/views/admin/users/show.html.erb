@@ -64,6 +64,6 @@
 <hr />
 
 <h4 class="dark-blue">User Events</h4>
-<% @events.each do |event| %>
+<% @user.event_logs.each do |event| %>
   <p><%= simple_format event.to_s %></p>
 <% end %>
