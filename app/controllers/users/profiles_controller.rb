@@ -1,6 +1,7 @@
 module Users
   class ProfilesController < BaseController
 
+    before_action :no_cache # Otherwise the photo upload still show the old image, which is confusing.
     before_action :set_profile
 
     def edit
