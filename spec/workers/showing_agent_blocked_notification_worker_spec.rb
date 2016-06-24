@@ -9,7 +9,7 @@ describe ShowingAgentBlockedNotificationWorker do
     @buyers_agent.showings << @showing
 
     to = @showing_agent.profile.phone1
-    body = "You have been blocked from further showings due to a no-show."
+    body = "It was reported that you did not show up to a showing. You are now blocked from accepting showings. Contact us http://localhost:3000/contact"
     success_object = stub(send: true)
     Notification::SMS.expects(:new).once.with(to, body).returns(success_object)
     worker = ShowingAgentBlockedNotificationWorker.new
