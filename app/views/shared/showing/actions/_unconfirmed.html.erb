@@ -2,6 +2,7 @@
   <p class="status">Status: <span class="orange">Unconfirmed</span></p>
   <%= form_for showing, url: cancel_users_buyers_request_path(showing), method: :post do |f| %>
     <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Clicking OK will cancel this showing." } %>
+    <p class="note">*Showings canceled with less than 4 hours notice will still incur the full showing fee. Your card will be charged at the showing date and time.</p>
   <% end %>
 <% elsif type == :showing_assistant %>
   <div class="row">
