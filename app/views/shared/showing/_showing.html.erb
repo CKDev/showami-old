@@ -8,11 +8,16 @@
         <h4><%= showing.address %></h4>
       </div>
       <p><strong>MLS #: </strong><%= showing.mls %></p>
-      <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
-      <% if showing.showing_agent_visible? %>
+
+      <% if showing.buyer_info_visible?(current_user) %>
+        <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
+      <% end %>
+
+      <% if showing.showing_agent_visible?(current_user) %>
         <%= render partial: "shared/showing/showing_agent_info", locals: { showing: showing } %>
       <% end %>
-      <% if showing.notes.present? %>
+
+      <% if showing.notes_visible?(current_user) %>
         <p class="note"><strong>Notes:</strong> <%= showing.notes %></p>
       <% end %>
 

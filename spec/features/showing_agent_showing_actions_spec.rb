@@ -48,6 +48,39 @@ feature "A showing agent can perform actions on a showing" do
       end
     end
 
+    scenario "is not shown the buyer information when the showing is in unassigned" do
+      expect(@showing.status).to eq "unassigned"
+      visit users_showing_opportunity_path(id: @showing.id)
+      within(".showing") do
+        expect(page).to_not have_content "Buyer:"
+        expect(page).to_not have_content "Phone:"
+        expect(page).to_not have_content "Buyer is a/an:"
+        expect(page).to_not have_content "Notes:"
+      end
+
+      click_button "Accept"
+      within(".showing") do
+        expect(page).to have_content "Buyer:"
+        expect(page).to have_content "Phone:"
+        expect(page).to have_content "Buyer is a/an:"
+        expect(page).to have_content "Notes:"
+      end
+    end
+
+    scenario "is not shown the buyer information when another agent has accepted the showing" do
+      @other_user = FactoryGirl.create(:user_with_valid_profile)
+      @other_user = FactoryGirl.create(:user_with_valid_profile)
+      @showing.update(status: "unconfirmed", showing_agent: @other_user)
+      visit users_showing_opportunity_path(id: @showing.id)
+      within(".showing") do
+        expect(page).to_not have_content "Buyer:"
+        expect(page).to_not have_content "Phone:"
+        expect(page).to_not have_content "Buyer is a/an:"
+        expect(page).to_not have_content "Notes:"
+      end
+
+    end
+
   end
 
   context "Can confirm a showing" do

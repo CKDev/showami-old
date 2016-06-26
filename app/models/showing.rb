@@ -203,8 +203,16 @@ class Showing < ActiveRecord::Base
     after_deadline? && status.in?(%w(unconfirmed confirmed))
   end
 
-  def showing_agent_visible?
-    status.in? %w(unconfirmed confirmed completed no_show)
+  def showing_agent_visible?(current_user)
+    (status.in? %w(unconfirmed confirmed completed no_show)) && (current_user == self.user || current_user == showing_agent)
+  end
+
+  def buyer_info_visible?(current_user)
+    current_user == self.user || (current_user == showing_agent && status != "unassigned")
+  end
+
+  def notes_visible?(current_user)
+    current_user == self.user || (current_user == showing_agent && notes.present? && status != "unassigned")
   end
 
   def showing_agent_phone

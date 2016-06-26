@@ -768,13 +768,14 @@ describe Showing do
   context "#showing_agent_visible?" do
 
     it "should show the showing agent, only in unconfirmed confirmed completed and no_show statuses" do
-      showing = Showing.new
+      user = User.new
+      showing = Showing.new(user: user)
       Showing.statuses.each do |status, _index|
         showing.status = status
         if %w(unconfirmed confirmed completed no_show).include? status
-          expect(showing.showing_agent_visible?).to be true
+          expect(showing.showing_agent_visible?(user)).to be true
         else
-          expect(showing.showing_agent_visible?).to be false
+          expect(showing.showing_agent_visible?(user)).to be false
         end
       end
     end

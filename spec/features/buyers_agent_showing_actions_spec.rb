@@ -55,14 +55,25 @@ feature "A buyers agent can perform actions on a showing" do
     before :each do
       @user = FactoryGirl.create(:user_with_valid_profile)
       @showing_agent = FactoryGirl.create(:user_with_valid_profile) # To receive the notification
+      @showing = FactoryGirl.create(:showing, user: @user)
       log_in @user
     end
 
     scenario "can view the show page of a single showing" do
-      @showing = FactoryGirl.create(:showing, user: @user)
       visit users_buyers_request_path(@showing)
       within(".showing") do
         expect(page).to have_content @showing.address
+      end
+    end
+
+    scenario "is shown the buyer information, even when the showing is in unassigned (this is not true for showing agent)" do
+      expect(@showing.status).to eq "unassigned"
+      visit users_buyers_request_path(id: @showing.id)
+      within(".showing") do
+        expect(page).to have_content "Buyer:"
+        expect(page).to have_content "Phone:"
+        expect(page).to have_content "Buyer is a/an:"
+        expect(page).to have_content "Notes:"
       end
     end
 
