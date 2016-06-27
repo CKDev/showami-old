@@ -17,4 +17,5 @@ every 1.minute do
   runner "Showing.start_payment_charges"
   runner "Showing.start_payment_transfers"
   runner "Showing.update_paid"
+  runner "Showing.send_confirmation_reminders"
 end

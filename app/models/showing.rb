@@ -46,6 +46,7 @@ class Showing < ActiveRecord::Base
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
+  scope :need_confirmation_reminder, -> { where("sent_confirmation_reminder_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unconfirmed])}
   scope :ready_for_payment, lambda {
     where("(status = ? AND showing_at < ?) OR (status = ? AND showing_at < ?)",
       statuses[:completed], Time.zone.now - 24.hours,
@@ -186,6 +187,15 @@ class Showing < ActiveRecord::Base
       showing.update(status: statuses[:paid])
       showing.update(payment_status: payment_statuses[:paying_sellers_agent_success])
       Log::EventLogger.info(nil, showing.id, "Marked as paid.", "Cron", "Showing.update_paid", "Showing: #{showing.id}")
+    end
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.send_confirmation_reminders
+    Rails.logger.tagged("Cron", "Showing.send_confirmation_reminders") { Rails.logger.info "Checking for showings that are within 30 minutes and have not been confirmed." }
+    Showing.need_confirmation_reminder.each do |showing|
+      showing.update(sent_confirmation_reminder_sms: true)
+      ConfirmationReminderWorker.perform_async(showing.id)
     end
   end
 

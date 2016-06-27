@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160624201336) do
+ActiveRecord::Schema.define(version: 20160627214856) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,17 +66,18 @@ ActiveRecord::Schema.define(version: 20160624201336) do
     t.string   "mls"
     t.text     "notes"
     t.integer  "user_id"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
     t.datetime "showing_at"
     t.string   "buyer_name"
     t.string   "buyer_phone"
     t.integer  "buyer_type"
-    t.integer  "status",           default: 0
+    t.integer  "status",                         default: 0
     t.integer  "showing_agent_id"
-    t.integer  "payment_status",   default: 0
+    t.integer  "payment_status",                 default: 0
     t.string   "charge_txn"
     t.string   "transfer_txn"
+    t.boolean  "sent_confirmation_reminder_sms", default: false
   end
 
   create_table "users", force: :cascade do |t|
