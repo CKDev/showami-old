@@ -524,7 +524,6 @@ describe Showing do
 
     end
 
-
   end
 
   context "#no_show_eligible?" do

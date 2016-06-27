@@ -46,8 +46,8 @@ class Showing < ActiveRecord::Base
   scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
-  scope :need_confirmation_reminder, -> { where("sent_confirmation_reminder_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unconfirmed])}
-  scope :need_unassigned_notification, -> { where("sent_unassigned_notification_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unassigned])}
+  scope :need_confirmation_reminder, -> { where("sent_confirmation_reminder_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unconfirmed]) }
+  scope :need_unassigned_notification, -> { where("sent_unassigned_notification_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unassigned]) }
   scope :ready_for_payment, lambda {
     where("(status = ? AND showing_at < ?) OR (status = ? AND showing_at < ?)",
       statuses[:completed], Time.zone.now - 24.hours,
