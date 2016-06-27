@@ -18,4 +18,5 @@ every 1.minute do
   runner "Showing.start_payment_transfers"
   runner "Showing.update_paid"
   runner "Showing.send_confirmation_reminders"
+  runner "Showing.send_unassigned_notifications"
 end

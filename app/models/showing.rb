@@ -47,6 +47,7 @@ class Showing < ActiveRecord::Base
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :expired, -> { where(status: [statuses[:unassigned], statuses[:unconfirmed]]).where("showing_at < ?", Time.zone.now) }
   scope :need_confirmation_reminder, -> { where("sent_confirmation_reminder_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unconfirmed])}
+  scope :need_unassigned_notification, -> { where("sent_unassigned_notification_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unassigned])}
   scope :ready_for_payment, lambda {
     where("(status = ? AND showing_at < ?) OR (status = ? AND showing_at < ?)",
       statuses[:completed], Time.zone.now - 24.hours,
@@ -196,6 +197,15 @@ class Showing < ActiveRecord::Base
     Showing.need_confirmation_reminder.each do |showing|
       showing.update(sent_confirmation_reminder_sms: true)
       ConfirmationReminderWorker.perform_async(showing.id)
+    end
+  end
+
+  # NOTE: called from a cron job, keep name in sync with schedule.rb.
+  def self.send_unassigned_notifications
+    Rails.logger.tagged("Cron", "Showing.send_unassigned_notification") { Rails.logger.info "Checking for showings that are within 30 minutes and have not been assigned." }
+    Showing.need_unassigned_notification.each do |showing|
+      showing.update(sent_unassigned_notification_sms: true)
+      UnassignedNotificationWorker.perform_async(showing.id)
     end
   end
 

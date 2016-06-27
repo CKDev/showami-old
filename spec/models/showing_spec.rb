@@ -511,6 +511,20 @@ describe Showing do
 
     end
 
+    context ".need_unassigned_notification" do
+
+      it "should return all showings in status unassigned within 30 minutes of the showing time, that have not already sent a reminder" do
+        @showing1 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 29.minutes)
+        @showing2 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 31.minutes)
+        @showing3 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 29.minutes, sent_unassigned_notification_sms: true)
+        @showing4 = FactoryGirl.build(:showing, status: "unconfirmed", showing_at: Time.zone.now + 29.minutes)
+        [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
+        expect(Showing.need_unassigned_notification).to contain_exactly @showing1
+      end
+
+    end
+
+
   end
 
   context "#no_show_eligible?" do
@@ -756,6 +770,28 @@ describe Showing do
 
         expect do
           Showing.send_confirmation_reminders # The second time around should not send a SMS
+        end.to_not change { Sidekiq::Worker.jobs.count }
+
+      end
+
+    end
+
+    context ".send_unassigned_notifications" do
+
+      it "should send all reminders and mark as sent" do
+        @showing1 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 29.minutes)
+        @showing2 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 31.minutes)
+        @showing3 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 29.minutes, sent_unassigned_notification_sms: true)
+        @showing4 = FactoryGirl.build(:showing, status: "unconfirmed", showing_at: Time.zone.now + 29.minutes)
+        [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
+
+        UnassignedNotificationWorker.expects(:perform_async).once.with(@showing1.id)
+        Showing.send_unassigned_notifications
+        @showing1.reload
+        expect(@showing1.sent_unassigned_notification_sms).to eq true
+
+        expect do
+          Showing.send_unassigned_notifications # The second time around should not send a SMS
         end.to_not change { Sidekiq::Worker.jobs.count }
 
       end
