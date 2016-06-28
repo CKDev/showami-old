@@ -78,7 +78,6 @@ feature "A showing agent can perform actions on a showing" do
         expect(page).to_not have_content "Buyer is a/an:"
         expect(page).to_not have_content "Notes:"
       end
-
     end
 
   end
@@ -105,6 +104,20 @@ feature "A showing agent can perform actions on a showing" do
       within(".showing") do
         expect(page).to have_content @showing.address
         expect(page).to have_content "Reserved"
+      end
+    end
+
+    scenario "can confirm a showing up to 6 hours after the showing time" do
+      @showing.update(showing_agent: @user, status: "unconfirmed")
+      @showing.showing_at = Time.zone.now - 5.hours - 59.minutes
+      @showing.save(validate: false)
+      visit users_showing_appointments_path
+      click_button "Confirm"
+      expect(current_path).to eq users_showing_appointments_path
+      expect(page).to have_content "Showing confirmed"
+      within(".showing") do
+        expect(page).to have_content @showing.address
+        expect(page).to have_content "Confirmed"
       end
     end
 

@@ -426,6 +426,37 @@ describe Showing do
 
     end
 
+    context ".completed" do
+
+      it "should return all showings where the showing_at has past and the showing is in confirmed" do
+        @showing1 = FactoryGirl.build(:showing, status: "confirmed", showing_at: Time.zone.now - 1.minute)
+        @showing2 = FactoryGirl.build(:showing, status: "confirmed", showing_at: Time.zone.now + 1.minute)
+        @showing3 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 1.day)
+        [@showing1, @showing2, @showing3].each { |s| s.save(validate: false) }
+        expect(Showing.completed).to contain_exactly @showing1
+      end
+
+    end
+
+    context ".expired" do
+
+      it "should return all showings where the showing_at has past and the showing is in unassigned" do
+        @showing1 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now - 1.minute)
+        @showing2 = FactoryGirl.build(:showing, status: "unassigned", showing_at: Time.zone.now + 1.minute)
+        @showing3 = FactoryGirl.build(:showing, status: "completed", showing_at: Time.zone.now - 1.day)
+        [@showing1, @showing2, @showing3].each { |s| s.save(validate: false) }
+        expect(Showing.expired).to contain_exactly @showing1
+      end
+
+      it "should return all showings where the showing_at is more than 6 hours past and the showing is in unconfirmed" do
+        @showing1 = FactoryGirl.build(:showing, status: "unconfirmed", showing_at: Time.zone.now - 5.hours - 59.minutes)
+        @showing2 = FactoryGirl.build(:showing, status: "unconfirmed", showing_at: Time.zone.now - 6.hours - 1.minute)
+        [@showing1, @showing2].each { |s| s.save(validate: false) }
+        expect(Showing.expired).to contain_exactly @showing2
+      end
+
+    end
+
     context ".available" do
 
       it "should return all available showings (showings in the bounding box, in the future, and unassigned)" do
@@ -635,6 +666,11 @@ describe Showing do
         @showing4.showing_at = Time.zone.now - 1.minute
         @showing4.save(validate: false)
 
+        @showing4_2 = FactoryGirl.create(:showing)
+        @showing4_2.status = "unconfirmed"
+        @showing4_2.showing_at = Time.zone.now - 6.hours - 1.minute
+        @showing4_2.save(validate: false)
+
         @showing5 = FactoryGirl.create(:showing)
         @showing5.status = "confirmed"
         @showing5.showing_at = Time.zone.now - 1.minute
@@ -661,11 +697,12 @@ describe Showing do
         @showing9.save(validate: false)
 
         Showing.update_expired
-        [@showing1, @showing2, @showing3, @showing4, @showing5, @showing6, @showing7, @showing8, @showing9].each(&:reload)
+        [@showing1, @showing2, @showing3, @showing4, @showing4_2, @showing5, @showing6, @showing7, @showing8, @showing9].each(&:reload)
         expect(@showing1.status).to eq "expired"
         expect(@showing2.status).to eq "unassigned"
         expect(@showing3.status).to eq "unassigned"
-        expect(@showing4.status).to eq "expired"
+        expect(@showing4.status).to eq "unconfirmed"
+        expect(@showing4_2.status).to eq "expired"
         expect(@showing5.status).to eq "confirmed"
         expect(@showing6.status).to eq "completed"
         expect(@showing7.status).to eq "cancelled"
@@ -678,7 +715,8 @@ describe Showing do
           expect(@showing1.status).to eq "expired"
           expect(@showing2.status).to eq "expired"
           expect(@showing3.status).to eq "expired"
-          expect(@showing4.status).to eq "expired"
+          expect(@showing4.status).to eq "unconfirmed"
+          expect(@showing4_2.status).to eq "expired"
           expect(@showing5.status).to eq "confirmed"
           expect(@showing6.status).to eq "completed"
           expect(@showing7.status).to eq "cancelled"
