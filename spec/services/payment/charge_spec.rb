@@ -26,6 +26,12 @@ module Payment
       expect(@showing.charge_txn).to be nil
     end
 
+    it "sends an email to all admins when a Charge fails" do
+      Stripe::Charge.expects(:create).once.raises(Stripe::CardError.new("Your card was declined.", nil, "card_declined"))
+      Notification::Email.expects(:notify_admins).once.with("A credit card charge failed", @showing.to_s)
+      Payment::Charge.new(@token, @showing).send
+    end
+
     it "requires a token" do
       @token = ""
       Stripe::Charge.expects(:create).never

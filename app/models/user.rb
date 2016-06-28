@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   scope :not_self, ->(id) { where("users.id <> ?", id) }
   scope :not_blocked, -> { where(blocked: false) }
   scope :not_admin, -> { where(admin: false) }
+  scope :admins, -> { where(admin: true) }
   scope :order_by_first_name, -> { joins(:profile).order("profiles.first_name") }
 
   def send_devise_notification(notification, *args)

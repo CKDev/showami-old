@@ -23,6 +23,7 @@ module Payment
       return true
     rescue Stripe::CardError => e
       Notification::ErrorReporter.send(e)
+      Notification::Email.notify_admins("A credit card charge failed", "Showing: #{@showing.to_s}")
       Log::EventLogger.error(nil, @showing.id, "Charge error: #{e.code} - #{e.message}", "Showing: #{@showing.id}", "Stripe Charge")
       return false
     end
