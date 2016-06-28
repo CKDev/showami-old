@@ -1,7 +1,0 @@
-Head over to
-<% if user_signed_in? %>
-  <%= link_to "your dashboard", controller.after_sign_in_path_for(current_user) %>
-<% else %>
-  the <%= link_to "homepage", root_path %>
-<% end %>
-to choose a new direction.
