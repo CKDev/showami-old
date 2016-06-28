@@ -29,6 +29,9 @@
         <%= render partial: "shared/showing/showing_opportunities_actions", locals: { showing: showing } %>
       <% end %>
 
+      <%# Not used, it's just helpful to be able to see the id, if needed. %>
+      <%= hidden_field_tag :showing_id, showing.id %>
+
     </div>
   </div>
 </div>
