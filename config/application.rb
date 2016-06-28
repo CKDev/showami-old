@@ -26,8 +26,5 @@ module Showami
     # Use Sidekiq as the background job processor
     config.active_job.queue_adapter = :sidekiq
 
-    # Use dynamic error pages
-    config.exceptions_app = self.routes
-
   end
 end
