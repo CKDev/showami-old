@@ -518,13 +518,28 @@ describe Showing do
 
     context ".ready_for_paid" do
 
-      it "should return all showings in status processing_payment and have been in payment_status: paying_sellers_agent_started for 5 days" do
-        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
-        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 5.days - 23.hours)
-        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success", showing_at: Time.zone.now - 6.days - 1.minute)
-        @showing4 = FactoryGirl.build(:showing, status: "paid", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
+      it "should return all showings in status processing_payment and have been in payment_status: paying_sellers_agent_started for 5 business days" do
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.local(2016, 6, 17, 12, 0, 0))
+        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.local(2016, 6, 19, 12, 0, 0))
+        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success", showing_at: Time.zone.local(2016, 6, 17, 12, 0, 0))
+        @showing4 = FactoryGirl.build(:showing, status: "paid", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.local(2016, 6, 17, 12, 0, 0))
         [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
-        expect(Showing.ready_for_paid).to contain_exactly @showing1
+
+        Timecop.freeze(Time.zone.local(2016, 6, 23, 14, 0, 0)) do
+          expect(Showing.ready_for_paid).to eq []
+        end
+
+        Timecop.freeze(Time.zone.local(2016, 6, 25, 14, 0, 0)) do
+          expect(Showing.ready_for_paid).to contain_exactly @showing1
+        end
+
+        Timecop.freeze(Time.zone.local(2016, 6, 26, 14, 0, 0)) do
+          expect(Showing.ready_for_paid).to contain_exactly @showing1
+        end
+
+        Timecop.freeze(Time.zone.local(2016, 6, 28, 14, 0, 0)) do
+          expect(Showing.ready_for_paid).to contain_exactly @showing1, @showing2
+        end
       end
 
     end
@@ -777,16 +792,18 @@ describe Showing do
     context ".update_paid" do
 
       it "should mark all ready_for_paid showings as paid" do
-        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
-        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 5.days - 23.hours)
-        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success", showing_at: Time.zone.now - 6.days - 1.minute)
-        @showing4 = FactoryGirl.build(:showing, status: "paid", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.now - 6.days - 1.minute)
+        @showing1 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.local(2016, 6, 17, 12, 0, 0))
+        @showing2 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.local(2016, 6, 19, 12, 0, 0))
+        @showing3 = FactoryGirl.build(:showing, status: "processing_payment", payment_status: "charging_buyers_agent_success", showing_at: Time.zone.local(2016, 6, 17, 12, 0, 0))
+        @showing4 = FactoryGirl.build(:showing, status: "paid", payment_status: "paying_sellers_agent_started", showing_at: Time.zone.local(2016, 6, 17, 12, 0, 0))
         [@showing1, @showing2, @showing3, @showing4].each { |s| s.save(validate: false) }
 
-        Showing.update_paid
-        @showing1.reload
-        expect(@showing1.status).to eq "paid"
-        expect(@showing1.payment_status).to eq "paying_sellers_agent_success"
+        Timecop.freeze(Time.zone.local(2016, 6, 25, 14, 0, 0)) do
+          Showing.update_paid
+          @showing1.reload
+          expect(@showing1.status).to eq "paid"
+          expect(@showing1.payment_status).to eq "paying_sellers_agent_success"
+        end
       end
 
     end

@@ -62,12 +62,12 @@ class Showing < ActiveRecord::Base
   scope :ready_for_transfer, -> { where("status = ? AND payment_status = ?", statuses[:processing_payment], payment_statuses[:charging_buyers_agent_success]) }
 
   scope :ready_for_paid, lambda {
-    # We can only safely assume that a transfer is complete after 5 days of not receiving a transfer.failed message.
-    # So, 24 hours after showing time + 5 days of in process.
+    # We can only safely assume that a transfer is complete after 5 business days of not receiving a transfer.failed message.
+    # So, 24 hours after showing time + 5 business days of in process.
     where("status = ? AND payment_status = ? AND showing_at < ?",
       statuses[:processing_payment],
       payment_statuses[:paying_sellers_agent_started],
-      Time.zone.now - 6.days)
+      5.business_days.before(Time.zone.now - 1.day))
   }
 
   scope :in_bounding_box, lambda { |bounds|
