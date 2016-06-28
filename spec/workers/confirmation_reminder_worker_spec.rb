@@ -9,7 +9,7 @@ describe ConfirmationReminderWorker do
     @showing_agent = FactoryGirl.create(:user_with_valid_profile)
     @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
     to = @showing_agent.profile.phone1
-    body = "Please remember to confirm your showing. #{users_showing_opportunity_path(@showing)}"
+    body = "Please remember to confirm your showing. #{users_showing_opportunity_url(@showing)}"
     success_object = stub(send: true)
     Notification::SMS.expects(:new).once.with(to, body).returns(success_object)
     ConfirmationReminderWorker.new.perform(@showing.id)
