@@ -3,20 +3,24 @@
 <h1>Users</h1>
 
 <table class="u-full-width">
-  <tr>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Agent Type</th>
-    <th>Details</th>
-  </tr>
-<% @users.each do |u| %>
-  <tr>
-    <td><%= u.safe_full_name %></td>
-    <td><%= mail_to u.email %></td>
-    <td><%= u.profile.agent_type_str %></td>
-    <td><%= link_to "Show Details", admin_user_path(u) %></td>
-  </tr>
-<% end %>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Agent Type</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |u| %>
+      <tr>
+        <td><%= u.safe_full_name %></td>
+        <td><%= mail_to u.email %></td>
+        <td><%= u.profile.agent_type_str %></td>
+        <td><%= link_to "Show Details", admin_user_path(u) %></td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 
 <div class="align-right">
