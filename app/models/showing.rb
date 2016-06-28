@@ -198,6 +198,10 @@ class Showing < ActiveRecord::Base
     "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Payment Status: #{payment_status}, Updated At: #{updated_at}"
   end
 
+  def stripe_details
+    "Showing #{id}: Buyer's Agent: #{user.full_details} - Showing Assistant: #{showing_agent.full_details} - Address: #{address} - MLS: #{mls}"
+  end
+
   private
 
   def check_unassigned_state_change

@@ -5,14 +5,14 @@ module Payment
 
     before :each do
       @user = FactoryGirl.create(:user_with_valid_profile)
-      @showing = FactoryGirl.create(:showing, showing_agent: @user)
+      @showing = FactoryGirl.create(:showing, user: @user, showing_agent: @user)
       @token = "cus_8c6ev"
     end
 
     it "properly sends a Charge request to Stripe" do
       customer_stub = stub(id: "txn_123")
       Stripe::Charge.expects(:create).once
-        .with(amount: 4_000, currency: "usd", customer: @token, description: "Buyer's agent charge for a successfully completed showing: #{@showing}")
+        .with(amount: 4_000, currency: "usd", customer: @token, description: "Buyer's agent charge for a successfully completed showing: #{@showing.stripe_details}")
         .returns(customer_stub)
       Payment::Charge.new(@token, @showing).send
       @showing.reload

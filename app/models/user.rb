@@ -31,11 +31,15 @@ class User < ActiveRecord::Base
   end
 
   def safe_full_name
-    full_name.present? ? full_name : "<not yet entered>"
+    profile.try(:full_name).present? ? full_name : "<not yet entered>"
   end
 
   def to_s
     "#{full_name} (#{email})"
+  end
+
+  def full_details
+    "#{full_name} (#{email}, #{primary_phone})"
   end
 
   def notify_new_showing(showing)

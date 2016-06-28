@@ -204,4 +204,49 @@ describe User do
 
   end
 
+  context "#safe_full_name" do
+
+    it "should render a message if the full name is not available" do
+      @user = FactoryGirl.build(:user)
+      expect(@user.safe_full_name).to eq "<not yet entered>"
+    end
+
+    it "should render the full name, when available" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      expect(@user.safe_full_name).to eq "Alejandro Brinkster"
+    end
+
+  end
+
+  context "#full_details" do
+
+    it "should render the full name email and phone" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      expect(@user.full_details).to eq "Alejandro Brinkster (#{@user.email}, 5551231234)"
+    end
+
+  end
+
+  context "user type methods" do
+
+    it "should return true if the user is a buyers_agent" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(agent_type: "buyers_agent")
+      expect(@user.buyers_agent?).to be true
+    end
+
+    it "should return true if the user is a showing_agent" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(agent_type: "sellers_agent")
+      expect(@user.sellers_agent?).to be true
+    end
+
+    it "should return true if the user is a both a buyers_agent and a showing agent" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @user.profile.update(agent_type: "both")
+      expect(@user.both_agent_types?).to be true
+    end
+
+  end
+
 end

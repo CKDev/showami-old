@@ -16,7 +16,7 @@ module Payment
         amount: 4_000, # Amount in cents - $40
         currency: "usd",
         customer: @token,
-        description: "Buyer's agent charge for a successfully completed showing: #{@showing}"
+        description: "Buyer's agent charge for a successfully completed showing: #{@showing.stripe_details}"
       )
       @showing.update(charge_txn: charge.id)
       Log::EventLogger.info(nil, @showing.id, "Charge successful.", "Showing: #{@showing.id}", "Stripe Charge")
