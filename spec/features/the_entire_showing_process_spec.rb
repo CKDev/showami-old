@@ -62,8 +62,8 @@ feature "The entire showing process" do
       expect(@showing.payment_status).to eq "paying_sellers_agent_started"
     end
 
-    # After 5 more days of not receiving the failed webhook
-    Timecop.freeze(Time.zone.local(2016, 6, 7, 14, 30, 0)) do
+    # After 5 more business days of not receiving the failed webhook
+    Timecop.freeze(Time.zone.local(2016, 6, 9, 14, 30, 0)) do
       Showing.update_paid # Assume cron kicked this method off.
       @showing.reload
       expect(@showing.status).to eq "paid"
