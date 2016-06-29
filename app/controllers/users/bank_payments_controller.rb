@@ -33,8 +33,8 @@ module Users
       if Rails.application.routes.recognize_path(request.referrer)[:controller] == "users/showing_opportunities"
         session[:after_successful_bank_update_path] = request.referrer
       end
-    rescue
-      session.delete(:after_successful_bank_update_path) # Don't ever break for a simple UX improvement.
+    rescue # Don't ever break for a simple UX improvement.
+      session.delete(:after_successful_bank_update_path)
     end
   end
 end

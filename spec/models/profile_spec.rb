@@ -170,4 +170,23 @@ describe Profile do
 
   end
 
+  context "#agent_type_str" do
+
+    it "should return a more readable 'Showing' if agent is a seller_agent" do
+      profile = Profile.new(agent_type: "sellers_agent")
+      expect(profile.agent_type_str).to eq "Showing"
+    end
+
+    it "should return a more readable 'Buyers' if agent is a buyers_agent" do
+      profile = Profile.new(agent_type: "buyers_agent")
+      expect(profile.agent_type_str).to eq "Buyers"
+    end
+
+    it "should return a more readable 'Both' if agent is both" do
+      profile = Profile.new(agent_type: "both")
+      expect(profile.agent_type_str).to eq "Both"
+    end
+
+  end
+
 end

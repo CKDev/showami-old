@@ -905,6 +905,71 @@ describe Showing do
       end
     end
 
+    it "should not show the showing agent to a user other than the buyer's agent or the showing agent" do
+      @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+      @other_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing, status: "unconfirmed", user: @buyers_agent, showing_agent: @showing_agent)
+      expect(@showing.showing_agent_visible?(@buyers_agent)).to be true
+      expect(@showing.showing_agent_visible?(@showing_agent)).to be true
+      expect(@showing.showing_agent_visible?(@other_agent)).to be false
+    end
+
+  end
+
+  context "#buyer_info_visible?" do
+
+    before :each do
+      @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+      @other_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
+    end
+
+    it "should not show the buyer's info to a user other than the buyer's agent or the showing agent" do
+      @showing.update(status: "unconfirmed")
+      expect(@showing.buyer_info_visible?(@buyers_agent)).to be true
+      expect(@showing.buyer_info_visible?(@showing_agent)).to be true
+      expect(@showing.buyer_info_visible?(@other_agent)).to be false
+    end
+
+    it "should not show the buyer's info to anyone other than the buyer's agent until the showing is assigned" do
+      expect(@showing.buyer_info_visible?(@buyers_agent)).to be true
+      expect(@showing.buyer_info_visible?(@showing_agent)).to be false
+      expect(@showing.buyer_info_visible?(@other_agent)).to be false
+    end
+
+  end
+
+  context "#notes_visible?" do
+
+    before :each do
+      @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+      @other_agent = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
+    end
+
+    it "should not show the notes to a user other than the buyer's agent or the showing agent" do
+      @showing.update(status: "unconfirmed")
+      expect(@showing.notes_visible?(@buyers_agent)).to be true
+      expect(@showing.notes_visible?(@showing_agent)).to be true
+      expect(@showing.notes_visible?(@other_agent)).to be false
+    end
+
+    it "should not show the notes to anyone other than the buyer's agent until the showing is assigned" do
+      expect(@showing.notes_visible?(@buyers_agent)).to be true
+      expect(@showing.notes_visible?(@showing_agent)).to be false
+      expect(@showing.notes_visible?(@other_agent)).to be false
+    end
+
+    it "should not show the notes to anyone other than the buyer's agent if there are no notes to be shown" do
+      @showing.update(status: "unconfirmed", notes: "")
+      expect(@showing.notes_visible?(@buyers_agent)).to be true
+      expect(@showing.notes_visible?(@showing_agent)).to be false
+      expect(@showing.notes_visible?(@other_agent)).to be false
+    end
+
   end
 
   context "helper methods" do
@@ -923,6 +988,38 @@ describe Showing do
 
     it "buyers_agent_phone should return the buyers agent's phone1" do
       expect(@showing.buyers_agent_phone).to eq "1231231234"
+    end
+
+    it "has a well formatted to_s" do
+      @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
+      # Just test that the individual pieces are available
+      expect(@showing.to_s).to match("Showing")
+      expect(@showing.to_s).to match("Buyer's Agent:")
+      expect(@showing.to_s).to match("Address:")
+      expect(@showing.to_s).to match("MLS:")
+      expect(@showing.to_s).to match("Showing Status:")
+      expect(@showing.to_s).to match("Payment Status:")
+      expect(@showing.to_s).to match("Updated At:")
+    end
+
+    it "has a method to send details to Stripe" do
+      @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
+      # Just test that the individual pieces are available
+      expect(@showing.stripe_details).to match("Showing")
+      expect(@showing.stripe_details).to match("Buyer's Agent:")
+      expect(@showing.stripe_details).to match("Showing Assistant:")
+      expect(@showing.stripe_details).to match("Address:")
+      expect(@showing.stripe_details).to match("MLS:")
+    end
+
+    it "has a method to include details for admin emails" do
+      @showing = FactoryGirl.create(:showing, user: @buyers_agent, showing_agent: @showing_agent)
+      # Just test that the individual pieces are available
+      expect(@showing.cc_failure_email_details).to match("Showing")
+      expect(@showing.cc_failure_email_details).to match("Buyer's Agent:")
+      expect(@showing.cc_failure_email_details).to match("Showing Assistant:")
+      expect(@showing.cc_failure_email_details).to match("Address:")
+      expect(@showing.cc_failure_email_details).to match("MLS:")
     end
 
   end
