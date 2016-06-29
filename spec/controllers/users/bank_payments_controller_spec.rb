@@ -54,7 +54,7 @@ module Users
         failure_object = stub(send: false)
         Payment::Recipient.expects(:new).once.with("cus_tok", @user).returns(failure_object)
         post :create, stripeToken: "cus_tok"
-        expect(flash[:alert]).to eq "There was an error adding payment information, please try again or contact us."
+        expect(flash[:alert]).to eq "There was an error adding payment information, please try again or <a href='/contact'>contact us</a>."
       end
 
       it "should redirect the user back to the showing opportunities path, if that was the previous page" do

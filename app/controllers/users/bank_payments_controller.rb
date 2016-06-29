@@ -13,7 +13,7 @@ module Users
       if Payment::Recipient.new(token, current_user).send
         redirect_to redirect_path, notice: "Thank you for adding your payment information, you may accept showing invitations."
       else
-        redirect_to users_root_path, alert: "There was an error adding payment information, please try again or contact us."
+        redirect_to users_root_path, alert: "There was an error adding payment information, please try again or <a href='/contact'>contact us</a>."
       end
     end
 

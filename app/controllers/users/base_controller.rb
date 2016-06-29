@@ -22,7 +22,7 @@ module Users
 
     def verify_not_blocked
       if current_user.blocked?
-        redirect_to after_sign_in_path_for(current_user), alert: "Your user account has been blocked, please contact us if you feel this is in error."
+        redirect_to after_sign_in_path_for(current_user), alert: "Your user account has been blocked, please <a href='/contact'>contact us</a> if you feel this is in error."
       end
     end
   end

@@ -8,7 +8,7 @@
 <% else %>
   <% if current_user.blocked? %>
     <p class="status red">
-      Your account has been blocked, you cannot accept showings.  Please contact us if you feel this is in error.
+      Your account has been blocked, you cannot accept showings.  Please <%= link_to "contact us", contact_path %> if you feel this is in error.
     </p>
   <% elsif !current_user.valid_bank_token? %>
     <% if showing.status == "unassigned" %>
