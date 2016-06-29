@@ -26,5 +26,15 @@ module Notification
       Rails.logger.expects(:error).once.with("Error: 21604 - A 'To' phone number is required.")
       Notification::SMS.new(to, body, true).send
     end
+
+    it "logs if a message is more than 140 characters" do
+      to = "+15005550006"
+      body = ""
+      141.times { body << "A" }
+      Rails.logger.expects(:info).once
+      Rails.logger.expects(:error).once.with("Previous message was > 140 characters")
+      Notification::SMS.new(to, body).send
+    end
+
   end
 end

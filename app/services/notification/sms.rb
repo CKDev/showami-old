@@ -18,6 +18,7 @@ module Notification
       @client.messages.create(body: @body, to: @to, from: @from)
       log_msg = "Completed SMS showing notification to #{@to}"
       Rails.logger.tagged("Showing Notification SMS") { Rails.logger.info log_msg }
+      Rails.logger.tagged("Showing Notification SMS") { Rails.logger.error "Previous message was > 140 characters" } if @body.length > 140
     rescue Twilio::REST::RequestError => e
       Notification::ErrorReporter.send(e)
       Rails.logger.tagged("Showing Notification SMS") { Rails.logger.error "Error: #{e.code} - #{e.message}" }
