@@ -202,6 +202,10 @@ class Showing < ActiveRecord::Base
     "Showing #{id}: Buyer's Agent: #{user.full_details} - Showing Assistant: #{showing_agent.full_details} - Address: #{address} - MLS: #{mls}"
   end
 
+  def cc_failure_email_details
+    "Showing #{id}: Buyer's Agent: #{user.full_details} - Showing Assistant: #{showing_agent.full_details} - Address: #{address} - MLS: #{mls}"
+  end
+
   private
 
   def check_unassigned_state_change

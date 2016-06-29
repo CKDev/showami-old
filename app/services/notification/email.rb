@@ -2,9 +2,9 @@ module Notification
 
   class Email
 
-    def self.notify_admins(subject, body)
+    def self.notify_admins(error, showing_details)
       User.admins.each do |user|
-        AdminMailer.email(user, subject, body).deliver_later
+        AdminCCFailureMailer.email(user, error, showing_details).deliver_later
       end
     end
 
