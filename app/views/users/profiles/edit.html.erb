@@ -95,13 +95,15 @@
     </div>
   </div>
 
-  <label for="map">Select your showing area</label>
+  <div id="map-feature">
+    <label for="map">Select your showing area</label>
 
-  <p>
-    Fit the shaded box around the area in which you are willing to show properties. Users who have selected to only be a buyer's agent can skip this step.
-  </p>
+    <p>
+      Fit the shaded box around the area in which you are willing to show properties. Users who have selected to only be a buyer's agent can skip this step.
+    </p>
 
-  <div id="map"></div>
+    <div id="map"></div>
+  </div>
 
   <%= f.hidden_field :geo_box %>
   <%= f.hidden_field :geo_box_zoom %>
@@ -111,4 +113,5 @@
 <% end %>
 
 <%= javascript_include_tag "single_view/showings_map" %>
+<%= javascript_include_tag "single_view/profile" %>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBffPEqK3fNSSFCl9H04OH3aB5sN51DaI&callback=ShowingsMap.initialize"></script>
