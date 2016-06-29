@@ -20,6 +20,10 @@
 ## Testing
 `rspec`
 
+### Ngrok for receiving webhooks
+`/Applications/ngrok http 3000`
+Set Stripe to send webhooks to http://c68bfd4e.ngrok.io/webhook/receive (Replacing actual ngrok url from above command)
+
 ## Services (job queues, cache servers, search engines, etc.)
 * Sidekiq
 

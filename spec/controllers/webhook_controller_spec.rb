@@ -15,20 +15,42 @@ describe WebhookController do
   it "should properly handle a transfer.failed POST" do
     fixture_path = "#{Rails.root}/spec/fixtures/webhooks/transfer.failed.json"
     @transfer_failed_json = JSON.parse(File.read(fixture_path))
+    expect do
+      post :receive, @transfer_failed_json.to_json
+    end.to change { Webhook.count }.by(1)
 
-    post :receive, @transfer_failed_json
     @showing.reload
     expect(@showing.status).to eq "processing_payment"
     expect(@showing.payment_status).to eq "paying_sellers_agent_failure"
+
+    webhook = Webhook.last
+    expect(webhook.raw_body).to_not be nil
+    expect(webhook.event_type).to eq "transfer.failed"
   end
 
-  it "should ignore other webhooks besides the transfer.failed" do
+  it "should ignore (except for logging) other webhooks besides the transfer.failed" do
     fixture_path = "#{Rails.root}/spec/fixtures/webhooks/transfer.paid.json"
     @transfer_paid_json = JSON.parse(File.read(fixture_path))
-    post :receive, @transfer_failed_json
+    expect do
+      post :receive, @transfer_paid_json.to_json
+    end.to change { Webhook.count }.by(1)
     @showing.reload
     expect(@showing.status).to eq "processing_payment"
     expect(@showing.payment_status).to eq "paying_sellers_agent_started"
+
+    webhook = Webhook.last
+    expect(webhook.raw_body).to_not be nil
+    expect(webhook.event_type).to eq "transfer.paid"
+  end
+
+  it "should properly handle a transfer.failed POST, where the showing transfer_txn isn't found" do
+    @showing.update(transfer_txn: "ASDF")
+    fixture_path = "#{Rails.root}/spec/fixtures/webhooks/transfer.failed.json"
+    @transfer_failed_json = JSON.parse(File.read(fixture_path))
+    expect do
+      post :receive, @transfer_failed_json.to_json
+    end.to_not raise_error
+
   end
 
 end

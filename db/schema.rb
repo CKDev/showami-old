@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160627230658) do
+ActiveRecord::Schema.define(version: 20160629175051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,5 +121,12 @@ ActiveRecord::Schema.define(version: 20160627230658) do
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
+
+  create_table "webhooks", force: :cascade do |t|
+    t.json     "raw_body"
+    t.string   "event_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
 end
