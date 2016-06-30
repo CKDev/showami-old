@@ -49,31 +49,32 @@
 <p>In order to submit a showing request, you must provide valid credit card information. You will be charged for each showing 24 hours after the showing date and time.</p>
 
 <%= form_tag users_cc_payment_path, id: "payment-form" do %>
-  <p class="payment-errors alert" style="display: none;"></p>
+  <p class="payment-errors alert display-none"></p>
 
   <div>
     <label for="cc-num">Credit Card Number</label>
-    <input id="cc-num" type="text" data-stripe="number" maxlength="20" autofocus="true" />
+    <input id="cc-num" type="text" data-stripe="number" maxlength="20" autofocus="true" class="input-width width-250" />
   </div>
 
   <div>
     <label for="cc-cvc">CVC</label>
-    <input id="cc-cvc" type="text" data-stripe="cvc" maxlength="4" />
+    <input id="cc-cvc" type="text" data-stripe="cvc" maxlength="4" class="input-width width-250"/>
   </div>
 
   <div>
     <label for="cc-exp-month">Expiration Date <span class="note">(mm/yyyy)</span></label>
-    <input id="cc-exp-month" type="text" data-stripe="exp-month" maxlength="2" style="display: inline-block; width: 50px;" />
+    <input id="cc-exp-month" type="text" data-stripe="exp-month" maxlength="2" class="input-width width-88" />
     <span> / </span>
-    <input id="cc-exp-year" type="text" data-stripe="exp-year" maxlength="4" style="display: inline-block; width: 100px;" />
+    <input id="cc-exp-year" type="text" data-stripe="exp-year" maxlength="4" class="input-width width-146" />
   </div>
 
   <div>
     <label for="cc-address-zip">Zip Code</label>
-    <input id="cc-address-zip" type="text" data-stripe="address-zip" maxlength="5" style="display: inline-block; width: 163px;" />
+    <input id="cc-address-zip" type="text" data-stripe="address-zip" maxlength="5" class="input-width width-250" />
   </div>
 
-  <%= submit_tag "Save", class: "button button-primary", data: { disable_with: "Saving..." } %>
+  <%= submit_tag "Save", class: "button button-primary top-and-bottom-margin", data: { disable_with: "Saving..." } %>
+
 <% end %>
 
 <% if current_user.sellers_agent? || current_user.both_agent_types? %>

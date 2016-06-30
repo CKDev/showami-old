@@ -51,7 +51,7 @@
 <p>In order to accept showings, you must provide valid bank account information. Your account will be credited within 2 to 3 days of the showing and the payment may take up to 5 additional business days to fully process depending upon your financial institution.</p>
 
 <%= form_tag users_bank_payment_path, id: "payment-form" do %>
-  <p class="payment-errors alert" style="display: none;"></p>
+  <p class="payment-errors alert display-none"></p>
 
   <div>
     <label for="bank-routing-number">Routing Number</label>
@@ -68,7 +68,8 @@
     <input id="bank-account-holder-name" type="text" data-stripe="account-holder-name" maxlength="40" />
   </div>
 
-  <%= submit_tag "Save", class: "button button-primary", data: { disable_with: "Saving..." } %>
+  <%= submit_tag "Save", class: "button button-primary top-and-bottom-margin", data: { disable_with: "Saving..." } %>
+
 <% end %>
 
 <% if current_user.buyers_agent? || current_user.both_agent_types? %>
