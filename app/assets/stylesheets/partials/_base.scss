@@ -2,34 +2,40 @@ html {
   box-sizing: border-box;
 }
 
-.logo {
-  font-weight: bolder;
-  font-size: 30px;
-  color: #555;
+em {
+  font-style: normal;
+  font-weight: bold;
+}
+
+select.month {
+  width: 100%;
+  @media (min-width: 668px) {
+    width: 125px;
+  }
+}
+
+select.day, select.hour, select.minute {
+  width: 100%;
+  @media (min-width: 668px) {
+    width: 125px;
+  }
 }
 
 .logo-icon {
   width: 125px;
 }
 
-.button-group {
-  a.button, button, input[type='button'], input[type='submit'] {
-    margin: 10px
-  }
-}
-
 .centered {
   text-align: center;
-}
-
-em {
-  font-style: normal;
-  font-weight: bold;
 }
 
 .note {
   color: $medium-grey;
   font-weight: 100;
+}
+
+.flash-message {
+  margin-top: 1em;
 }
 
 .alert {
@@ -76,22 +82,9 @@ em {
   text-align: right;
 }
 
-.flash-message {
-  margin-top: 1em;
-}
-
-select.month {
-  width: 100%;
-  @media (min-width: 668px) {
-    width: 125px;
-  }
-}
-
-select.day, select.hour, select.minute {
-  width: 100%;
-  @media (min-width: 668px) {
-    width: 125px;
-  }
+.top-and-bottom-padding {
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 .size-200 {
@@ -106,109 +99,6 @@ select.day, select.hour, select.minute {
   }
 }
 
-.homepage-hero {
-  background-color: $dark-blue;
-  padding-top: 1em;
-
-  @media (min-width: 490px) {
-    border-top: 20px solid $dark-blue;
-    background: image-url("home.jpg") no-repeat;
-    background-size: cover;
-    min-height: 600px;
-  }
-}
-
-.homepage-signin-box {
-  background-color: white;
-  margin-top: 3em;
-  margin-bottom: 3em;
-  padding: 2em;
-
-  h1 {
-    color: $dark-blue;
-    font-size: 3.5rem;
-  }
-
-  h2 {
-    color: $light-blue;
-    font-size: 2.5rem;
-  }
-
-  @media (min-width: 640px) {
-    float: right;
-    width: 490px;
-  }
-}
-
-.error-page-hero {
-  background-color: $dark-blue;
-  padding-top: 1em;
-
-  @media (min-width: 490px) {
-    border-top: 20px solid $dark-blue;
-    background: image-url("error.jpg") no-repeat;
-    background-size: cover;
-    min-height: 600px;
-  }
-}
-
-.error-page-callout-box {
-  background-color: white;
-  margin-top: 3em;
-  margin-bottom: 3em;
-  padding: 2em;
-
-  h1 {
-    color: $dark-blue;
-    font-size: 3.5rem;
-  }
-
-  h2 {
-    color: $light-blue;
-    font-size: 2.5rem;
-  }
-
-  @media (min-width: 640px) {
-    float: left;
-    width: 490px;
-  }
-}
-
 .status {
   font-weight: bold;
-}
-
-.white {
-  color: $white;
-}
-
-.red {
-  color: $red;
-}
-
-.light-grey {
-  color: $light-grey;
-}
-
-.light-blue {
-  color: $light-blue;
-}
-
-.dark-blue {
-  color: $dark-blue;
-}
-
-.orange {
-  color: $orange;
-}
-
-.red-box {
-  color: $white;
-  display: inline-block;
-  background-color: $red;
-}
-
-.top-and-bottom-padding {
-  padding-top: 1em;
-  padding-bottom: 1em;
 }

@@ -69,26 +69,26 @@
   <%= label_tag "Buyer is a/an:" %>
   <div class="row">
     <div class="four columns">
-      <%= f.label "buyer_type_individual", class: "control control--radio" do %>
+      <%= f.label "buyer_type_individual", class: "control control-radio" do %>
         Individual
         <%= f.radio_button :buyer_type, :individual %>
-        <div class="control__indicator"></div>
+        <div class="control-indicator"></div>
       <% end %>
     </div>
 
     <div class="four columns">
-      <%= f.label "buyer_type_couple", class: "control control--radio" do %>
+      <%= f.label "buyer_type_couple", class: "control control-radio" do %>
         Couple
         <%= f.radio_button :buyer_type, :couple %>
-        <div class="control__indicator"></div>
+        <div class="control-indicator"></div>
       <% end %>
     </div>
 
     <div class="four columns">
-      <%= f.label "buyer_type_family", class: "control control--radio" do %>
+      <%= f.label "buyer_type_family", class: "control control-radio" do %>
         Family
         <%= f.radio_button :buyer_type, :family %>
-        <div class="control__indicator"></div>
+        <div class="control-indicator"></div>
       <% end %>
     </div>
   </div>

@@ -22,8 +22,8 @@ and also iPads specifically.
     margin-bottom: 1em;
   }
 
+  /* Behave like a "row" */
   td {
-    /* Behave  like a "row" */
     border: none;
     border-bottom: 1px solid $pale-grey;
     position: relative;
