@@ -26,11 +26,13 @@ class AvatarUploader < CarrierWave::Uploader::Base
 
   # Create different versions of your uploaded files:
   version :small do
-    process resize_to_fit: [200, 200]
+    process :auto_orient
+    process resize_to_fit: [200, 100_000] # Only scale width, height can remain to keep ratio.
   end
 
   version :mini do
-    process resize_to_fit: [75, 75]
+    process :auto_orient
+    process resize_to_fit: [100, 100_000] # Only scale width, height can remain to keep ratio.
   end
 
   # Add a white list of extensions which are allowed to be uploaded.
@@ -43,6 +45,11 @@ class AvatarUploader < CarrierWave::Uploader::Base
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
   def filename
     "avatar.jpg" if original_filename
+  end
+
+  # Respect the rotation of the image (otherwise image can be flipped 90 degrees)
+  def auto_orient
+    manipulate!(&:auto_orient)
   end
 
 end

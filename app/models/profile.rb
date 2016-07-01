@@ -18,7 +18,7 @@ class Profile < ActiveRecord::Base
     end
   end
 
-  validates :avatar, file_size: { less_than_or_equal_to: 1024.kilobytes }
+  validates :avatar, file_size: { less_than_or_equal_to: 2.5.megabytes }
 
   mount_uploader :avatar, AvatarUploader
 
