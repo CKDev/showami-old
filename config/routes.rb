@@ -59,6 +59,7 @@ Rails.application.routes.draw do
   # Webhooks
   post "webhook/receive"
   post "webhook/voice"
+  post "webhook/sms"
 
   # Sidekiq web interface is a Sinatra app.
   authenticate :user, lambda { |u| u.admin? } do

@@ -24,4 +24,9 @@ class WebhookController < ApplicationController
     render file: "public/twilio/voice_response.xml", content_type: "application/xml", layout: false
   end
 
+  def sms
+    Rails.logger.tagged("Webhook", "Twilio", "SMS") { Rails.logger.error "Received an incoming twilio sms webhook" }
+    render file: "public/twilio/sms_response.xml", content_type: "application/xml", layout: false
+  end
+
 end
