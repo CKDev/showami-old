@@ -99,7 +99,7 @@
     <label for="map">Select your showing area</label>
 
     <p>
-      Fit the shaded box around the area in which you are willing to show properties. Users who have selected to only be a buyer's agent can skip this step.
+      Fit the shaded box around the area in which you are willing to show properties.
     </p>
 
     <div id="map"></div>
@@ -107,6 +107,11 @@
 
   <%= f.hidden_field :geo_box %>
   <%= f.hidden_field :geo_box_zoom %>
+
+  <p>
+    By clicking Update you hereby you agree to our Application End User License Agreement
+    and acknowledge our Privacy Policy.
+  </p>
 
   <%= f.submit "Update", class: "button-primary" %>
 

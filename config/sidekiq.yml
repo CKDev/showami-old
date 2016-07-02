@@ -7,6 +7,6 @@
   - high
   - default
   - mailers
-:pidfile: tmp/pids/sidekiq-0.pid
+:pidfile: tmp/pids/sidekiq.pid
 :logfile: log/sidekiq.log
 :concurrency: 5
