@@ -1,5 +1,7 @@
 <div class="buyer-info">
-  <div class="name"><strong>Buyer: </strong><%= showing.buyer_name %></div>
-  <div class="phone"><strong>Phone: </strong><%= tel_to number_to_phone(showing.buyer_phone, area_code: true) %></div>
+  <% if showing.buyer_info_visible?(current_user) %>
+    <div class="name"><strong>Buyer: </strong><%= showing.buyer_name %></div>
+    <div class="phone"><strong>Phone: </strong><%= tel_to number_to_phone(showing.buyer_phone, area_code: true) %></div>
+  <% end %>
   <div class="buyer-type"><strong>Buyer is a/an: </strong><%= showing.buyer_type.titleize %></div>
 </div>

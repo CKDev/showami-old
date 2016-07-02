@@ -54,7 +54,7 @@ feature "A showing agent can perform actions on a showing" do
       within(".showing") do
         expect(page).to_not have_content "Buyer:"
         expect(page).to_not have_content "Phone:"
-        expect(page).to_not have_content "Buyer is a/an:"
+        expect(page).to have_content "Buyer is a/an:" # This should always show
         expect(page).to_not have_content "Notes:"
       end
 
@@ -75,7 +75,7 @@ feature "A showing agent can perform actions on a showing" do
       within(".showing") do
         expect(page).to_not have_content "Buyer:"
         expect(page).to_not have_content "Phone:"
-        expect(page).to_not have_content "Buyer is a/an:"
+        expect(page).to have_content "Buyer is a/an:" # This should always show
         expect(page).to_not have_content "Notes:"
       end
     end

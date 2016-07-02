@@ -9,9 +9,7 @@
       </div>
       <p><strong>MLS #: </strong><%= showing.mls %></p>
 
-      <% if showing.buyer_info_visible?(current_user) %>
-        <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
-      <% end %>
+      <%= render partial: "shared/showing/buyer_info", locals: { showing: showing } %>
 
       <% if showing.showing_agent_visible?(current_user) %>
         <%= render partial: "shared/showing/showing_agent_info", locals: { showing: showing } %>
