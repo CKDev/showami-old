@@ -19,4 +19,9 @@ class WebhookController < ApplicationController
     render nothing: true
   end
 
+  def voice
+    # TODO: log
+    render file: "public/twilio/voice_response.xml", content_type: "application/xml"
+  end
+
 end
