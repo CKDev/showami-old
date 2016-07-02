@@ -16,3 +16,11 @@ textarea.field_with_errors, .field_with_errors select {
 .field_with_errors label {
   color: $error-font-color;
 }
+
+#error_explanation {
+  color: $red;
+
+  h4 {
+    color: $red;
+  }
+}
