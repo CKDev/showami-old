@@ -58,9 +58,9 @@ describe WebhookController do
   context "Twilio voice incoming call" do
 
     it "should return properly formatted xml when a webhook from twilio is received" do
-      expect do
-        post :voice
-      end.to_not raise_error
+      post :voice
+      expect(response).to have_http_status(:success)
+      expect(response.content_type).to eq("application/xml")
     end
 
   end

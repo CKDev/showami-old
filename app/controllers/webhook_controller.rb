@@ -12,7 +12,7 @@ class WebhookController < ApplicationController
         transaction_id = raw_body["data"]["object"]["id"]
         Showing.find_by_transfer_txn(transaction_id).update(payment_status: "paying_sellers_agent_failure")
       rescue => e
-        Rails.logger.tagged("Received Webhook") { Rails.logger.error "Received a transfer.failed webhook that doesn't match a showing.  This is okay in staging, and an error in production." }
+        Rails.logger.tagged("Webhook", "Stripe") { Rails.logger.error "Received a transfer.failed webhook that doesn't match a showing.  This is okay in staging, and an error in production." }
         Notification::ErrorReporter.send(e) if Rails.env.production?
       end
     end
@@ -20,8 +20,8 @@ class WebhookController < ApplicationController
   end
 
   def voice
-    # TODO: log
-    render file: "public/twilio/voice_response.xml", content_type: "application/xml"
+    Rails.logger.tagged("Webhook", "Twilio", "Voice") { Rails.logger.error "Received an incoming twilio voice webhook" }
+    render file: "public/twilio/voice_response.xml", content_type: "application/xml", layout: false
   end
 
 end
