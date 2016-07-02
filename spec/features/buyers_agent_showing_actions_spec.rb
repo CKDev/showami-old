@@ -15,8 +15,8 @@ feature "A buyers agent can perform actions on a showing" do
       expect(current_path).to eq users_buyers_requests_path
       first(:link, "New Request").click
       expect(page).to have_content "Request New Showing"
-      select "11 PM", from: "showing[showing_at(4i)]"
-      select "55", from: "showing[showing_at(5i)]"
+      select "8 PM", from: "showing[showing_at(4i)]"
+      select "45", from: "showing[showing_at(5i)]"
       fill_in "showing[mls]", with: "1234512345"
       fill_in "showing[address_attributes][line1]", with: "600 S Broadway"
       fill_in "showing[address_attributes][line2]", with: "Apt ABC"

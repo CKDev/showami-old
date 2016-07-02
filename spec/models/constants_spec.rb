@@ -30,4 +30,18 @@ describe Constants do
     end
   end
 
+  it "should return the expected date format for hour_format" do
+    Timecop.freeze do
+      t = Time.zone.local(2016, 9, 1, 14, 5, 0)
+      expect(t.strftime(Constants.hour_format)).to eq "14"
+    end
+  end
+
+  it "should return the expected date format for minute_format" do
+    Timecop.freeze do
+      t = Time.zone.local(2016, 9, 1, 14, 45, 0)
+      expect(t.strftime(Constants.minute_format)).to eq "45"
+    end
+  end
+
 end

@@ -15,4 +15,12 @@ class Constants
     "%l:%M %p" # "2015 7:47 PM"
   end
 
+  def self.hour_format
+    "%k" # 24 hour integer format 0..23
+  end
+
+  def self.minute_format
+    "%M" # Minute of the hour 0..59
+  end
+
 end

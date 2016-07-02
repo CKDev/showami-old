@@ -17,7 +17,8 @@
 
   <div>
     <%= f.label :showing_at %>
-    <%= f.datetime_select :showing_at, discard_year: true, ampm: true, minute_step: 5, with_css_classes: true %>
+    <%= f.datetime_select :showing_at,
+      discard_year: true, ampm: true, minute_step: 5, start_hour: 8, end_hour: 20, with_css_classes: true %>
   </div>
 
   <div>
@@ -28,7 +29,7 @@
   <%= f.fields_for :address do |a| %>
 
     <div>
-      <%= a.label :line1, "Street", class: "required" %>
+      <%= a.label :line1, "Address", class: "required" %>
       <%= a.text_field :line1 %>
     </div>
 

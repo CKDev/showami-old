@@ -33,6 +33,38 @@ describe Showing do
       expect(@showing.valid?).to be false
     end
 
+    it "should not allow a showing time to be before 8 am" do
+      @showing = FactoryGirl.build(:showing)
+      showing_at = Time.zone.now + 1.day # To be sure we aren't in the past.
+      showing_at = showing_at.change({ hour: 7, min: 59, sec: 0 })
+      @showing.showing_at = showing_at
+      expect(@showing.valid?).to be false
+    end
+
+    it "should allow a showing time to be at 8 am" do
+      @showing = FactoryGirl.build(:showing)
+      showing_at = Time.zone.now + 1.day # To be sure we aren't in the past.
+      showing_at = showing_at.change({ hour: 8, min: 00, sec: 0 })
+      @showing.showing_at = showing_at
+      expect(@showing.valid?).to be true
+    end
+
+    it "should allow a showing time to at 8:45 pm" do
+      @showing = FactoryGirl.build(:showing)
+      showing_at = Time.zone.now + 1.day # To be sure we aren't in the past.
+      showing_at = showing_at.change({ hour: 20, min: 45, sec: 0 })
+      @showing.showing_at = showing_at
+      expect(@showing.valid?).to be true
+    end
+
+    it "should not allow a showing time to be after 8:45 am" do
+      @showing = FactoryGirl.build(:showing)
+      showing_at = Time.zone.now + 1.day # To be sure we aren't in the past.
+      showing_at = showing_at.change({ hour: 20, min: 46, sec: 0 })
+      @showing.showing_at = showing_at
+      expect(@showing.valid?).to be false
+    end
+
     it "should require an MLS number" do
       @showing = FactoryGirl.build(:showing, mls: "")
       expect(@showing.valid?).to be false

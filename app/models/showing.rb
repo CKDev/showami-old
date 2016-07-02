@@ -84,16 +84,6 @@ class Showing < ActiveRecord::Base
     end
   }
 
-  def showing_at_must_be_in_range
-    if showing_at.present? && showing_at < Time.zone.now + 1.hour
-      errors.add(:showing_at, "must be at least one hour from now")
-    end
-
-    if showing_at.present? && showing_at > Time.zone.now + 7.days
-      errors.add(:showing_at, "cannot be more than seven days from now")
-    end
-  end
-
   def valid_status_change?
     if status_changed?
       if status_was == "unassigned"
@@ -262,6 +252,26 @@ class Showing < ActiveRecord::Base
 
   def strip_phone_numbers
     self.buyer_phone = buyer_phone.gsub(/\D/, "") unless buyer_phone.blank?
+  end
+
+  def showing_at_must_be_in_range
+    if showing_at.present?
+      if showing_at < Time.zone.now + 1.hour
+        errors.add(:showing_at, "must be at least one hour from now")
+      end
+
+      if showing_at > Time.zone.now + 7.days
+        errors.add(:showing_at, "cannot be more than seven days from now")
+      end
+
+      hour_int = showing_at.strftime(Constants.hour_format).to_i
+      minute_int = showing_at.strftime(Constants.minute_format).to_i
+      if hour_int < 8
+        errors.add(:showing_at, "cannot be before 8 am")
+      elsif hour_int > 20 || (hour_int == 20 && minute_int > 45)
+        errors.add(:showing_at, "cannot be after 8:45 pm")
+      end
+    end
   end
 
 end
