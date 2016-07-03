@@ -1,5 +1,9 @@
-<p>Welcome <%= @email %>!</p>
+<p>Welcome to Showami!</p>
 
-<p>You can confirm your account email through the link below:</p>
+<p>In order to confirm your account, please click the link below.</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p><%= link_to "Confirm your account", confirmation_url(@resource, confirmation_token: @token) %></p>
+
+<p>
+  By receiving this email and/or utilizing the contents, you agree to our <%= link_to "Application End User License Agreement", terms_path %> and acknowledge our <%= link_to "Privacy Policy", privacy_path %>. If you have questions, please <%= link_to "contact us", contact_path %>. Thank you!
+</p>
