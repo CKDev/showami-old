@@ -28,7 +28,7 @@ module Payment
 
     it "sends an email to all admins when a Charge fails" do
       Stripe::Charge.expects(:create).once.raises(Stripe::CardError.new("Your card was declined.", nil, "card_declined"))
-      Notification::Email.expects(:notify_admins).once.with("Your card was declined.", @showing.cc_failure_email_details)
+      Notification::Email.expects(:notify_admins_cc_failure).once.with("Your card was declined.", @showing.cc_failure_email_details)
       Payment::Charge.new(@token, @showing).send
     end
 

@@ -1,6 +1,6 @@
-class AdminCCFailureMailer < ApplicationMailer
+class AdminMailer < ApplicationMailer
 
-  def email(user, error, showing_details)
+  def cc_failure(user, error, showing_details)
     subject = "Showami Credit Card Charge Failure"
     @user = user
     @error = error

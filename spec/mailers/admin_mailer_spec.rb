@@ -1,10 +1,11 @@
 require "rails_helper"
 
-describe AdminCCFailureMailer do
-  describe "email" do
+describe AdminMailer do
+
+  describe "cc_failure" do
 
     let(:user) { FactoryGirl.create(:user) }
-    let(:mail) { AdminCCFailureMailer.email(user, "error message", "showing details...") }
+    let(:mail) { AdminMailer.cc_failure(user, "error message", "showing details...") }
 
     it "correctly sets the email params" do
       expect(mail.subject).to eq "Showami Credit Card Charge Failure"
@@ -15,6 +16,6 @@ describe AdminCCFailureMailer do
       expect(mail.body.encoded).to match("<strong>The reason for failure: </strong>error message")
       expect(mail.body.encoded).to match("showing details...")
     end
-
   end
+
 end

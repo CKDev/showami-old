@@ -11,11 +11,11 @@ module Notification
       error = "CC failed because..."
       success_object = stub(deliver_later: true)
 
-      AdminCCFailureMailer.expects(:email).once.with(@admin1, error, showing_details).returns(success_object)
-      AdminCCFailureMailer.expects(:email).once.with(@admin2, error, showing_details).returns(success_object)
-      AdminCCFailureMailer.expects(:email).once.with(@admin3, error, showing_details).never
+      AdminMailer.expects(:cc_failure).once.with(@admin1, error, showing_details).returns(success_object)
+      AdminMailer.expects(:cc_failure).once.with(@admin2, error, showing_details).returns(success_object)
+      AdminMailer.expects(:cc_failure).once.with(@admin3, error, showing_details).never
       success_object.expects(:deliver_later).once
-      Notification::Email.notify_admins(error, showing_details)
+      Notification::Email.notify_admins_cc_failure(error, showing_details)
     end
 
   end
