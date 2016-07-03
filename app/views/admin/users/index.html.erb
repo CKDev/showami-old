@@ -7,6 +7,8 @@
     <tr>
       <th>Name</th>
       <th>Email</th>
+      <th>Cell Phone</th>
+      <th>Office Phone</th>
       <th>Agent Type</th>
       <th>Details</th>
     </tr>
@@ -16,6 +18,8 @@
       <tr>
         <td><%= u.safe_full_name %></td>
         <td><%= mail_to u.email %></td>
+        <td><%= tel_to number_to_phone(u.primary_phone) %></td>
+        <td><%= tel_to number_to_phone(u.secondary_phone) %></td>
         <td><%= u.profile.agent_type_str %></td>
         <td><%= link_to "Show Details", admin_user_path(u) %></td>
       </tr>
