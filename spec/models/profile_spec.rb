@@ -6,7 +6,7 @@ describe Profile do
     expect(Profile.new.agent_type).to eq "both"
   end
 
-  it "should send a welcome SMS to the user (only) the first time they fully update their profile" do
+  it "should send a welcome SMS to the user the first time they fully update their profile" do
     @user = FactoryGirl.create(:user)
     expect do
       @user.profile.first_name = "Alejandro"
@@ -27,6 +27,30 @@ describe Profile do
     expect do
       @user.profile.update(first_name: "Alex")
     end.to_not change { Sidekiq::Worker.jobs.count }
+
+  end
+
+  it "should send a new user email to the site admins the first time they fully update their profile" do
+    @user = FactoryGirl.create(:user)
+    @admin = FactoryGirl.create(:user, admin: true)
+
+    success_object = stub(deliver_later: true)
+    AdminMailer.expects(:new_user).once.with(@admin, @user).returns(success_object)
+
+    @user.profile.first_name = "Alejandro"
+    @user.profile.last_name = "Brinkster"
+    @user.profile.phone1 = "5551231234"
+    @user.profile.phone2 = "5559871234"
+    @user.profile.company = "Showing Services, LLC"
+    @user.profile.agent_id = "1234 1234"
+    @user.profile.agent_type = 2
+    @user.profile.avatar = fixture_file_upload(Rails.root.join("spec", "fixtures", "avatar.png"), "image/png")
+    @user.profile.geo_box = "(-104.682, 39.822), (-105.358, 39.427)"
+    @user.profile.sent_welcome_sms = false
+    @user.profile.save
+
+    # Test that an update does not send another email
+    @user.profile.update(first_name: "Alex")
 
   end
 

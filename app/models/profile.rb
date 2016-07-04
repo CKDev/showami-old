@@ -2,7 +2,7 @@ class Profile < ActiveRecord::Base
   belongs_to :user
 
   before_validation :strip_phone_numbers
-  after_update :send_welcome_text
+  after_update :new_user_notifications
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -50,10 +50,11 @@ class Profile < ActiveRecord::Base
     self.phone2 = phone2.gsub(/\D/, "") unless phone2.blank?
   end
 
-  def send_welcome_text
+  def new_user_notifications
     unless sent_welcome_sms
       update(sent_welcome_sms: true)
       WelcomeNotificationWorker.perform_async(self.user.id)
+      Notification::Email.notify_admins_new_user(self.user)
     end
   end
 
