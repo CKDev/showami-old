@@ -44,6 +44,10 @@ class User < ActiveRecord::Base
     "#{full_name} (#{email}, #{primary_phone})"
   end
 
+  def new_user_email_details
+    "Name: #{full_name}, Email: #{email}, Cell Phone: #{primary_phone}, Office Phone: #{secondary_phone}, Company Name: #{profile.company}, Agent Id: #{profile.agent_id}, Agent Type: #{profile.agent_type_str}"
+  end
+
   def notify_new_showing(showing)
     ShowingNotificationWorker.perform_async(id, showing.id)
   end

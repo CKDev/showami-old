@@ -227,6 +227,21 @@ describe User do
 
   end
 
+  context "#new_user_email_details" do
+
+    it "should render the full name email and phone" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      expect(@user.new_user_email_details).to match "Name:"
+      expect(@user.new_user_email_details).to match "Email:"
+      expect(@user.new_user_email_details).to match "Cell Phone:"
+      expect(@user.new_user_email_details).to match "Office Phone:"
+      expect(@user.new_user_email_details).to match "Company Name:"
+      expect(@user.new_user_email_details).to match "Agent Id:"
+      expect(@user.new_user_email_details).to match "Agent Type:"
+    end
+
+  end
+
   context "user type methods" do
 
     it "should return true if the user is a buyers_agent" do
