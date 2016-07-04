@@ -1,5 +1,5 @@
 <Response>
   <Say voice="alice">
-    Thank you for calling, the number you dialed is for our automated text message notification service. To contact us and speak to a customer service representative, please call 7 2 0 5 0 4 9 1 2 3.
+    Thank you for calling, the number you dialed is for our automated text message notification service. To contact us and speak to a customer service representative, please call 7 2 0 <Pause length="1"/> 5 0 4 <Pause length="1"/> 9 1 2 3
   </Say>
 </Response>
