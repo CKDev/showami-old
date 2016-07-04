@@ -1,9 +1,5 @@
 <Response>
   <Say voice="alice">
-    Thanks for the call to Showami.
-  </Say>
-  <Pause length="1"/>
-  <Say voice="alice">
-    Showami is currently under development, please check back later.
+    Thank you for calling, the number you dialed is for our automated text message notification service. To contact us and speak to a customer service representative, please call 7 2 0 5 0 4 9 1 2 3.
   </Say>
 </Response>
