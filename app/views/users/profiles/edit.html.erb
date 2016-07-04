@@ -48,6 +48,7 @@
       <div class="left-or-right">
         <%= f.file_field :avatar, class: "size-200" %>
       </div>
+      <p class="note left-or-right">Max. file size is 2.5 MB</p>
       <% if @profile.avatar.present? %>
         <p>
           <%= link_to "Delete picture", delete_avatar_users_profile_path, method: "post", data: { confirm: "Are you sure you want to delete your picture?" } %>
