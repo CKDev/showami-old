@@ -44,6 +44,7 @@ gem "twilio-ruby" # Sending SMS messages
 gem "whenever", require: false # Cron scheduling
 gem "paper_trail" # Model auditing
 gem "business_time" # For calculating number of business days
+gem "colorize"
 
 # Pagination
 gem "will_paginate"

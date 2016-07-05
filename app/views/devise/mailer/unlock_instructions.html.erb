@@ -4,4 +4,8 @@
 
 <p>Click the link below to unlock your account:</p>
 
-<p><%= link_to 'Unlock my account', unlock_url(@resource, unlock_token: @token) %></p>
+<p><%= link_to "Unlock my account", unlock_url(@resource, unlock_token: @token) %></p>
+
+<p>
+  By receiving this email and/or utilizing the contents, you agree to our <%= link_to "Application End User License Agreement", terms_url %> and acknowledge our <%= link_to "Privacy Policy", privacy_url %>. If you have questions, please <%= link_to "contact us", contact_url %>. Thank you!
+</p>
