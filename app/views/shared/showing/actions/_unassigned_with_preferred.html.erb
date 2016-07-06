@@ -1,0 +1,14 @@
+<p class="status">Status: <span class="light-blue">Not Assigned</span></p>
+<% if type == :buyers_agent %>
+  <%= form_for showing, url: cancel_users_buyers_request_path(showing), method: :post do |f| %>
+    <%= f.submit "Cancel", class: "button-secondary", data: { confirm: "Clicking OK will cancel this showing." } %>
+  <% end %>
+<% elsif type == :showing_assistant %>
+  <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
+    <%= f.submit "Accept" %>
+  <% end %>
+<% elsif type == :showing_opportunities %>
+  <%= form_for showing, url: accept_users_showing_opportunity_path(showing), method: :post do |f| %>
+    <%= f.submit "Accept" %>
+  <% end %>
+<% end %>

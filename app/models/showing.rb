@@ -9,12 +9,13 @@ class Showing < ActiveRecord::Base
 
   belongs_to :user
   belongs_to :showing_agent, class_name: "User"
+  belongs_to :preferred_agent, class_name: "User"
   has_one :address, as: :addressable, dependent: :destroy
   has_many :event_logs
 
   enum buyer_type: [:individual, :couple, :family]
   enum status: [:unassigned, :unconfirmed, :confirmed, :completed,
-    :cancelled, :expired, :no_show, :processing_payment, :paid, :cancelled_with_payment]
+    :cancelled, :expired, :no_show, :processing_payment, :paid, :cancelled_with_payment, :unassigned_with_preferred]
   enum payment_status: [:unpaid,
     :charging_buyers_agent, :charging_buyers_agent_success, :charging_buyers_agent_failure,
     :paying_sellers_agent, :paying_sellers_agent_started, :paying_sellers_agent_success, :paying_sellers_agent_failure]
@@ -45,7 +46,9 @@ class Showing < ActiveRecord::Base
 
   default_scope { order("showing_at DESC") }
   scope :in_future, -> { where("showing_at > ?", Time.zone.now) }
-  scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
+  # scope :unassigned, -> { where("status = ?", statuses[:unassigned]) }
+  scope :unassigned, ->(id) { where("(status = ?) OR (status = ? AND preferred_agent_id = ?)", statuses[:unassigned], statuses[:unassigned_with_preferred], id) }
+  scope :grace_period_over, -> { where("status = ? AND created_at < ?", statuses[:unassigned_with_preferred], Time.zone.now - 10.minutes) }
   scope :completed, -> { where("status = ? AND showing_at < ?", statuses[:confirmed], Time.zone.now) }
   scope :need_confirmation_reminder, -> { where("sent_confirmation_reminder_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unconfirmed]) }
   scope :need_unassigned_notification, -> { where("sent_unassigned_notification_sms = ? AND showing_at < ? AND status = ?", false, Time.zone.now + 30.minutes, statuses[:unassigned]) }
@@ -106,6 +109,8 @@ class Showing < ActiveRecord::Base
         check_paid_state_change
       elsif status_was == "cancelled_with_payment"
         check_cancelled_with_payment_status
+      elsif status_was == "unassigned_with_preferred"
+        check_unassigned_with_preferred_status
       end
     end
   end
@@ -135,8 +140,8 @@ class Showing < ActiveRecord::Base
     end
   end
 
-  def self.available(geo_box_coords)
-    Showing.in_bounding_box(geo_box_coords).in_future.unassigned
+  def self.available(geo_box_coords, user_id)
+    Showing.in_bounding_box(geo_box_coords).in_future.unassigned(user_id)
   end
 
   def no_show_eligible?
@@ -248,6 +253,11 @@ class Showing < ActiveRecord::Base
 
   def check_cancelled_with_payment_status
     errors.add(:status, "can only change from cancelled_with_payment to processing_payment") unless status == "processing_payment"
+  end
+
+  def check_unassigned_with_preferred_status
+    errors.add(:status, "cannot change from unassigned_with_preferred to confirmed, it must be unconfirmed first") if status == "confirmed"
+    errors.add(:status, "cannot change from unassigned_with_preferred to completed, it must be unconfirmed first") if status == "completed"
   end
 
   def strip_phone_numbers

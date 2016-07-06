@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160629175051) do
+ActiveRecord::Schema.define(version: 20160705200933) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(version: 20160629175051) do
     t.string   "transfer_txn"
     t.boolean  "sent_confirmation_reminder_sms",   default: false
     t.boolean  "sent_unassigned_notification_sms", default: false
+    t.integer  "preferred_agent_id"
   end
 
   create_table "users", force: :cascade do |t|

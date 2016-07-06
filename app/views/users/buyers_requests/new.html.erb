@@ -101,6 +101,12 @@
     <%= f.text_area :notes %>
   </div>
 
+  <div>
+    <%= f.label :preferred_agent, "Preferred Showing Assistant Email" %>
+    <p class="note">Text about what this means....</p>
+    <%= f.email_field :preferred_agent %>
+  </div>
+
   <%= f.submit "Submit" %>
 
 <% end %>

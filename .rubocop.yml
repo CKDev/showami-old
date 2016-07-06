@@ -19,7 +19,7 @@ Style/StringLiterals:
     - double_quotes
 
 Metrics/ModuleLength:
-  Max: 100
+  Max: 110
   Exclude:
     - "spec/controllers/users/buyers_requests_controller_spec.rb" # Just a spec file, it's fine.
 
@@ -28,7 +28,7 @@ Metrics/ClassLength:
   Max: 300
 
 Metrics/LineLength:
-  Max: 210
+  Max: 250
 
 Metrics/MethodLength:
   Max: 25

@@ -19,14 +19,25 @@ module Users
     def create
       @showing = Showing.new(showing_params)
       @showing.user = current_user
+      @showing.status = "unassigned_with_preferred" if @showing.preferred_agent.present?
 
       if @showing.save
         lat = @showing.address.latitude
         long = @showing.address.longitude
         matched_users = User.not_blocked.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
-        Log::EventLogger.info(current_user.id, @showing.id, "Notifying #{matched_users.count} users of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
-        matched_users.each do |u|
-          u.notify_new_showing(@showing)
+
+        if @showing.preferred_agent.present?
+          Log::EventLogger.info(current_user.id, @showing.id, "Notifying preferred agent of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
+          if @showing.preferred_agent.in? matched_users
+            @showing.preferred_agent.notify_new_preferred_showing(@showing)
+          else
+            PreferredAgentNotAMatchWorker.perform_async(@showing.id)
+          end
+        else
+          Log::EventLogger.info(current_user.id, @showing.id, "Notifying #{matched_users.count} users of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
+          matched_users.each do |u|
+            u.notify_new_showing(@showing)
+          end
         end
         redirect_to users_buyers_requests_path, notice: "New showing successfully created."
       else
@@ -77,9 +88,20 @@ module Users
     private
 
     def showing_params
+      params["showing"]["preferred_agent_id"] = preferred_agent_id # This param comes in as a raw email.
       params.require(:showing).permit(:showing_at, :mls, :notes,
-        :buyer_name, :buyer_phone, :buyer_type,
+        :buyer_name, :buyer_phone, :buyer_type, :preferred_agent_id,
         address_attributes: [:id, :line1, :line2, :city, :state, :zip])
+    end
+
+    def preferred_agent_id
+      preferred_agent_email = params["showing"]["preferred_agent"]
+      preferred_agent = User.find_by_email(preferred_agent_email)
+      preferred_agent.id
+    rescue
+      # TODO: this doesn't seem like the best place for this.
+      UserMailer.invite(preferred_agent_email).deliver_later if preferred_agent_email.present?
+      ""
     end
 
   end

@@ -12,6 +12,7 @@
 set :output, "log/cron.log"
 
 every 1.minute do
+  runner "Showing.update_preferred_showing"
   runner "Showing.update_completed"
   runner "Showing.update_expired"
   runner "Showing.start_payment_charges"
