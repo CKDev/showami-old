@@ -68,6 +68,14 @@ describe User do
       @showing = FactoryGirl.create(:showing)
       expect { @user.notify_new_showing(@showing) }.to change { Sidekiq::Worker.jobs.size }.by(1)
     end
+
+    it "should call the background worker without delay" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing)
+      ShowingNotificationWorker.expects(:perform_async).once.with(@user.id, @showing.id)
+      @user.notify_new_showing(@showing)
+    end
+
   end
 
   context "#admin?" do

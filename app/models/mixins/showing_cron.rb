@@ -5,6 +5,23 @@ module Mixins
     # NOTE: All of these called from a cron job, keep method names in sync with schedule.rb.
     module ClassMethods
 
+      def update_preferred_showing
+        Rails.logger.tagged("Cron", "Showing.update_preferred_showing") { Rails.logger.info "Checking for preferred showing grace periods that have come to an end." }
+        Showing.grace_period_over.each do |showing|
+          showing.update(status: statuses[:unassigned])
+          Log::EventLogger.info(nil, showing.id, "Marked as unassigned.", "Cron", "Showing.update_preferred_showing", "Showing: #{showing.id}")
+          PreferredAgentExpiredWorker.perform_async(showing.user.id)
+
+          lat = showing.address.latitude
+          long = showing.address.longitude
+          matched_users = User.not_blocked.sellers_agents.not_self(showing.user.id).not_user(showing.preferred_agent.id).in_bounding_box(lat, long)
+          Log::EventLogger.info(showing.user.id, showing.id, "Notifying #{matched_users.count} users of new showing (after preferred grace period)", "User: #{showing.user.id}", "Showing: #{showing.id}", "Showing Notification SMS")
+          matched_users.each do |u|
+            u.notify_new_showing(showing)
+          end
+        end
+      end
+
       def update_completed
         Rails.logger.tagged("Cron", "Showing.update_completed") { Rails.logger.info "Checking for completed showings..." }
         Showing.completed.each do |showing|

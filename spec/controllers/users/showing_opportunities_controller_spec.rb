@@ -7,7 +7,7 @@ module Users
 
       it "assigns all available showings (in bounding box, in future, unassigned)" do
         @user = FactoryGirl.create(:user_with_valid_profile)
-        @showing1 = FactoryGirl.create(:showing, showing_at: Time.zone.now + 3.hours)
+        @showing1 = FactoryGirl.create(:showing)
         sign_in @user
         get :index
         showings = assigns(:showings)
@@ -20,6 +20,25 @@ module Users
         sign_in @user
         get :index
         expect(response).to redirect_to edit_users_profile_path
+      end
+
+      it "should not show a showing that has a preferred agent, until the grace period (10 mins) is over" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
+        @showing = FactoryGirl.create(:showing, status: "unassigned_with_preferred", preferred_agent: @preferred_agent)
+        sign_in @user
+        get :index
+        showings = assigns(:showings)
+        expect(showings).to eq []
+      end
+
+      it "should show a showing where the logged in user is the preferred assistant" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing1 = FactoryGirl.create(:showing, status: "unassigned_with_preferred", preferred_agent: @user)
+        sign_in @user
+        get :index
+        showings = assigns(:showings)
+        expect(showings).to contain_exactly(@showing1)
       end
 
     end
@@ -50,10 +69,9 @@ module Users
 
       before(:each) do
         @buyers_agent = FactoryGirl.create(:user_with_valid_profile)
-        @showing = FactoryGirl.create(:showing)
+        @showing = FactoryGirl.create(:showing, user: @buyers_agent)
         @showing_agent = FactoryGirl.create(:user_with_valid_profile)
         @showing_agent.profile.update(agent_type: "sellers_agent")
-        @buyers_agent.showings << @showing
         sign_in @showing_agent
       end
 
@@ -66,6 +84,12 @@ module Users
 
       it "sends an SMS to the buying agent upon accepting" do
         ShowingAcceptedNotificationWorker.expects(:perform_async).once.with(@showing.id)
+        post :accept, id: @showing.id
+      end
+
+      it "sends an SMS to the buying agent that their preferred agent accepted the showing" do
+        @showing.update(preferred_agent: @showing_agent)
+        ShowingAcceptedByPreferredNotificationWorker.expects(:perform_async).once.with(@showing.id)
         post :accept, id: @showing.id
       end
 

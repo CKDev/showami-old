@@ -19,7 +19,8 @@ module Users
           },
           buyer_name: "Andre",
           buyer_phone: "720 999 8888",
-          buyer_type: "individual"
+          buyer_type: "individual",
+          preferred_agent: ""
         }
       end
 
@@ -123,14 +124,72 @@ module Users
         expect(response).to redirect_to users_buyers_requests_path
       end
 
+      it "allows for a preferred agent" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
+        valid_attributes[:preferred_agent] = @preferred_agent.email
+        post :create, showing: valid_attributes
+        showing = Showing.last
+        expect(showing.preferred_agent).to eq @preferred_agent
+      end
+
+      it "sets the initial status to unassigned_with_preferred, if a preferred agent is given" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
+        valid_attributes[:preferred_agent] = @preferred_agent.email
+        post :create, showing: valid_attributes
+        showing = Showing.last
+        expect(showing.status).to eq "unassigned_with_preferred"
+      end
+
+      it "if an unknown user is entered for preferred agent, they are sent a welcome email" do
+        valid_attributes[:preferred_agent] = "notauser@example.com"
+        success_object = stub(deliver_later: true)
+        UserMailer.expects(:invite).once.with("notauser@example.com").returns(success_object)
+        post :create, showing: valid_attributes
+        showing = Showing.last
+        expect(showing.preferred_agent).to be nil
+      end
+
+      it "notifies only preferred agent initially" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
+        @other_user = FactoryGirl.create(:user_with_valid_profile)
+        @other_user2 = FactoryGirl.create(:user_with_valid_profile)
+
+        User.any_instance.expects(:notify_new_preferred_showing).once.with(instance_of(Showing))
+
+        valid_attributes[:preferred_agent] = @preferred_agent.email
+        post :create, showing: valid_attributes
+      end
+
+      it "notifies all matching agents immediately if no preferred agent is given" do
+        @user1 = FactoryGirl.create(:user_with_valid_profile)
+        @user2 = FactoryGirl.create(:user_with_valid_profile)
+        @user3 = FactoryGirl.create(:user_with_valid_profile)
+
+        User.any_instance.expects(:notify_new_showing).times(3).with(instance_of(Showing))
+
+        valid_attributes[:preferred_agent] = ""
+        post :create, showing: valid_attributes
+      end
+
+      it "sends an SMS to the buying agent if their preferred agent does not meet the parameters of the showing" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile, blocked: true)
+        @other_user = FactoryGirl.create(:user_with_valid_profile)
+        @other_user2 = FactoryGirl.create(:user_with_valid_profile)
+
+        User.any_instance.expects(:notify_new_showing).never
+        PreferredAgentNotAMatchWorker.expects(:perform_async).once
+
+        valid_attributes[:preferred_agent] = @preferred_agent.email
+        post :create, showing: valid_attributes
+      end
+
     end
 
     describe "GET #index" do
 
       it "should assign all showings for the given user" do
         @user = FactoryGirl.create(:user_with_valid_profile)
-        @showing = FactoryGirl.create(:showing)
-        @user.showings << @showing
+        @showing = FactoryGirl.create(:showing, user: @user)
         sign_in @user
         get :index
         expect(assigns(:showings).size).to be 1

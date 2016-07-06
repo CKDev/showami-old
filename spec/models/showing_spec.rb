@@ -450,10 +450,12 @@ describe Showing do
 
     context ".unassigned" do
 
-      it "should return all showings in unassigned status" do
+      it "should return all showings in unassigned status or unassigned_with_preferred status, where the showing_agent_id matches the param" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
         @unassigned_showing = FactoryGirl.create(:showing)
+        @preferred_showing = FactoryGirl.create(:showing, status: "unassigned_with_preferred", preferred_agent: @preferred_agent)
         @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
-        expect(Showing.unassigned).to contain_exactly @unassigned_showing
+        expect(Showing.unassigned(@preferred_agent.id)).to contain_exactly(@unassigned_showing, @preferred_showing)
       end
 
     end
@@ -492,6 +494,7 @@ describe Showing do
     context ".available" do
 
       it "should return all available showings (showings in the bounding box, in the future, and unassigned)" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
         @in_bounding_box = FactoryGirl.create(:showing)
         @vail_showing = FactoryGirl.create(:showing)
         @vail_address = FactoryGirl.create(:vail_address)
@@ -502,7 +505,8 @@ describe Showing do
         @future_showing = FactoryGirl.create(:showing, showing_at: Time.zone.now + 2.hours)
         @unassigned_showing = FactoryGirl.create(:showing)
         @taken_showing = FactoryGirl.create(:showing, status: "unconfirmed")
-        expect(Showing.available([[39.500, -105.000], [39.749, -104.800]])).to contain_exactly @in_bounding_box, @future_showing, @unassigned_showing
+        @preferred_showing = FactoryGirl.create(:showing, preferred_agent: @preferred_agent)
+        expect(Showing.available([[39.500, -105.000], [39.749, -104.800]], @preferred_agent.id)).to contain_exactly @in_bounding_box, @future_showing, @unassigned_showing, @preferred_showing
       end
 
     end
@@ -879,6 +883,57 @@ describe Showing do
         expect do
           Showing.send_unassigned_notifications # The second time around should not send a SMS
         end.to_not change { Sidekiq::Worker.jobs.count }
+
+      end
+
+    end
+
+    context ".update_preferred_showing" do
+
+      it "marks unassigned_with_preferred as unassigned, after 10 minutes" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
+        @showing1 = FactoryGirl.build(:showing, status: "unassigned_with_preferred", created_at: Time.zone.local(2016, 6, 1, 12, 0, 0), preferred_agent: @preferred_agent, user: @user)
+        @showing2 = FactoryGirl.build(:showing, status: "unassigned_with_preferred", created_at: Time.zone.local(2016, 6, 1, 12, 30, 0), preferred_agent: @preferred_agent, user: @user)
+        @showing3 = FactoryGirl.build(:showing, status: "unassigned", created_at: Time.zone.local(2016, 6, 1, 12, 0, 0), preferred_agent: @preferred_agent, user: @user)
+        [@showing1, @showing2, @showing3].each { |s| s.save(validate: false) }
+
+        Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 9, 0)) do
+          Showing.update_preferred_showing
+          [@showing1, @showing2, @showing3].each(&:reload)
+          expect(@showing1.status).to eq "unassigned_with_preferred"
+          expect(@showing2.status).to eq "unassigned_with_preferred"
+          expect(@showing3.status).to eq "unassigned"
+        end
+
+        Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do
+          Showing.update_preferred_showing
+          [@showing1, @showing2, @showing3].each(&:reload)
+          expect(@showing1.status).to eq "unassigned"
+          expect(@showing2.status).to eq "unassigned_with_preferred"
+          expect(@showing3.status).to eq "unassigned"
+        end
+
+        Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 41, 0)) do
+          Showing.update_preferred_showing
+          [@showing1, @showing2, @showing3].each(&:reload)
+          expect(@showing1.status).to eq "unassigned"
+          expect(@showing2.status).to eq "unassigned"
+          expect(@showing3.status).to eq "unassigned"
+        end
+
+      end
+
+      it "sends an SMS to the buyer's agent if an unassigned_with_preferred goes to unassigned" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
+        @showing1 = FactoryGirl.build(:showing, status: "unassigned_with_preferred", created_at: Time.zone.local(2016, 6, 1, 12, 0, 0), preferred_agent: @preferred_agent, user: @user)
+        @showing1.save(validate: false)
+
+        Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do
+          PreferredAgentExpiredWorker.expects(:perform_async).once.with(@user.id)
+          Showing.update_preferred_showing
+        end
 
       end
 

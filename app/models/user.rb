@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   scope :in_bounding_box, ->(lat, long) { joins(:profile).where("geo_box::box @> point '(#{long},#{lat})'") }
   scope :sellers_agents, -> { joins(:profile).where("profiles.agent_type <> ? ", Profile.agent_types[:buyers_agent]) }
   scope :not_self, ->(id) { where("users.id <> ?", id) }
+  scope :not_user, ->(id) { where("users.id <> ?", id) }
   scope :not_blocked, -> { where(blocked: false) }
   scope :not_admin, -> { where(admin: false) }
   scope :admins, -> { where(admin: true) }
@@ -50,6 +51,10 @@ class User < ActiveRecord::Base
 
   def notify_new_showing(showing)
     ShowingNotificationWorker.perform_async(id, showing.id)
+  end
+
+  def notify_new_preferred_showing(showing)
+    PreferredShowingNotificationWorker.perform_async(id, showing.id)
   end
 
   # For showing agents - need a bank account on file
