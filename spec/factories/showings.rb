@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :showing do
-    showing_at Time.zone.now + 61.minutes
+    showing_at Time.zone.now + 2.hours
     mls "abc123"
     notes "notes about the showing"
     buyer_name "Andre"

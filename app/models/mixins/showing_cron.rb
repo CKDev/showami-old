@@ -9,8 +9,8 @@ module Mixins
         Rails.logger.tagged("Cron", "Showing.update_preferred_showing") { Rails.logger.info "Checking for preferred showing grace periods that have come to an end." }
         Showing.grace_period_over.each do |showing|
           showing.update(status: statuses[:unassigned])
-          Log::EventLogger.info(nil, showing.id, "Marked as unassigned.", "Cron", "Showing.update_preferred_showing", "Showing: #{showing.id}")
-          PreferredAgentExpiredWorker.perform_async(showing.user.id)
+          Log::EventLogger.info(showing.user.id, showing.id, "Marked as unassigned.", "Cron", "Showing.update_preferred_showing", "Showing: #{showing.id}")
+          PreferredAgentExpiredWorker.perform_async(showing.id)
 
           lat = showing.address.latitude
           long = showing.address.longitude

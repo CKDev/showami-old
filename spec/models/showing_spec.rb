@@ -931,7 +931,7 @@ describe Showing do
         @showing1.save(validate: false)
 
         Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do
-          PreferredAgentExpiredWorker.expects(:perform_async).once.with(@user.id)
+          PreferredAgentExpiredWorker.expects(:perform_async).once.with(@showing1.id)
           Showing.update_preferred_showing
         end
 
