@@ -99,6 +99,13 @@ class User < ActiveRecord::Base
     profile.try(:phone2) || ""
   end
 
+  def self.user_id_from_email(email)
+    return "" unless email.present?
+    User.find_by_email!(email).id
+  rescue ActiveRecord::RecordNotFound
+    ""
+  end
+
   private
 
   def add_profile

@@ -189,6 +189,13 @@ class Showing < ActiveRecord::Base
     ""
   end
 
+  def invite_preferred_agent(email)
+    if email.present? && self.preferred_agent.blank?
+      UserMailer.invite(email).deliver_later
+      InvitedUser.create(invited_by: self.user, email: email)
+    end
+  end
+
   def to_s
     "Showing #{id}: Buyer's Agent: #{user}, Address: #{address}, MLS: #{mls}, Showing Status: #{status}, Payment Status: #{payment_status}, Updated At: #{updated_at}"
   end

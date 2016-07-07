@@ -289,4 +289,25 @@ describe User do
 
   end
 
+  context ".user_id_from_email" do
+
+    it "should return the id of a valid user" do
+      @user = FactoryGirl.create(:user)
+      expect(User.user_id_from_email(@user.email)).to eq @user.id
+    end
+
+    it "should return an empty string if the user doesn't exist" do
+      expect(User.user_id_from_email("doenstexist@example.com")).to eq ""
+    end
+
+    it "should return an empty string if no email is given" do
+      expect(User.user_id_from_email("")).to eq ""
+    end
+
+    it "should return an empty string if a bad input is given" do
+      expect(User.user_id_from_email("asdf")).to eq ""
+    end
+
+  end
+
 end

@@ -1126,4 +1126,39 @@ describe Showing do
 
   end
 
+  context "invite_preferred_agent" do
+
+    it "should send an email if a preferred agent was given, and there is no listed preferred agent" do
+      @showing = FactoryGirl.create(:showing)
+      success_stub = stub(deliver_later: true)
+      UserMailer.expects(:invite).once.with("alex+invited@commercekitchen.com").returns(success_stub)
+      @showing.invite_preferred_agent("alex+invited@commercekitchen.com")
+    end
+
+    it "should log when an unknown preferred agent was given" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing, user: @user)
+      @showing.invite_preferred_agent("alex+invited@commercekitchen.com")
+      invited_user = InvitedUser.last
+      expect(invited_user.email).to eq "alex+invited@commercekitchen.com"
+      expect(invited_user.invited_by).to eq @user
+    end
+
+    it "should not send an email if no email is given" do
+      @showing = FactoryGirl.create(:showing)
+      UserMailer.expects(:invite).never
+      @showing.invite_preferred_agent("")
+      @showing.invite_preferred_agent(nil)
+    end
+
+    it "should not send an email if a preferred agent is listed (meaning the given email was a match)" do
+      @preferred_agent = FactoryGirl.create(:user)
+      @showing = FactoryGirl.create(:showing, preferred_agent: @preferred_agent)
+      # success_stub = stub(deliver_later: true)
+      UserMailer.expects(:invite).never
+      @showing.invite_preferred_agent(@preferred_agent.email)
+    end
+
+  end
+
 end
