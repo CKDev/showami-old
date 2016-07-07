@@ -78,6 +78,23 @@ describe User do
 
   end
 
+  context "#notify_new_preferred_showing" do
+
+    it "should call the background worker with the correct parameters" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing)
+      expect { @user.notify_new_preferred_showing(@showing) }.to change { Sidekiq::Worker.jobs.size }.by(1)
+    end
+
+    it "should call the background worker without delay" do
+      @user = FactoryGirl.create(:user_with_valid_profile)
+      @showing = FactoryGirl.create(:showing)
+      PreferredShowingNotificationWorker.expects(:perform_async).once.with(@user.id, @showing.id)
+      @user.notify_new_preferred_showing(@showing)
+    end
+
+  end
+
   context "#admin?" do
 
     it "should properly determine if a user is an admin" do
