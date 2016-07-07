@@ -15,13 +15,13 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   # Mailer configuration
-  config.action_mailer.default_url_options = { host: "ccp-prodapp-01.do.lark-it.com" }
+  config.action_mailer.default_url_options = { host: "showami.com" }
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.asset_host = "http://ccp-prodapp-01.do.lark-it.com"
+  config.action_mailer.asset_host = "https://showami.com"
 
   # To use url helpers in workers
-  Rails.application.routes.default_url_options = { host: "ccp-prodapp-01.do.lark-it.com" }
+  Rails.application.routes.default_url_options = { host: "showami.com" }
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
