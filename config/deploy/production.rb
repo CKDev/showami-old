@@ -1,6 +1,6 @@
 set :bundle_without, %w{staging test}.join(" ")
 
-set :branch, "master"
+set :branch, "production"
 
 server "ccp-prodapp-01.do.lark-it.com",
   user: fetch(:application),

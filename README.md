@@ -63,7 +63,16 @@ At any time, the working state of the app should be provable by running the test
 
 ## Server Environments
 
-I am following a simple branching strategy.  Master at this time is the main branch, and is deployed to both Staging and Production.  In the future, we'll have a production branch, which is the current state of Production.
+I am following a simple branching strategy.  Master at this time is the main branch, and is deployed to staging for review.  Developers should use feature branches for development, but then merge to master for review. The Production server environment maps to the production github branch.
+
+I'm following a tagged release strategy, loosely based on SemVer.  Master should be tagged, using SemVer, and then the cuts of the production branch can be made a specific tag points, with the release notes being the oneline commit titles from the previous tag.
+
+For example:
+
+* First get release notes (in a different tab)
+`git log --oneline`
+`git tag -a vx.x.x` (Add title for release, then paste in release notes from above step)
+`git push origin vx.x.x`
 
 ## Git Commits
 
