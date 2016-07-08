@@ -104,7 +104,8 @@
   <div>
     <%= f.label :preferred_agent, "Preferred Showing Assistant Email" %>
     <p class="note">Text about what this means....</p>
-    <%= f.email_field :preferred_agent %>
+    <%# TODO: should this be a virtual attribute since we're not saving email, just using it to convert to a user? %>
+    <%= f.email_field :preferred_agent_email %>
   </div>
 
   <%= f.submit "Submit", class: "top-and-bottom-margin" %>

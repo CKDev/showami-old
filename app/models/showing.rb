@@ -7,6 +7,8 @@ class Showing < ActiveRecord::Base
 
   has_paper_trail # Auditing
 
+  attr_accessor :preferred_agent_email
+
   belongs_to :user
   belongs_to :showing_agent, class_name: "User"
   belongs_to :preferred_agent, class_name: "User"
@@ -281,13 +283,13 @@ class Showing < ActiveRecord::Base
         errors.add(:showing_at, "cannot be more than seven days from now")
       end
 
-      hour_int = showing_at.strftime(Constants.hour_format).to_i
-      minute_int = showing_at.strftime(Constants.minute_format).to_i
-      if hour_int < 8
-        errors.add(:showing_at, "cannot be before 8 am")
-      elsif hour_int > 20 || (hour_int == 20 && minute_int > 45)
-        errors.add(:showing_at, "cannot be after 8:45 pm")
-      end
+      # hour_int = showing_at.strftime(Constants.hour_format).to_i
+      # minute_int = showing_at.strftime(Constants.minute_format).to_i
+      # if hour_int < 8
+      #   errors.add(:showing_at, "cannot be before 8 am")
+      # elsif hour_int > 20 || (hour_int == 20 && minute_int > 45)
+      #   errors.add(:showing_at, "cannot be after 8:45 pm")
+      # end
     end
   end
 

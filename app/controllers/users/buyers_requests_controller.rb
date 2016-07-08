@@ -26,7 +26,7 @@ module Users
         long = @showing.address.longitude
         matched_users = User.not_blocked.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
 
-        @showing.invite_preferred_agent(params["showing"]["preferred_agent"])
+        @showing.invite_preferred_agent(params["showing"]["preferred_agent_email"])
 
         if @showing.preferred_agent.present?
           if @showing.preferred_agent.in? matched_users
@@ -88,9 +88,9 @@ module Users
     private
 
     def showing_params
-      params["showing"]["preferred_agent_id"] = User.user_id_from_email(params["showing"]["preferred_agent"]) # This param comes in as a raw email.
+      params["showing"]["preferred_agent_id"] = User.user_id_from_email(params["showing"]["preferred_agent_email"])
       params.require(:showing).permit(:showing_at, :mls, :notes,
-        :buyer_name, :buyer_phone, :buyer_type, :preferred_agent_id,
+        :buyer_name, :buyer_phone, :buyer_type, :preferred_agent_id, :preferred_agent_email,
         address_attributes: [:id, :line1, :line2, :city, :state, :zip])
     end
 

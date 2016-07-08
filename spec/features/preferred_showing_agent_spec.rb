@@ -25,7 +25,7 @@ feature "The preferred agent process" do
       fill_in "showing[notes]", with: "A whole bunch of details on the showing..."
       fill_in "showing[buyer_name]", with: "Andre"
       fill_in "showing[buyer_phone]", with: "720 999 8888"
-      fill_in "showing[preferred_agent]", with: @preferred_agent.email
+      fill_in "showing[preferred_agent_email]", with: @preferred_agent.email
       choose "Couple"
       click_button "Submit"
       expect(page).to have_content "New showing successfully created."
@@ -70,7 +70,7 @@ feature "The preferred agent process" do
         fill_in "showing[notes]", with: "A whole bunch of details on the showing..."
         fill_in "showing[buyer_name]", with: "Andre"
         fill_in "showing[buyer_phone]", with: "720 999 8888"
-        fill_in "showing[preferred_agent]", with: @preferred_agent.email
+        fill_in "showing[preferred_agent_email]", with: @preferred_agent.email
         choose "Couple"
         click_button "Submit"
         expect(page).to have_content "New showing successfully created."

@@ -126,7 +126,7 @@ module Users
 
       it "allows for a preferred agent" do
         @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
-        valid_attributes[:preferred_agent] = @preferred_agent.email
+        valid_attributes[:preferred_agent_email] = @preferred_agent.email
         post :create, showing: valid_attributes
         showing = Showing.last
         expect(showing.preferred_agent).to eq @preferred_agent
@@ -134,14 +134,14 @@ module Users
 
       it "sets the initial status to unassigned_with_preferred, if a preferred agent is given" do
         @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
-        valid_attributes[:preferred_agent] = @preferred_agent.email
+        valid_attributes[:preferred_agent_email] = @preferred_agent.email
         post :create, showing: valid_attributes
         showing = Showing.last
         expect(showing.status).to eq "unassigned_with_preferred"
       end
 
       it "if an unknown user is entered for preferred agent, they are sent a welcome email" do
-        valid_attributes[:preferred_agent] = "notauser@example.com"
+        valid_attributes[:preferred_agent_email] = "notauser@example.com"
         success_object = stub(deliver_later: true)
         UserMailer.expects(:invite).once.with("notauser@example.com").returns(success_object)
         post :create, showing: valid_attributes
@@ -156,7 +156,7 @@ module Users
 
         User.any_instance.expects(:notify_new_preferred_showing).once.with(instance_of(Showing))
 
-        valid_attributes[:preferred_agent] = @preferred_agent.email
+        valid_attributes[:preferred_agent_email] = @preferred_agent.email
         post :create, showing: valid_attributes
       end
 
@@ -167,7 +167,7 @@ module Users
 
         User.any_instance.expects(:notify_new_showing).times(3).with(instance_of(Showing))
 
-        valid_attributes[:preferred_agent] = ""
+        valid_attributes[:preferred_agent_email] = ""
         post :create, showing: valid_attributes
       end
 
@@ -179,7 +179,7 @@ module Users
         User.any_instance.expects(:notify_new_showing).never
         PreferredAgentNotAMatchWorker.expects(:perform_async).once
 
-        valid_attributes[:preferred_agent] = @preferred_agent.email
+        valid_attributes[:preferred_agent_email] = @preferred_agent.email
         post :create, showing: valid_attributes
       end
 

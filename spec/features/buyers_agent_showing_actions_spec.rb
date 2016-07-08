@@ -12,30 +12,32 @@ feature "A buyers agent can perform actions on a showing" do
     end
 
     scenario "can request a new showing" do
-      first(:link, "Buyer's Agent Info").click
-      expect(current_path).to eq users_buyers_requests_path
-      first(:link, "New Request").click
-      expect(page).to have_content "Request New Showing"
-      select "8 PM", from: "showing[showing_at(4i)]"
-      select "45", from: "showing[showing_at(5i)]"
-      fill_in "showing[mls]", with: "1234512345"
-      fill_in "showing[address_attributes][line1]", with: "600 S Broadway"
-      fill_in "showing[address_attributes][line2]", with: "Apt ABC"
-      fill_in "showing[address_attributes][city]", with: "Denver"
-      fill_in "showing[address_attributes][state]", with: "CO"
-      fill_in "showing[address_attributes][zip]", with: "80209"
-      fill_in "showing[notes]", with: "A whole bunch of details on the showing..."
-      fill_in "showing[buyer_name]", with: "Andre"
-      fill_in "showing[buyer_phone]", with: "720 999 8888"
-      fill_in "showing[preferred_agent]", with: @preferred_agent.email
-      choose "Couple"
-      click_button "Submit"
-      expect(current_path).to eq users_buyers_requests_path
-      expect(page).to have_content "New showing successfully created."
-      expect(page).to have_content "600 S Broadway"
+      Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do
+        first(:link, "Buyer's Agent Info").click
+        expect(current_path).to eq users_buyers_requests_path
+        first(:link, "New Request").click
+        expect(page).to have_content "Request New Showing"
+        select "8 PM", from: "showing[showing_at(4i)]"
+        select "45", from: "showing[showing_at(5i)]"
+        fill_in "showing[mls]", with: "1234512345"
+        fill_in "showing[address_attributes][line1]", with: "600 S Broadway"
+        fill_in "showing[address_attributes][line2]", with: "Apt ABC"
+        fill_in "showing[address_attributes][city]", with: "Denver"
+        fill_in "showing[address_attributes][state]", with: "CO"
+        fill_in "showing[address_attributes][zip]", with: "80209"
+        fill_in "showing[notes]", with: "A whole bunch of details on the showing..."
+        fill_in "showing[buyer_name]", with: "Andre"
+        fill_in "showing[buyer_phone]", with: "720 999 8888"
+        fill_in "showing[preferred_agent_email]", with: @preferred_agent.email
+        choose "Couple"
+        click_button "Submit"
+        expect(current_path).to eq users_buyers_requests_path
+        expect(page).to have_content "New showing successfully created."
+        expect(page).to have_content "600 S Broadway"
 
-      showing = Showing.last
-      expect(showing.preferred_agent).to eq @preferred_agent
+        showing = Showing.last
+        expect(showing.preferred_agent).to eq @preferred_agent
+      end
     end
 
     scenario "can click link on 'my requests' page to create a new showing" do
