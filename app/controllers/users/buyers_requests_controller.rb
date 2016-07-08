@@ -26,16 +26,19 @@ module Users
         long = @showing.address.longitude
         matched_users = User.not_blocked.sellers_agents.not_self(current_user.id).in_bounding_box(lat, long)
 
-        @showing.invite_preferred_agent(params["showing"]["preferred_agent_email"])
-
-        if @showing.preferred_agent.present?
-          if @showing.preferred_agent.in? matched_users
+        if @showing.preferred_agent.present? # Preferred match
+          if @showing.preferred_agent.in? matched_users # Preferred agent fits showing criteria
             Log::EventLogger.info(current_user.id, @showing.id, "Notifying preferred agent of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
             @showing.preferred_agent.notify_new_preferred_showing(@showing)
-          else
+          else # Preferred exists, but does not match showing criteria
             PreferredAgentNotAMatchWorker.perform_async(@showing.id)
+            @showing.update(status: "unassigned")
+            Log::EventLogger.info(current_user.id, @showing.id, "Notifying #{matched_users.count} users of new showing (from a preferred agent that was not a match)", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
+            matched_users.each { |u| u.notify_new_showing(@showing) }
           end
-        else
+        elsif params["showing"]["preferred_agent_email"].present? # Preferred email given, but no match
+          @showing.invite_preferred_agent(params["showing"]["preferred_agent_email"])
+        else # No preferred agent given
           Log::EventLogger.info(current_user.id, @showing.id, "Notifying #{matched_users.count} users of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
           matched_users.each { |u| u.notify_new_showing(@showing) }
         end

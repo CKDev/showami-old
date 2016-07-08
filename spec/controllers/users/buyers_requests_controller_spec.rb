@@ -149,6 +149,23 @@ module Users
         expect(showing.preferred_agent).to be nil
       end
 
+      it "if an unknown user is entered for preferred agent, other users aren't notified until 10 minutes" do
+        @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+        User.any_instance.expects(:notify_new_showing).never
+        valid_attributes[:preferred_agent_email] = "notauser@example.com"
+        post :create, showing: valid_attributes
+      end
+
+      it "notifies other showing agents immediately if an known user, who is not a match for the showing, is entered for preferred agent" do
+        @preferred_agent = FactoryGirl.create(:user_with_valid_profile, blocked: true)
+        @showing_agent = FactoryGirl.create(:user_with_valid_profile)
+        User.any_instance.expects(:notify_new_showing).once
+        PreferredAgentNotAMatchWorker.expects(:perform_async).once
+        valid_attributes[:preferred_agent_email] = @preferred_agent.email
+        post :create, showing: valid_attributes
+        expect(Showing.last.status).to eq "unassigned"
+      end
+
       it "notifies only preferred agent initially" do
         @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
         @other_user = FactoryGirl.create(:user_with_valid_profile)
@@ -176,7 +193,7 @@ module Users
         @other_user = FactoryGirl.create(:user_with_valid_profile)
         @other_user2 = FactoryGirl.create(:user_with_valid_profile)
 
-        User.any_instance.expects(:notify_new_showing).never
+        User.any_instance.expects(:notify_new_showing).twice
         PreferredAgentNotAMatchWorker.expects(:perform_async).once
 
         valid_attributes[:preferred_agent_email] = @preferred_agent.email

@@ -58,6 +58,7 @@ feature "The preferred agent process" do
       Sidekiq::Testing.inline! do
         success_object = stub(send: true)
         Notification::SMS.expects(:new).with(@buyers_agent.primary_phone, "Your preferred Showing Assistant did not match your request criteria. All matching Showing Assistants will be notified of your request.").returns(success_object)
+        Notification::SMS.expects(:new).with(@showing_agent.primary_phone, regexp_matches(/New Showami showing available.*/)).returns(success_object)
         log_in @buyers_agent
         visit new_users_buyers_request_path
         select "02 PM", from: "showing[showing_at(4i)]"
@@ -75,18 +76,6 @@ feature "The preferred agent process" do
         click_button "Submit"
         expect(page).to have_content "New showing successfully created."
         log_out
-      end
-    end
-
-    @showing = Showing.last
-
-    # After 10 minute grace period
-    Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do
-      Sidekiq::Testing.inline! do
-        success_object = stub(send: true)
-        Notification::SMS.expects(:new).with(@showing_agent.primary_phone, "New Showami showing available: http://localhost:3000/users/showing_opportunities/#{@showing.id}").returns(success_object)
-        Notification::SMS.expects(:new).with(@buyers_agent.primary_phone, "Your preferred Showing Assistant did not accept the showing in time, all Showing Assistants that match your request will now be notified.").returns(success_object)
-        Showing.update_preferred_showing # Assume cron kicked this method off.
       end
     end
 

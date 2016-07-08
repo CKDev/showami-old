@@ -31,10 +31,10 @@ Metrics/LineLength:
   Max: 250
 
 Metrics/MethodLength:
-  Max: 25
+  Max: 30
 
 Metrics/AbcSize:
-  Max: 50
+  Max: 75
   Exclude:
 
 Style/Documentation:
