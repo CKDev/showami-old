@@ -110,8 +110,8 @@
   <%= f.hidden_field :geo_box_zoom %>
 
   <p>
-    By clicking Update you hereby you agree to our Application End User License Agreement
-    and acknowledge our Privacy Policy.
+    By clicking Update you hereby agree to our <%= link_to "Application End User License Agreement", terms_path %>
+    and acknowledge our <%= link_to "Privacy Policy", privacy_path %>.
   </p>
 
   <%= f.submit "Update", class: "button-primary" %>
