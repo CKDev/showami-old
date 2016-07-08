@@ -2,7 +2,7 @@ class Profile < ActiveRecord::Base
   belongs_to :user
 
   before_validation :strip_phone_numbers
-  after_update :new_user_notifications
+  after_commit :new_user_notifications
 
   validates :first_name, presence: true
   validates :last_name, presence: true
@@ -51,7 +51,7 @@ class Profile < ActiveRecord::Base
   end
 
   def new_user_notifications
-    unless sent_welcome_sms
+    if self.valid? && !sent_welcome_sms
       update(sent_welcome_sms: true)
       WelcomeNotificationWorker.perform_async(self.user.id)
       Notification::Email.notify_admins_new_user(self.user)

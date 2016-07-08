@@ -84,4 +84,12 @@ More importantly, a title should have a tag like [CHG], [FEAT], [REFAC], [BUG] e
 Commits should be "squashed" into atomic chunks of code, usually corresponding with a full feature or change.  WIP commits are not within the code standards of this project.  Any checkin should be deployable, without having to consider the surrounding commits.
 
 ## Showing Assistant vs Showing Agent vs Sellers Agent
+
 A showing assistant is exactly the same as a showing agent as a sellers agent.  The sellers agent is a mistake in the code, as there isn't really such a thing, but it was introduced early on and would take a bit of effort at this point to fix.  The showing assistant and showing agent are both used depending on the person talking, but still both refer to the same thing.  In the copy we should be using Showing Assistant, as that is the most descriptive and correct.
+
+## Stripe Testing
+
+There needs to be sufficient funds for transfer in the Stripe test account.  There is a normal waiting period in test, just as there is in live, though a special credit card can be used to deposit funds with no waiting period.  Here is the code to do so from the console.
+
+# Update or find a user to have the cc number: 4000 0000 0000 0077
+# Go into the Stripe test dashboard and charge the card for 10,000.

@@ -20,12 +20,14 @@ describe Profile do
       @user.profile.geo_box = "(-104.682, 39.822), (-105.358, 39.427)"
       @user.profile.sent_welcome_sms = false
       @user.profile.save
+      @user.profile.run_callbacks(:commit)
     end.to change { Sidekiq::Worker.jobs.count }.by(1)
 
     Sidekiq::Worker.clear_all
 
     expect do
       @user.profile.update(first_name: "Alex")
+      @user.profile.run_callbacks(:commit)
     end.to_not change { Sidekiq::Worker.jobs.count }
 
   end
@@ -48,6 +50,7 @@ describe Profile do
     @user.profile.geo_box = "(-104.682, 39.822), (-105.358, 39.427)"
     @user.profile.sent_welcome_sms = false
     @user.profile.save
+    @user.profile.run_callbacks(:commit)
 
     # Test that an update does not send another email
     @user.profile.update(first_name: "Alex")
