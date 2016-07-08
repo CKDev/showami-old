@@ -29,8 +29,8 @@ module Users
         @showing.invite_preferred_agent(params["showing"]["preferred_agent"])
 
         if @showing.preferred_agent.present?
-          Log::EventLogger.info(current_user.id, @showing.id, "Notifying preferred agent of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
           if @showing.preferred_agent.in? matched_users
+            Log::EventLogger.info(current_user.id, @showing.id, "Notifying preferred agent of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
             @showing.preferred_agent.notify_new_preferred_showing(@showing)
           else
             PreferredAgentNotAMatchWorker.perform_async(@showing.id)
