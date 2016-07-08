@@ -5,6 +5,17 @@ module Mixins
     # NOTE: All of these called from a cron job, keep method names in sync with schedule.rb.
     module ClassMethods
 
+      def run_cron
+        update_preferred_showing
+        update_completed
+        update_expired
+        start_payment_charges
+        start_payment_transfers
+        update_paid
+        send_confirmation_reminders
+        send_unassigned_notifications
+      end
+
       def update_preferred_showing
         Rails.logger.tagged("Cron", "Showing.update_preferred_showing") { Rails.logger.info "Checking for preferred showing grace periods that have come to an end." }
         Showing.grace_period_over.each do |showing|
