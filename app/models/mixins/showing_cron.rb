@@ -25,7 +25,11 @@ module Mixins
 
           lat = showing.address.latitude
           long = showing.address.longitude
-          matched_users = User.not_blocked.sellers_agents.not_self(showing.user.id).not_user(showing.preferred_agent.id).in_bounding_box(lat, long)
+          if showing.preferred_agent.present?
+            matched_users = User.not_blocked.sellers_agents.not_self(showing.user.id).not_user(showing.preferred_agent.id).in_bounding_box(lat, long)
+          else
+            matched_users = User.not_blocked.sellers_agents.not_self(showing.user.id).in_bounding_box(lat, long)
+          end
           Log::EventLogger.info(showing.user.id, showing.id, "Notifying #{matched_users.count} users of new showing (after preferred grace period)", "User: #{showing.user.id}", "Showing: #{showing.id}", "Showing Notification SMS")
           matched_users.each do |u|
             u.notify_new_showing(showing)

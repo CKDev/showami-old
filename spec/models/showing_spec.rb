@@ -937,12 +937,26 @@ describe Showing do
 
       end
 
-      it "sends an SMS to matching showing assistants, if the showing goes unassigned" do
+      it "sends an SMS to matching showing assistants (after expiration), when a preferred agent is listed" do
         @user = FactoryGirl.create(:user_with_valid_profile)
         @preferred_agent = FactoryGirl.create(:user_with_valid_profile)
         @showing_agent1 = FactoryGirl.create(:user_with_valid_profile)
         @showing_agent2 = FactoryGirl.create(:user_with_valid_profile)
         @showing1 = FactoryGirl.build(:showing, status: "unassigned_with_preferred", created_at: Time.zone.local(2016, 6, 1, 12, 0, 0), preferred_agent: @preferred_agent, user: @user)
+        @showing1.save(validate: false)
+
+        Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do
+          User.any_instance.expects(:notify_new_showing).twice.with(@showing1)
+          Showing.update_preferred_showing
+        end
+
+      end
+
+      it "sends an SMS to matching showing assistants (immediately), when no preferred agent is listed" do
+        @user = FactoryGirl.create(:user_with_valid_profile)
+        @showing_agent1 = FactoryGirl.create(:user_with_valid_profile)
+        @showing_agent2 = FactoryGirl.create(:user_with_valid_profile)
+        @showing1 = FactoryGirl.build(:showing, status: "unassigned_with_preferred", created_at: Time.zone.local(2016, 6, 1, 12, 0, 0), user: @user)
         @showing1.save(validate: false)
 
         Timecop.freeze(Time.zone.local(2016, 6, 1, 12, 11, 0)) do

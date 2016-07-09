@@ -19,7 +19,7 @@ module Users
     def create
       @showing = Showing.new(showing_params)
       @showing.user = current_user
-      @showing.status = "unassigned_with_preferred" if @showing.preferred_agent.present?
+      @showing.status = "unassigned_with_preferred" if preferred_email.present?
 
       if @showing.save
         lat = @showing.address.latitude
@@ -36,8 +36,8 @@ module Users
             Log::EventLogger.info(current_user.id, @showing.id, "Notifying #{matched_users.count} users of new showing (from a preferred agent that was not a match)", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
             matched_users.each { |u| u.notify_new_showing(@showing) }
           end
-        elsif params["showing"]["preferred_agent_email"].present? # Preferred email given, but no match
-          @showing.invite_preferred_agent(params["showing"]["preferred_agent_email"])
+        elsif preferred_email.present? # Preferred email given, but no match
+          @showing.invite_preferred_agent(preferred_email)
         else # No preferred agent given
           Log::EventLogger.info(current_user.id, @showing.id, "Notifying #{matched_users.count} users of new showing", "User: #{current_user.id}", "Showing: #{@showing.id}", "Showing Notification SMS")
           matched_users.each { |u| u.notify_new_showing(@showing) }
@@ -95,6 +95,10 @@ module Users
       params.require(:showing).permit(:showing_at, :mls, :notes,
         :buyer_name, :buyer_phone, :buyer_type, :preferred_agent_id, :preferred_agent_email,
         address_attributes: [:id, :line1, :line2, :city, :state, :zip])
+    end
+
+    def preferred_email
+      params["showing"]["preferred_agent_email"]
     end
 
   end

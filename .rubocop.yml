@@ -91,6 +91,12 @@ Style/WordArray:
 Style/EmptyLinesAroundModuleBody:
   Enabled: false
 
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/IfInsideElse:
+  Enabled: false
+
 Metrics/CyclomaticComplexity:
   Max: 17
 

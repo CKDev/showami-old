@@ -103,8 +103,7 @@
 
   <div>
     <%= f.label :preferred_agent, "Preferred Showing Assistant Email" %>
-    <p class="note">Text about what this means....</p>
-    <%# TODO: should this be a virtual attribute since we're not saving email, just using it to convert to a user? %>
+    <p class="note">If you have a preferred Showing Assistant that you would like to request, enter their email address below. This individual will be sent a notification and given a 10 minute window to accept this showing request before other Showing Assistants are notified.</p>
     <%= f.email_field :preferred_agent_email %>
   </div>
 
